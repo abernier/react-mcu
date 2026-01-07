@@ -7,11 +7,10 @@
     "component",
     "typescript"
   ],
-  "main": "dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "homepage": "https://github.com/abernier/react-mcu",
@@ -48,7 +47,7 @@
     "test": "vitest run",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "check-exports": "attw --pack .",
+    "check-exports": "attw --pack . --ignore-rules cjs-resolves-to-esm no-resolution",
     "local-release": "npm run ci && changeset version && changeset publish"
   },
   "peerDependencies": {
