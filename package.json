@@ -27,6 +27,7 @@
     "dist"
   ],
   "type": "module",
+  "packageManager": "pnpm@10.27.0",
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.4",
     "@changesets/cli": "^2.27.7",
@@ -45,14 +46,14 @@
   },
   "scripts": {
     "build": "tsup",
-    "ci": "npm run build && npm run check-format && npm run check-exports && npm run lint && npm run test",
+    "ci": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run lint && pnpm run test",
     "lint": "tsc",
     "test": "vitest run",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules cjs-resolves-to-esm no-resolution",
-    "release": "npm run build && changeset publish",
-    "local-release": "npm run ci && changeset version && changeset publish"
+    "release": "pnpm run build && changeset publish",
+    "local-release": "pnpm run ci && changeset version && changeset publish"
   },
   "peerDependencies": {
     "react": "^19.2.3",
