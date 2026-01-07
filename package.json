@@ -48,6 +48,7 @@
     "format": "prettier --write .",
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules cjs-resolves-to-esm no-resolution",
+    "release": "npm run build && changeset publish",
     "local-release": "npm run ci && changeset version && changeset publish"
   },
   "peerDependencies": {

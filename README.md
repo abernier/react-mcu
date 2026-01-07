@@ -27,3 +27,13 @@ A simple component that renders "Hello World".
 ```tsx
 <Mcu />
 ```
+
+## Contributing
+
+When submitting a pull request, please include a changeset to document your changes:
+
+```bash
+npx changeset
+```
+
+This helps us maintain the changelog and version the package appropriately.
