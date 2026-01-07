@@ -6,6 +6,6 @@ describe('Mcu', () => {
   it('should render hello world div', () => {
     render(<Mcu />);
     const divElement = screen.getByText('Hello World');
-    expect(divElement).toBeInTheDocument();
+    expect(divElement).toBeTruthy();
   });
 });
