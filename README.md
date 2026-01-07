@@ -38,4 +38,8 @@ npx changeset
 
 This helps us maintain the changelog and version the package appropriately.
 
-bump01
+### Important Notes
+
+- **Do not use `[skip ci]`, `[ci skip]`, or similar directives** in commit messages for PRs that include changesets. These directives prevent ALL GitHub Actions workflows from running, including the release workflow that publishes packages to npm.
+- The release workflow automatically runs when changes are merged to the `main` branch.
+- If you need to skip CI checks during development, do so only on feature branches, not on commits that will be merged to `main`.
