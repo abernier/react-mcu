@@ -15,7 +15,10 @@
     "noImplicitOverride": true,
     /* If transpiling with TypeScript: */
     "module": "NodeNext",
-    "lib": ["es2022"],
+    "lib": ["es2022", "DOM"],
+    "jsx": "react-jsx",
     "noEmit": true
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
