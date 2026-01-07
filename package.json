@@ -42,7 +42,9 @@
     "react-dom": "^19.2.3",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
-    "vitest": "^2.0.5"
+    "vitest": "^2.0.5",
+    "storybook": "^10.1.11",
+    "@storybook/react-vite": "^10.1.11"
   },
   "scripts": {
     "build": "tsup",
@@ -53,7 +55,9 @@
     "check-format": "prettier --check .",
     "check-exports": "attw --pack . --ignore-rules cjs-resolves-to-esm no-resolution",
     "release": "pnpm run build && changeset publish",
-    "local-release": "pnpm run ci && changeset version && changeset publish"
+    "local-release": "pnpm run ci && changeset version && changeset publish",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "peerDependencies": {
     "react": "^19.2.3",
