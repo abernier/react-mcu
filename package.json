@@ -38,7 +38,9 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
     "chromatic": "^13.3.5",
+    "husky": "^9.1.7",
     "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.3.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -59,10 +61,16 @@
     "local-release": "pnpm run ci && changeset version && changeset publish",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "chromatic --project-token $CHROMATIC_PROJECT_TOKEN"
+    "chromatic": "chromatic --project-token $CHROMATIC_PROJECT_TOKEN",
+    "prepare": "husky"
   },
   "peerDependencies": {
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md}": [
+      "prettier --write"
+    ]
   }
 }
