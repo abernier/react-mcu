@@ -6,18 +6,11 @@ import reactHooksPlugin from "eslint-plugin-react-hooks";
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
+  reactPlugin.configs.flat.recommended,
   {
     files: ["**/*.{ts,tsx}"],
     plugins: {
-      react: reactPlugin,
       "react-hooks": reactHooksPlugin,
-    },
-    languageOptions: {
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
     },
     settings: {
       react: {
@@ -25,7 +18,6 @@ export default tseslint.config(
       },
     },
     rules: {
-      ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
       "react/react-in-jsx-scope": "off", // Not needed with React 17+
       "@typescript-eslint/no-empty-object-type": [
