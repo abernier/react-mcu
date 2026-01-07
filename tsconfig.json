@@ -14,7 +14,8 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     /* If transpiling with TypeScript: */
-    "module": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "lib": ["es2022", "DOM"],
     "jsx": "react-jsx",
     "noEmit": true
