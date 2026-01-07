@@ -1,0 +1,30 @@
+name: Changesets Bot
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  changesets-bot:
+    name: Changesets Bot
+    runs-on: ubuntu-latest
+    # Skip the changesets bot on release PRs created by the release workflow
+    if: ${{ !startsWith(github.head_ref, 'changeset-release/') }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Check for changesets
+        uses: changesets/action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
