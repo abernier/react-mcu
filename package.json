@@ -59,7 +59,7 @@
     "local-release": "pnpm run ci && changeset version && changeset publish",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "npx chromatic --project-token=chpt_0a4b028b8d09cd7"
+    "chromatic": "chromatic --project-token $CHROMATIC_PROJECT_TOKEN"
   },
   "peerDependencies": {
     "react": "^19.2.3",
