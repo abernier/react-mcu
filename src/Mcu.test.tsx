@@ -1,11 +1,11 @@
-import { render } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
-import { Mcu } from './Mcu.js';
+import { render } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import { Mcu } from "./Mcu.js";
 
-describe('Mcu', () => {
-  it('should render hello react-mcu div', () => {
+describe("Mcu", () => {
+  it("should render hello react-mcu div", () => {
     const { getByText } = render(<Mcu />);
-    const divElement = getByText('hello react-mcu');
+    const divElement = getByText("hello react-mcu");
     expect(divElement).toBeTruthy();
   });
 });

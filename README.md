@@ -1,5 +1,7 @@
 # react-mcu
 
+[![npm version](https://img.shields.io/npm/v/react-mcu.svg)](https://www.npmjs.com/package/react-mcu)
+
 A React component library.
 
 ## Installation
@@ -11,7 +13,7 @@ npm install react-mcu
 ## Usage
 
 ```tsx
-import { Mcu } from 'react-mcu';
+import { Mcu } from "react-mcu";
 
 function App() {
   return <Mcu />;
