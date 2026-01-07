@@ -20,15 +20,58 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-
-      - name: Install Dependencies
-        run: npm ci
-
       - name: Check for changesets
-        uses: changesets/action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: check-changesets
+        run: |
+          # Count changeset files (excluding README.md and config.json)
+          CHANGESET_COUNT=$(find .changeset -name "*.md" ! -name "README.md" | wc -l)
+          echo "count=$CHANGESET_COUNT" >> $GITHUB_OUTPUT
+          if [ "$CHANGESET_COUNT" -eq 0 ]; then
+            echo "No changesets found"
+            exit 1
+          else
+            echo "Found $CHANGESET_COUNT changeset(s)"
+          fi
+
+      - name: Comment on PR
+        if: failure() && steps.check-changesets.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('No changesets found')
+            );
+            
+            const commentBody = '## ⚠️ No changesets found\n\n' +
+              'This PR doesn\'t include any changesets. If this PR contains changes that should be included in the changelog and trigger a version bump, please add a changeset.\n\n' +
+              'To add a changeset, run:\n' +
+              '```bash\n' +
+              'npx changeset\n' +
+              '```\n\n' +
+              'Then commit the generated file.\n\n' +
+              'If this PR doesn\'t require a changeset (e.g., documentation updates, CI changes), you can ignore this message.';
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody,
+              });
+            }
+
+
