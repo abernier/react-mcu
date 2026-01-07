@@ -7,7 +7,7 @@ A React component library.
 ## Installation
 
 ```bash
-pnpm add react-mcu
+npm install react-mcu
 ```
 
 ## Usage
