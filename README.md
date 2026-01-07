@@ -7,7 +7,7 @@ A React component library.
 ## Installation
 
 ```bash
-npm install react-mcu
+pnpm add react-mcu
 ```
 
 ## Usage
@@ -35,7 +35,7 @@ A simple component that renders "Hello World".
 When submitting a pull request, please include a changeset to document your changes:
 
 ```bash
-npx changeset
+pnpm changeset
 ```
 
 This helps us maintain the changelog and version the package appropriately.
