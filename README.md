@@ -1,38 +1,32 @@
-# react-mcu
-
 [![npm version](https://img.shields.io/npm/v/react-mcu.svg)](https://www.npmjs.com/package/react-mcu)
 
-A React component library.
+# INSTALL
 
-## Installation
+Pre-requisites:
 
-```bash
-npm install react-mcu
+- Install [nvm](https://github.com/nvm-sh/nvm), then:
+  ```sh
+  $ nvm install
+  $ nvm use
+  $ node -v # make sure your version satisfies package.json#engines.node
+  ```
+  nb: if you want this node version to be your default nvm's one:
+  `nvm alias default node`
+- Install pnpm, with:
+  ```sh
+  $ corepack enable
+  $ corepack prepare --activate # it reads "packageManager"
+  $ pnpm -v # make sure your version satisfies package.json#engines.pnpm
+  ```
+
+```sh
+$ pnpm i
 ```
 
-## Usage
+# CONTRIBUTING
 
-```tsx
-import { Mcu } from "react-mcu";
-
-function App() {
-  return <Mcu />;
-}
-```
-
-## Components
-
-### Mcu
-
-A simple component that renders "Hello World".
-
-```tsx
-<Mcu />
-```
-
-## Contributing
-
-When submitting a pull request, please include a changeset to document your changes:
+When submitting a pull request, please include a changeset to document your
+changes:
 
 ```bash
 pnpm dlx changeset
