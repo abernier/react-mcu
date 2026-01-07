@@ -31,20 +31,21 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.4",
     "@changesets/cli": "^2.27.7",
+    "@storybook/react-vite": "^10.1.11",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
+    "chromatic": "^13.3.5",
     "jsdom": "^27.4.0",
     "prettier": "^3.3.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "storybook": "^10.1.11",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
-    "vitest": "^2.0.5",
-    "storybook": "^10.1.11",
-    "@storybook/react-vite": "^10.1.11"
+    "vitest": "^2.0.5"
   },
   "scripts": {
     "build": "tsup",
@@ -57,7 +58,8 @@
     "release": "pnpm run build && changeset publish",
     "local-release": "pnpm run ci && changeset version && changeset publish",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=chpt_0a4b028b8d09cd7"
   },
   "peerDependencies": {
     "react": "^19.2.3",

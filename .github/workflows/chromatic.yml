@@ -1,19 +1,10 @@
-name: CI
+name: "Chromatic"
 
-on:
-  pull_request:
-  push:
-    branches:
-      - main
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+on: push
 
 jobs:
-  ci:
+  chromatic:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,6 +13,6 @@ jobs:
           cache: "pnpm"
       - uses: pnpm/action-setup@v4
       - run: pnpm install --frozen-lockfile
-
-      - name: Run CI
-        run: pnpm run ci
+      - run: pnpm run chromatic --exit-once-uploaded --auto-accept-changes main
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
