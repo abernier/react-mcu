@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Mcu } from "./Mcu";
+import { Mcu, schemeNames } from "./Mcu";
 import type { ComponentProps } from "react";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
@@ -24,15 +24,7 @@ const meta = {
     },
     scheme: {
       control: "select",
-      options: [
-        "tonalSpot",
-        "monochrome",
-        "neutral",
-        "vibrant",
-        "expressive",
-        "fidelity",
-        "content",
-      ],
+      options: schemeNames,
       description: "The Material Design color scheme",
     },
     contrast: {
