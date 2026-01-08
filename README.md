@@ -32,7 +32,7 @@ When submitting a pull request, please include a changeset to document your
 changes:
 
 ```bash
-pnpm dlx changeset
+pnpm exec changeset
 ```
 
 This helps us maintain the changelog and version the package appropriately.
