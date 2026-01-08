@@ -674,7 +674,6 @@ function Bar() {
 
 export const St1: Story = {
   name: "light",
-
   render: (args) => (
     <Mcu {...args}>
       <Bar />
@@ -684,11 +683,12 @@ export const St1: Story = {
 
 export const St2: Story = {
   name: "dark",
+  globals: {
+    theme: "dark",
+  },
   render: (args) => (
-    <div className="dark">
-      <Mcu {...args}>
-        <Bar />
-      </Mcu>
-    </div>
+    <Mcu {...args}>
+      <Bar />
+    </Mcu>
   ),
 };
