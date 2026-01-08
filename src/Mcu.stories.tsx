@@ -18,7 +18,35 @@ const meta = {
     children: null,
   },
   argTypes: {
-    // backgroundColor: { control: "color" },
+    source: {
+      control: "color",
+      description: "The source color in hex format",
+    },
+    scheme: {
+      control: "select",
+      options: [
+        "tonalSpot",
+        "monochrome",
+        "neutral",
+        "vibrant",
+        "expressive",
+        "fidelity",
+        "content",
+      ],
+      description: "The Material Design color scheme",
+    },
+    contrast: {
+      control: { type: "range", min: -1, max: 1, step: 0.1 },
+      description: "Contrast level from -1 to 1",
+    },
+    customColors: {
+      control: "object",
+      description: "Array of custom colors with name and hex value",
+    },
+    children: {
+      control: false,
+      description: "React children to render",
+    },
   },
 } satisfies Meta<typeof Mcu>;
 
