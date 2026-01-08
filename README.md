@@ -10,10 +10,10 @@ import { Mcu } from "react-mcu";
   source="#0e1216"
   scheme="vibrant"
   contrast={0.5}
-  customColors=[
+  customColors={[
     { name: "myCustomColor1", hex: "#FF5733", blend: true },
     { name: "myCustomColor2", hex: "#3498DB", blend: false },
-  ]
+  ]}
 >
   <p style={{
     backgroundColor: "var(--mcu-surface)",
