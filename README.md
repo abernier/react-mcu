@@ -23,6 +23,38 @@ import { Mcu } from "react-mcu";
 
 [![](https://snapshots.chromatic.com/snapshots/695eb517cb602e59b4cc045c-695fddf78332cc46c76d4590/thumb/capture-ad484cab.png)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
 
+## Using the `useMcu` hook
+
+Access MCU configuration and colors programmatically within your components:
+
+```tsx
+import { Mcu, useMcu } from "react-mcu";
+
+function MyComponent() {
+  const { initials, setMcuConfig, getMcuColor } = useMcu();
+
+  return (
+    <div>
+      <button onClick={() => setMcuConfig({ ...initials, source: "#FF5722" })}>
+        Change theme color
+      </button>
+      <p>Primary color: {getMcuColor("primary", "light")}</p>
+    </div>
+  );
+}
+
+// Wrap your component tree with Mcu provider
+<Mcu source="#0e1216" scheme="vibrant" contrast={0.5} customColors={[]}>
+  <MyComponent />
+</Mcu>;
+```
+
+The `useMcu` hook returns:
+
+- `initials`: The initial MCU configuration passed to the `Mcu` component
+- `setMcuConfig(config)`: Update the MCU configuration dynamically
+- `getMcuColor(tokenName, theme)`: Get a color value (hex string) for a specific token and theme (`"light"` or `"dark"`)
+
 # Dev
 
 ## INSTALL
