@@ -672,23 +672,10 @@ function Bar() {
   );
 }
 
-export const St1: Story = {
-  name: "light",
-
+export const Default: Story = {
   render: (args) => (
     <Mcu {...args}>
       <Bar />
     </Mcu>
-  ),
-};
-
-export const St2: Story = {
-  name: "dark",
-  render: (args) => (
-    <div className="dark">
-      <Mcu {...args}>
-        <Bar />
-      </Mcu>
-    </div>
   ),
 };
