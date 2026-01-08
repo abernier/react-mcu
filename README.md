@@ -21,6 +21,8 @@ import { Mcu } from "react-mcu";
 </Mcu>
 ```
 
+[![](https://snapshots.chromatic.com/snapshots/695eb517cb602e59b4cc045c-695fddf78332cc46c76d4590/thumb/capture-ad484cab.png)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
+
 # Dev
 
 ## INSTALL
