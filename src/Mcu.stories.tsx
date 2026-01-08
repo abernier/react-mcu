@@ -41,7 +41,8 @@ const meta = {
     },
     customColors: {
       control: "object",
-      description: "Array of custom colors with name and hex value",
+      description:
+        "Array of custom color objects, each with 'name' and 'hex' properties",
     },
     children: {
       control: false,
