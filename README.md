@@ -1,6 +1,26 @@
 [![npm version](https://img.shields.io/npm/v/react-mcu.svg)](https://www.npmjs.com/package/react-mcu)
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
 
+Usage:
+
+```tsx
+import { Mcu } from "react-mcu";
+
+<Mcu
+  source="#0e1216"
+  scheme="vibrant"
+  contrast={0.5}
+  customColors=[]
+>
+  <div style={{
+    backgroundColor: "var(--mcu-surface)",
+    color: "var(--mcu-on-surface)",
+  }}>
+    Hello, MCU colors!
+  </div>
+</Mcu>
+```
+
 # Dev
 
 ## INSTALL
