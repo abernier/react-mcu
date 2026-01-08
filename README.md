@@ -30,6 +30,18 @@ import { Mcu } from "react-mcu";
 
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
+A `useMcu` hook is provided:
+
+```tsx
+const { initials, setMcuConfig, getMcuColor } = useMcu();
+
+return (
+  <button onClick={() => setMcuConfig({ ...initials, source: "#FF5722" })}>
+    Change to {getMcuColor("primary", "light")}
+  </button>
+);
+```
+
 # Dev
 
 ## INSTALL
