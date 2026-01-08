@@ -53,7 +53,7 @@ The `useMcu` hook returns:
 
 - `initials`: The initial MCU configuration passed to the `Mcu` component
 - `setMcuConfig(config)`: Update the MCU configuration dynamically
-- `getMcuColor(tokenName, theme)`: Get a color value (hex string) for a specific token and theme (`"light"` or `"dark"`)
+- `getMcuColor(tokenName, theme)`: Get a color value (hex string) for a specific token and theme (`"light"` or `"dark"`; defaults to `"dark"` if not provided)
 
 # Dev
 
