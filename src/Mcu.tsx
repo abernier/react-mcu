@@ -101,6 +101,10 @@ export const tokenNames = [
   "onPrimaryFixed",
   "onPrimaryFixedVariant",
   "inversePrimary",
+  "primaryFixed",
+  "primaryFixedDim",
+  "onPrimaryFixed",
+  "onPrimaryFixedVariant",
   "secondary",
   // "secondaryDim",
   "onSecondary",
@@ -124,6 +128,8 @@ export const tokenNames = [
   "onError",
   "errorContainer",
   "onErrorContainer",
+  "scrim", // added manually, was missing
+  "shadow", // added manually, was missing
 ] as const;
 export type TokenName = (typeof tokenNames)[number];
 
@@ -245,7 +251,6 @@ export function generateCss({
   return {
     css: `
     :root { ${lightVars} }
-    @media (prefers-color-scheme: dark) { :root:not([class]) { ${darkVars} } }
     .dark { ${darkVars} }
     `,
     mergedColorsLight,
