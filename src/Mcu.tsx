@@ -1,5 +1,259 @@
-export interface McuProps {}
+import {
+  argbFromHex,
+  type CustomColor,
+  DynamicScheme,
+  Hct,
+  hexFromArgb,
+  MaterialDynamicColors,
+  SchemeContent,
+  SchemeExpressive,
+  SchemeFidelity,
+  SchemeMonochrome,
+  SchemeNeutral,
+  SchemeTonalSpot,
+  SchemeVibrant,
+} from "@material/material-color-utilities";
+import { kebabCase } from "lodash-es";
+import { useMemo } from "react";
+import { McuProvider } from "./Mcu.context";
 
-export const Mcu: React.FC<McuProps> = () => {
-  return <div>hello react-mcu</div>;
+type HexCustomColor = Omit<CustomColor, "value"> & {
+  hex: string;
 };
+
+export type McuConfig = {
+  source: string;
+  scheme: SchemeName;
+  contrast: number;
+  customColors: HexCustomColor[];
+};
+
+const schemesMap = {
+  tonalSpot: SchemeTonalSpot,
+  monochrome: SchemeMonochrome,
+  neutral: SchemeNeutral,
+  vibrant: SchemeVibrant,
+  expressive: SchemeExpressive,
+  fidelity: SchemeFidelity,
+  content: SchemeContent,
+} as const;
+export const schemeNames = Object.keys(
+  schemesMap,
+) as (keyof typeof schemesMap)[];
+type SchemeName = (typeof schemeNames)[number];
+
+const mcuStyleId = "mcu-styles";
+
+export function Mcu({
+  source,
+  scheme,
+  contrast,
+  customColors,
+  children,
+}: McuConfig & { children: React.ReactNode }) {
+  const config = useMemo(
+    () => ({
+      source,
+      scheme,
+      contrast,
+      customColors,
+    }),
+    [contrast, customColors, scheme, source],
+  );
+
+  const { css } = useMemo(() => generateCss(config), [config]);
+
+  return (
+    <>
+      <style id={mcuStyleId}>{css}</style>
+      <McuProvider {...config} styleId={mcuStyleId}>
+        {children}
+      </McuProvider>
+    </>
+  );
+}
+
+// all colors https://github.com/material-foundation/material-color-utilities/blob/a800772dbf1adae9b5072daf975c1af7c9fddfe1/typescript/dynamiccolor/material_dynamic_colors.ts#L320
+export const tokenNames = [
+  "background",
+  "onBackground",
+  "surface",
+  "surfaceDim",
+  "surfaceBright",
+  "surfaceContainerLowest",
+  "surfaceContainerLow",
+  "surfaceContainer",
+  "surfaceContainerHigh",
+  "surfaceContainerHighest",
+  "onSurface",
+  "onSurfaceVariant",
+  "outline",
+  "outlineVariant",
+  "inverseSurface",
+  "inverseOnSurface",
+  "primary",
+  // "primaryDim",
+  "onPrimary",
+  "primaryContainer",
+  "onPrimaryContainer",
+  "primaryFixed",
+  "primaryFixedDim",
+  "onPrimaryFixed",
+  "onPrimaryFixedVariant",
+  "inversePrimary",
+  "primaryFixed",
+  "primaryFixedDim",
+  "onPrimaryFixed",
+  "onPrimaryFixedVariant",
+  "secondary",
+  // "secondaryDim",
+  "onSecondary",
+  "secondaryContainer",
+  "onSecondaryContainer",
+  "secondaryFixed",
+  "secondaryFixedDim",
+  "onSecondaryFixed",
+  "onSecondaryFixedVariant",
+  "tertiary",
+  // "tertiaryDim",
+  "onTertiary",
+  "tertiaryContainer",
+  "onTertiaryContainer",
+  "tertiaryFixed",
+  "tertiaryFixedDim",
+  "onTertiaryFixed",
+  "onTertiaryFixedVariant",
+  "error",
+  // "errorDim",
+  "onError",
+  "errorContainer",
+  "onErrorContainer",
+  "scrim", // added manually, was missing
+  "shadow", // added manually, was missing
+] as const;
+export type TokenName = (typeof tokenNames)[number];
+
+//
+// Utility function to convert an array of keys to an object/dictionary of key-value pairs
+//
+// @example:
+// ```ts
+// const arr1 = ['foo', 'bar'];
+// const record = toRecord(arr1, item => [item, item.toUpperCase()]);
+// // record is now { 'foo': 'FOO', 'bar': 'BAR' }
+// ```
+// @example:
+// ```ts
+// const arr2 = [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }];
+// const record = toRecord(arr2, item => [item.id, item.name]);
+// // record is now { '1': 'Alice', '2': 'Bob' }
+// ```
+//
+function toRecord<T, K extends string, V>(
+  arr: readonly T[],
+  getEntry: (item: T) => [K, V],
+) {
+  return arr.reduce(
+    (acc, item) => {
+      const [key, value] = getEntry(item);
+      acc[key] = value;
+      return acc;
+    },
+    {} as Record<K, V>,
+  );
+}
+
+//
+// Merge the base Material Dynamic Colors with custom colors
+//
+// returns: { primary: 0xFF6200EE, onPrimary: 0xFFFFFFFF, ..., customColor1: 0xFF6200EF, customColor2: 0x00FF00, ... }
+//
+
+function mergeBaseAndCustomColors(
+  scheme: DynamicScheme,
+  customColors: CustomColor[],
+) {
+  //
+  // Base colors (all listed in tokenNames)
+  //
+  // returns: { primary: 0xFF6200EE, onPrimary: 0xFFFFFFFF, ... }
+  //
+  const baseVars = toRecord(tokenNames, (tokenName) => {
+    const dynamicColor = MaterialDynamicColors[tokenName];
+    const argb = dynamicColor.getArgb(scheme);
+    return [tokenName, argb];
+  });
+
+  //
+  // Custom colors
+  //
+  // returns: { primary: 0xFF6200EF, customColor1: 0xFF0000, customColor2: 0x00FF00, ... }
+  //
+  const customVars = toRecord(customColors, (color) => [
+    color.name,
+    color.value,
+  ]);
+
+  // Merge both
+  return { ...baseVars, ...customVars };
+}
+
+//
+// Merge and format as a big string of CSS rules
+//
+// returns: "--mcu-primary: #ff6200ef; --mcu-on-primary: #ffffff; --mcu-custom-color1: #ff0000; --mcu-custom-color2: #00ff00;"
+//
+
+const cssVar = (colorName: string, colorValue: number) => {
+  const name = `--mcu-${kebabCase(colorName)}`;
+  const value = hexFromArgb(colorValue);
+
+  return `${name}:${value};`; // eg: `--mcu-on-primary:#ffffff;`
+};
+
+//
+// Generate full CSS styles string (for insertion into a <style> tag)
+//
+
+const toCssVars = (mergedColors: Record<string, number>) => {
+  return Object.entries(mergedColors)
+    .map(([name, value]) => cssVar(name, value))
+    .join(" ");
+};
+
+export function generateCss({
+  source: hexSource,
+  customColors: hexCustomColors,
+  scheme,
+  contrast,
+}: McuConfig) {
+  console.log("MCU generateCss");
+
+  const sourceArgb = argbFromHex(hexSource);
+  const hct = Hct.fromInt(sourceArgb);
+
+  const SchemeClass = schemesMap[scheme];
+  const lightScheme = new SchemeClass(hct, false, contrast);
+  const darkScheme = new SchemeClass(hct, true, contrast);
+
+  // Prepare custom colors (keep ARGB so generateCssVars can use them)
+  const customColors = hexCustomColors.map(({ hex, ...rest }) => ({
+    ...rest,
+    value: argbFromHex(hex),
+  }));
+
+  const mergedColorsLight = mergeBaseAndCustomColors(lightScheme, customColors);
+  const mergedColorsDark = mergeBaseAndCustomColors(darkScheme, customColors);
+
+  const lightVars = toCssVars(mergedColorsLight);
+  const darkVars = toCssVars(mergedColorsDark);
+
+  return {
+    css: `
+    :root { ${lightVars} }
+    .dark { ${darkVars} }
+    `,
+    mergedColorsLight,
+    mergedColorsDark,
+  };
+}
