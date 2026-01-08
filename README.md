@@ -1,5 +1,8 @@
 [![npm version](https://img.shields.io/npm/v/react-mcu.svg)](https://www.npmjs.com/package/react-mcu)
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
+[![](https://img.shields.io/badge/storybook-171c23.svg?logo=storybook)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
+
+
 
 Usage:
 
@@ -27,7 +30,7 @@ import { Mcu } from "react-mcu";
 </Mcu>
 ```
 
-[![](https://snapshots.chromatic.com/snapshots/695eb517cb602e59b4cc045c-695fddf78332cc46c76d4590/thumb/capture-ad484cab.png)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
+https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
 # Dev
 
