@@ -59,7 +59,9 @@ function Bar() {
             gap: 24px;
           }
 
-          p {margin:.5rem; font-family: sans-serif; font-size: 0.875rem; color:white;mix-blend-mode:difference;}
+      [style*="background-color"] {padding:.5rem; outline:1px solid;}
+
+          p {all:unset; font-family: sans-serif; font-size: 0.875rem; color:white;mix-blend-mode:difference;}
         }
       `}</style>
 
