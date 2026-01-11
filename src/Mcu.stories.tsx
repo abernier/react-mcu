@@ -715,6 +715,35 @@ export const St2: Story = {
 };
 
 function BarTailwind() {
+  function FooTailwind({
+    topBg,
+    topText,
+    bottomBg,
+    bottomText,
+  }: {
+    topBg: string;
+    topText: string;
+    bottomBg?: string;
+    bottomText?: string;
+  }) {
+    return (
+      <div className="grid grid-cols-1 gap-0">
+        <div className={`h-20 ${topBg} p-2 outline outline-1`}>
+          <p className="font-sans text-sm text-white mix-blend-difference">
+            {topText}
+          </p>
+        </div>
+        {bottomBg && bottomText && (
+          <div className={`${bottomBg} p-2 outline outline-1`}>
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              {bottomText}
+            </p>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-[3fr_1fr] gap-6">
       {
@@ -728,78 +757,42 @@ function BarTailwind() {
       }
 
       <div className="grid grid-cols-3 grid-rows-2 gap-2">
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-primary p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Primary
-            </p>
-          </div>
-          <div className="bg-on-primary p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Primary
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-secondary p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Secondary
-            </p>
-          </div>
-          <div className="bg-on-secondary p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Secondary
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-tertiary p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Tertiary
-            </p>
-          </div>
-          <div className="bg-on-tertiary p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Tertiary
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-primary-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Primary Container
-            </p>
-          </div>
-          <div className="bg-on-primary-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Primary Container
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-secondary-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Secondary Container
-            </p>
-          </div>
-          <div className="bg-on-secondary-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Secondary Container
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-tertiary-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Tertiary Container
-            </p>
-          </div>
-          <div className="bg-on-tertiary-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Tertiary Container
-            </p>
-          </div>
-        </div>
+        <FooTailwind
+          topBg="bg-primary"
+          topText="Primary"
+          bottomBg="bg-on-primary"
+          bottomText="On Primary"
+        />
+        <FooTailwind
+          topBg="bg-secondary"
+          topText="Secondary"
+          bottomBg="bg-on-secondary"
+          bottomText="On Secondary"
+        />
+        <FooTailwind
+          topBg="bg-tertiary"
+          topText="Tertiary"
+          bottomBg="bg-on-tertiary"
+          bottomText="On Tertiary"
+        />
+        <FooTailwind
+          topBg="bg-primary-container"
+          topText="Primary Container"
+          bottomBg="bg-on-primary-container"
+          bottomText="On Primary Container"
+        />
+        <FooTailwind
+          topBg="bg-secondary-container"
+          topText="Secondary Container"
+          bottomBg="bg-on-secondary-container"
+          bottomText="On Secondary Container"
+        />
+        <FooTailwind
+          topBg="bg-tertiary-container"
+          topText="Tertiary Container"
+          bottomBg="bg-on-tertiary-container"
+          bottomText="On Tertiary Container"
+        />
       </div>
 
       {
@@ -813,30 +806,18 @@ function BarTailwind() {
       }
 
       <div className="grid grid-cols-1 grid-rows-2 gap-2">
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-error p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Error
-            </p>
-          </div>
-          <div className="bg-on-error p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Error
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-error-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Error Container
-            </p>
-          </div>
-          <div className="bg-on-error-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Error Container
-            </p>
-          </div>
-        </div>
+        <FooTailwind
+          topBg="bg-error"
+          topText="Error"
+          bottomBg="bg-on-error"
+          bottomText="On Error"
+        />
+        <FooTailwind
+          topBg="bg-error-container"
+          topText="Error Container"
+          bottomBg="bg-on-error-container"
+          bottomText="On Error Container"
+        />
       </div>
 
       {
@@ -1032,25 +1013,13 @@ function BarTailwind() {
       }
 
       <div className="flex flex-col gap-2">
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 bg-inverse-surface p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Inverse Surface
-            </p>
-          </div>
-          <div className="bg-inverse-on-surface p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Inverse On Surface
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="bg-inverse-primary p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Inverse Primary
-            </p>
-          </div>
-        </div>
+        <FooTailwind
+          topBg="bg-inverse-surface"
+          topText="Inverse Surface"
+          bottomBg="bg-inverse-on-surface"
+          bottomText="Inverse On Surface"
+        />
+        <FooTailwind topBg="bg-inverse-primary" topText="Inverse Primary" />
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-scrim p-2 outline outline-1">
             <p className="font-sans text-sm text-white mix-blend-difference">
