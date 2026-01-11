@@ -18,8 +18,13 @@
     "moduleResolution": "bundler",
     "lib": ["es2022", "DOM"],
     "jsx": "react-jsx",
-    "noEmit": true
+    "noEmit": true,
+    /* Path Mapping */
+    "baseUrl": ".",
+    "paths": {
+      "react-mcu/tailwind.css": ["./tailwind.css"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", ".storybook/**/*"],
   "exclude": ["node_modules", "dist"]
 }
