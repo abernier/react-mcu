@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+import { copyFileSync } from "fs";
 
 export default defineConfig({
   entryPoints: ["src/index.ts"],
@@ -9,5 +10,9 @@ export default defineConfig({
   external: ["react", "react-dom"],
   esbuildOptions(options) {
     options.jsx = "automatic";
+  },
+  onSuccess: async () => {
+    // Copy tailwind.css to dist
+    copyFileSync("tailwind.css", "dist/tailwind.css");
   },
 });
