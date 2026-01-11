@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Mcu, schemeNames } from "./Mcu";
 import type { ComponentProps } from "react";
+import { cn } from "../.storybook/utils";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -714,35 +715,36 @@ export const St2: Story = {
   ),
 };
 
-function BarTailwind() {
-  function FooTailwind({
-    topBg,
-    topText,
-    bottomBg,
-    bottomText,
-  }: {
-    topBg: string;
-    topText: string;
-    bottomBg?: string;
-    bottomText?: string;
-  }) {
-    return (
-      <div className="grid grid-cols-1 gap-0">
-        <div className={`h-20 ${topBg} p-2 outline outline-1`}>
+function FooTailwind({
+  topBg,
+  topText,
+  bottomBg,
+  bottomText,
+}: {
+  topBg: string;
+  topText: string;
+  bottomBg?: string;
+  bottomText?: string;
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-0">
+      <div className={cn("h-20 p-2 outline outline-1", topBg)}>
+        <p className="font-sans text-sm text-white mix-blend-difference">
+          {topText}
+        </p>
+      </div>
+      {bottomBg && bottomText && (
+        <div className={cn("p-2 outline outline-1", bottomBg)}>
           <p className="font-sans text-sm text-white mix-blend-difference">
-            {topText}
+            {bottomText}
           </p>
         </div>
-        {bottomBg && bottomText && (
-          <div className={`${bottomBg} p-2 outline outline-1`}>
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              {bottomText}
-            </p>
-          </div>
-        )}
-      </div>
-    );
-  }
+      )}
+    </div>
+  );
+}
+
+function BarTailwind() {
 
   return (
     <div className="grid grid-cols-[3fr_1fr] gap-6">
