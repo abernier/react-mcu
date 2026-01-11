@@ -966,10 +966,10 @@ function BarTailwind() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-[var(--mcu-scrim)] p-2 outline outline-1">
+          <div className="bg-scrim p-2 outline outline-1">
             <p className="font-sans text-sm text-white mix-blend-difference">Scrim</p>
           </div>
-          <div className="bg-[var(--mcu-shadow)] p-2 outline outline-1">
+          <div className="bg-shadow p-2 outline outline-1">
             <p className="font-sans text-sm text-white mix-blend-difference">Shadow</p>
           </div>
         </div>
