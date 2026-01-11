@@ -52,20 +52,7 @@ return (
 ## Tailwind
 
 Compatible with Tailwind through
-[theme variables](https://tailwindcss.com/docs/theme).
-
-Simply import the provided Tailwind configuration:
-
-```css
-@import "tailwindcss";
-@import "react-mcu/tailwind.css";
-```
-
-This imports all Material Design 3 color mappings.
-
-Or simply `@import "tailwindcss"; @import "react-mcu/tailwind.css";` (see [example](https://github.com/abernier/react-mcu/blob/7cfd25113859a650153127e865a70df3da2483ac/examples/tanstack-start-app/src/index.css#L1-L2)).
-
-Alternatively, you can define them manually:
+[theme variables](https://tailwindcss.com/docs/theme):
 
 ```css
 @theme {
@@ -116,6 +103,9 @@ Alternatively, you can define them manually:
   --color-on-error-container: var(--mcu-on-error-container);
 }
 ```
+
+Or simply `@import "react-mcu/tailwind.css"`:
+https://github.com/abernier/react-mcu/blob/7cfd25113859a650153127e865a70df3da2483ac/examples/tanstack-start-app/src/index.css#L1-L2
 
 # Dev
 
