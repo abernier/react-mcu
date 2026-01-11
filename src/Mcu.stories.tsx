@@ -715,37 +715,39 @@ export const St2: Story = {
   ),
 };
 
-function FooTailwind({
-  topBg,
-  topText,
-  bottomBg,
-  bottomText,
-}: {
-  topBg: string;
-  topText: string;
-  bottomBg?: string;
-  bottomText?: string;
-}) {
+function FooTailwind({ children, ...props }: ComponentProps<"div">) {
   return (
-    <div className="grid grid-cols-1 gap-0">
-      <div className={cn("h-20 p-2 outline outline-1", topBg)}>
+    <div className="grid grid-cols-1 gap-0" {...props}>
+      {children}
+    </div>
+  );
+}
+
+function FooTopTailwind({ children, ...props }: ComponentProps<"div">) {
+  return (
+    <div {...props}>
+      {children || (
         <p className="font-sans text-sm text-white mix-blend-difference">
-          {topText}
+          FooTopTailwind
         </p>
-      </div>
-      {bottomBg && bottomText && (
-        <div className={cn("p-2 outline outline-1", bottomBg)}>
-          <p className="font-sans text-sm text-white mix-blend-difference">
-            {bottomText}
-          </p>
-        </div>
+      )}
+    </div>
+  );
+}
+
+function FooBottomTailwind({ children, ...props }: ComponentProps<"div">) {
+  return (
+    <div {...props}>
+      {children || (
+        <p className="font-sans text-sm text-white mix-blend-difference">
+          FooBottomTailwind
+        </p>
       )}
     </div>
   );
 }
 
 function BarTailwind() {
-
   return (
     <div className="grid grid-cols-[3fr_1fr] gap-6">
       {
@@ -759,42 +761,108 @@ function BarTailwind() {
       }
 
       <div className="grid grid-cols-3 grid-rows-2 gap-2">
-        <FooTailwind
-          topBg="bg-primary"
-          topText="Primary"
-          bottomBg="bg-on-primary"
-          bottomText="On Primary"
-        />
-        <FooTailwind
-          topBg="bg-secondary"
-          topText="Secondary"
-          bottomBg="bg-on-secondary"
-          bottomText="On Secondary"
-        />
-        <FooTailwind
-          topBg="bg-tertiary"
-          topText="Tertiary"
-          bottomBg="bg-on-tertiary"
-          bottomText="On Tertiary"
-        />
-        <FooTailwind
-          topBg="bg-primary-container"
-          topText="Primary Container"
-          bottomBg="bg-on-primary-container"
-          bottomText="On Primary Container"
-        />
-        <FooTailwind
-          topBg="bg-secondary-container"
-          topText="Secondary Container"
-          bottomBg="bg-on-secondary-container"
-          bottomText="On Secondary Container"
-        />
-        <FooTailwind
-          topBg="bg-tertiary-container"
-          topText="Tertiary Container"
-          bottomBg="bg-on-tertiary-container"
-          bottomText="On Tertiary Container"
-        />
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("h-20 p-2 outline outline-1", "bg-primary")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Primary
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-primary")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Primary
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("h-20 p-2 outline outline-1", "bg-secondary")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Secondary
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-secondary")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Secondary
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("h-20 p-2 outline outline-1", "bg-tertiary")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Tertiary
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-tertiary")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Tertiary
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("h-20 p-2 outline outline-1", "bg-primary-container")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Primary Container
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-primary-container")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Primary Container
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn(
+              "h-20 p-2 outline outline-1",
+              "bg-secondary-container",
+            )}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Secondary Container
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-secondary-container")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Secondary Container
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn(
+              "h-20 p-2 outline outline-1",
+              "bg-tertiary-container",
+            )}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Tertiary Container
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-tertiary-container")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Tertiary Container
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
       </div>
 
       {
@@ -808,18 +876,38 @@ function BarTailwind() {
       }
 
       <div className="grid grid-cols-1 grid-rows-2 gap-2">
-        <FooTailwind
-          topBg="bg-error"
-          topText="Error"
-          bottomBg="bg-on-error"
-          bottomText="On Error"
-        />
-        <FooTailwind
-          topBg="bg-error-container"
-          topText="Error Container"
-          bottomBg="bg-on-error-container"
-          bottomText="On Error Container"
-        />
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("h-20 p-2 outline outline-1", "bg-error")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Error
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-error")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Error
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("h-20 p-2 outline outline-1", "bg-error-container")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Error Container
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-on-error-container")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              On Error Container
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
       </div>
 
       {
@@ -1015,13 +1103,31 @@ function BarTailwind() {
       }
 
       <div className="flex flex-col gap-2">
-        <FooTailwind
-          topBg="bg-inverse-surface"
-          topText="Inverse Surface"
-          bottomBg="bg-inverse-on-surface"
-          bottomText="Inverse On Surface"
-        />
-        <FooTailwind topBg="bg-inverse-primary" topText="Inverse Primary" />
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("h-20 p-2 outline outline-1", "bg-inverse-surface")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Inverse Surface
+            </p>
+          </FooTopTailwind>
+          <FooBottomTailwind
+            className={cn("p-2 outline outline-1", "bg-inverse-on-surface")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Inverse On Surface
+            </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind
+            className={cn("p-2 outline outline-1", "bg-inverse-primary")}
+          >
+            <p className="font-sans text-sm text-white mix-blend-difference">
+              Inverse Primary
+            </p>
+          </FooTopTailwind>
+        </FooTailwind>
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-scrim p-2 outline outline-1">
             <p className="font-sans text-sm text-white mix-blend-difference">
