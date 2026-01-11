@@ -2,7 +2,11 @@
 
 The bare minimum code to use react-mcu with Tailwind CSS v4.
 
-## Run
+## Live Demo
+
+🔗 **[View Live Demo](https://abernier.github.io/react-mcu/)**
+
+## Run Locally
 
 ```bash
 pnpm install
