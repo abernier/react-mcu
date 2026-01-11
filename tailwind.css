@@ -44,4 +44,6 @@
   --color-on-error: var(--mcu-on-error);
   --color-error-container: var(--mcu-error-container);
   --color-on-error-container: var(--mcu-on-error-container);
+  --color-scrim: var(--mcu-scrim);
+  --color-shadow: var(--mcu-shadow);
 }
