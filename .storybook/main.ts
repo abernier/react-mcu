@@ -15,11 +15,11 @@ const config: StorybookConfig = {
 
     if (Array.isArray(config.resolve.alias)) {
       config.resolve.alias.push({
-        find: "react-mcu/tailwind.css",
-        replacement: "/tailwind.css",
+        find: /^react-mcu\//,
+        replacement: "/src/",
       });
     } else {
-      config.resolve.alias["react-mcu/tailwind.css"] = "/tailwind.css";
+      config.resolve.alias["react-mcu/"] = "/src/";
     }
 
     return config;

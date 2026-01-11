@@ -22,7 +22,7 @@
     /* Path Mapping */
     "baseUrl": ".",
     "paths": {
-      "react-mcu/tailwind.css": ["./tailwind.css"]
+      "react-mcu/*": ["./src/*"]
     }
   },
   "include": ["src/**/*", ".storybook/**/*"],
