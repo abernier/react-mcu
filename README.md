@@ -104,7 +104,8 @@ Compatible with Tailwind through
 }
 ```
 
-Or simply `@import "react-mcu/tailwind.css"`.
+Or simply `@import "react-mcu/tailwind.css"`:
+https://github.com/abernier/react-mcu/blob/d9579644f4dcb16a6dd36f87e5665be8b12157e7/.storybook/tailwind.css#L1-L2
 
 # Dev
 
