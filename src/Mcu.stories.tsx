@@ -713,3 +713,276 @@ export const St2: Story = {
     </Mcu>
   ),
 };
+
+function BarTailwind() {
+  return (
+    <div className="grid grid-cols-[3fr_1fr] gap-6">
+      {
+        //
+        //  █████
+        // ██   ██
+        // ███████
+        // ██   ██
+        // ██   ██
+        //
+      }
+
+      <div className="grid grid-cols-3 grid-rows-2 gap-2">
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-primary p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Primary</p>
+          </div>
+          <div className="bg-on-primary p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Primary</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-secondary p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Secondary</p>
+          </div>
+          <div className="bg-on-secondary p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Secondary</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-tertiary p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Tertiary</p>
+          </div>
+          <div className="bg-on-tertiary p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Tertiary</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-primary-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Primary Container</p>
+          </div>
+          <div className="bg-on-primary-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Primary Container</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-secondary-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Secondary Container</p>
+          </div>
+          <div className="bg-on-secondary-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Secondary Container</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-tertiary-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Tertiary Container</p>
+          </div>
+          <div className="bg-on-tertiary-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Tertiary Container</p>
+          </div>
+        </div>
+      </div>
+
+      {
+        //
+        // ██████
+        // ██   ██
+        // ██████
+        // ██   ██
+        // ██████
+        //
+      }
+
+      <div className="grid grid-cols-1 grid-rows-2 gap-2">
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-error p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Error</p>
+          </div>
+          <div className="bg-on-error p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Error</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-error-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Error Container</p>
+          </div>
+          <div className="bg-on-error-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Error Container</p>
+          </div>
+        </div>
+      </div>
+
+      {
+        //
+        //  ██████
+        // ██
+        // ██
+        // ██
+        //  ██████
+        //
+      }
+
+      <div className="grid grid-cols-3 grid-rows-1 gap-2">
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 grid grid-cols-2 grid-rows-1">
+            <div className="bg-primary-fixed p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">Primary Fixed</p>
+            </div>
+            <div className="bg-primary-fixed-dim p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">Primary Fixed Dim</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 grid-rows-2">
+            <div className="bg-on-primary-fixed p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">On Primary Fixed</p>
+            </div>
+            <div className="bg-on-primary-fixed-variant p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">On Primary Fixed Variant</p>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 grid grid-cols-2 grid-rows-1">
+            <div className="bg-secondary-fixed p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">Secondary Fixed</p>
+            </div>
+            <div className="bg-secondary-fixed-dim p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">Secondary Fixed Dim</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 grid-rows-2">
+            <div className="bg-on-secondary-fixed p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">On Secondary Fixed</p>
+            </div>
+            <div className="bg-on-secondary-fixed-variant p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">On Secondary Fixed Variant</p>
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 grid grid-cols-2 grid-rows-1">
+            <div className="bg-tertiary-fixed p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">Tertiary Fixed</p>
+            </div>
+            <div className="bg-tertiary-fixed-dim p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">Tertiary Fixed Dim</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 grid-rows-2">
+            <div className="bg-on-tertiary-fixed p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">On Tertiary Fixed</p>
+            </div>
+            <div className="bg-on-tertiary-fixed-variant p-2 outline outline-1">
+              <p className="font-sans text-sm text-white mix-blend-difference">On Tertiary Fixed Variant</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {
+        //
+        // ██████
+        // ██   ██
+        // ██   ██
+        // ██   ██
+        // ██████
+        //
+      }
+
+      <div></div>
+
+      {
+        //
+        // ███████
+        // ██
+        // █████
+        // ██
+        // ███████
+        //
+      }
+
+      <div className="grid grid-cols-1 gap-2">
+        <div className="h-20 grid grid-cols-3 grid-rows-1">
+          <div className="bg-surface-dim p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface Dim</p>
+          </div>
+          <div className="bg-surface p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface</p>
+          </div>
+          <div className="bg-surface-bright p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface Bright</p>
+          </div>
+        </div>
+        <div className="h-20 grid grid-cols-5 grid-rows-1">
+          <div className="bg-surface-container-lowest p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface Container Lowest</p>
+          </div>
+          <div className="bg-surface-container-low p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface Container Low</p>
+          </div>
+          <div className="bg-surface-container p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface Container</p>
+          </div>
+          <div className="bg-surface-container-high p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface Container High</p>
+          </div>
+          <div className="bg-surface-container-highest p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Surface Container Highest</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-4 grid-rows-1">
+          <div className="bg-on-surface p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Surface</p>
+          </div>
+          <div className="bg-on-surface-variant p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">On Surface Variant</p>
+          </div>
+          <div className="bg-outline p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Outline</p>
+          </div>
+          <div className="bg-outline-variant p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Outline Variant</p>
+          </div>
+        </div>
+      </div>
+
+      {
+        //
+        // ███████
+        // ██
+        // █████
+        // ██
+        // ██
+        //
+      }
+
+      <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-1 gap-0">
+          <div className="h-20 bg-inverse-surface p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Inverse Surface</p>
+          </div>
+          <div className="bg-inverse-on-surface p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Inverse On Surface</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 gap-0">
+          <div className="bg-inverse-primary p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Inverse Primary</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-[var(--mcu-scrim)] p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Scrim</p>
+          </div>
+          <div className="bg-[var(--mcu-shadow)] p-2 outline outline-1">
+            <p className="font-sans text-sm text-white mix-blend-difference">Shadow</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const St3: Story = {
+  name: "tailwind",
+  render: (args) => (
+    <Mcu {...args}>
+      <BarTailwind />
+    </Mcu>
+  ),
+};
