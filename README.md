@@ -61,7 +61,11 @@ Simply import the provided Tailwind configuration:
 @import "react-mcu/tailwind.css";
 ```
 
-This imports all Material Design 3 color mappings. Alternatively, you can define them manually:
+This imports all Material Design 3 color mappings.
+
+Or simply `@import "tailwindcss"; @import "react-mcu/tailwind.css";` (see [example](https://github.com/abernier/react-mcu/blob/7cfd25113859a650153127e865a70df3da2483ac/examples/tanstack-start-app/src/index.css#L1-L2)).
+
+Alternatively, you can define them manually:
 
 ```css
 @theme {
