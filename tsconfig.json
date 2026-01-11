@@ -18,12 +18,7 @@
     "moduleResolution": "bundler",
     "lib": ["es2022", "DOM"],
     "jsx": "react-jsx",
-    "noEmit": true,
-    /* Path Mapping */
-    "baseUrl": ".",
-    "paths": {
-      "react-mcu/*": ["./src/*"]
-    }
+    "noEmit": true
   },
   "include": ["src/**/*", ".storybook/**/*"],
   "exclude": ["node_modules", "dist"]
