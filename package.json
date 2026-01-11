@@ -11,7 +11,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./tailwind.css": "./src/tailwind.css"
   },
   "homepage": "https://github.com/abernier/react-mcu",
   "bugs": {
@@ -24,7 +25,8 @@
   },
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "src/tailwind.css"
   ],
   "type": "module",
   "packageManager": "pnpm@10.27.0",

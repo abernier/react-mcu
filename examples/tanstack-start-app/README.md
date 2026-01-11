@@ -53,17 +53,11 @@ function Home() {
 }
 ```
 
-**index.css** - Map react-mcu colors to Tailwind:
+**index.css** - Import Tailwind and react-mcu theme:
 
 ```css
 @import "tailwindcss";
-
-@theme {
-  --color-surface: var(--mcu-surface);
-  --color-on-surface: var(--mcu-on-surface);
-  --color-primary: var(--mcu-primary);
-  --color-on-primary: var(--mcu-on-primary);
-}
+@import "react-mcu/tailwind.css";
 ```
 
 That's it.
