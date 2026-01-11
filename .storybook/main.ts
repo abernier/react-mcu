@@ -5,23 +5,12 @@ const config: StorybookConfig = {
   addons: [],
   framework: "@storybook/react-vite",
   async viteFinal(config) {
-    // Configure Vite to resolve the TypeScript path alias
-    if (!config.resolve) {
-      config.resolve = {};
-    }
-    if (!config.resolve.alias) {
-      config.resolve.alias = {};
-    }
-
-    if (Array.isArray(config.resolve.alias)) {
-      config.resolve.alias.push({
-        find: /^react-mcu\//,
-        replacement: "/src/",
-      });
-    } else {
-      config.resolve.alias["react-mcu/"] = "/src/";
-    }
-
+    // Configure Vite to resolve the TypeScript path alias for CSS @import statements
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "react-mcu/": "/src/",
+    };
     return config;
   },
 };
