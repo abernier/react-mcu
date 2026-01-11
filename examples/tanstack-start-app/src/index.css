@@ -1,29 +1,18 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-#root {
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+@theme {
+  /* Map react-mcu CSS variables to Tailwind colors */
+  --color-background: var(--mcu-background);
+  --color-on-background: var(--mcu-on-background);
+  --color-surface: var(--mcu-surface);
+  --color-surface-container: var(--mcu-surface-container);
+  --color-on-surface: var(--mcu-on-surface);
+  --color-primary: var(--mcu-primary);
+  --color-on-primary: var(--mcu-on-primary);
+  --color-primary-container: var(--mcu-primary-container);
+  --color-on-primary-container: var(--mcu-on-primary-container);
+  --color-secondary-container: var(--mcu-secondary-container);
+  --color-on-secondary-container: var(--mcu-on-secondary-container);
+  --color-tertiary-container: var(--mcu-tertiary-container);
+  --color-on-tertiary-container: var(--mcu-on-tertiary-container);
 }

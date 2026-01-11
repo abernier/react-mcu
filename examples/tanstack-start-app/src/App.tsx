@@ -7,15 +7,7 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <Mcu
-      source="#0e1216"
-      scheme="vibrant"
-      contrast={0.5}
-      customColors={[
-        { name: "myCustomColor1", hex: "#FF5733", blend: true },
-        { name: "myCustomColor2", hex: "#3498DB", blend: false },
-      ]}
-    >
+    <Mcu source="#0e1216" scheme="vibrant" contrast={0.5} customColors={[]}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
