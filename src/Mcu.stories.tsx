@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Mcu, schemeNames } from "./Mcu";
 import type { ComponentProps } from "react";
-import { cn } from "../.storybook/utils";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -749,7 +748,7 @@ function FooBottomTailwind({ children, ...props }: ComponentProps<"div">) {
 
 function BarTailwind() {
   return (
-    <div className="grid grid-cols-[3fr_1fr] gap-6">
+    <div className="grid grid-cols-[3fr_1fr] gap-6 [&_[class*='bg-']]:p-2 [&_[class*='bg-']]:outline [&_[class*='bg-']]:outline-1 [&_p]:font-sans [&_p]:text-sm [&_p]:text-white [&_p]:mix-blend-difference">
       {
         //
         //  █████
@@ -762,105 +761,51 @@ function BarTailwind() {
 
       <div className="grid grid-cols-3 grid-rows-2 gap-2">
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("h-20 p-2 outline outline-1", "bg-primary")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Primary
-            </p>
+          <FooTopTailwind className="h-20 bg-primary">
+            <p>Primary</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-primary")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Primary
-            </p>
+          <FooBottomTailwind className="bg-on-primary">
+            <p>On Primary</p>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("h-20 p-2 outline outline-1", "bg-secondary")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Secondary
-            </p>
+          <FooTopTailwind className="h-20 bg-secondary">
+            <p>Secondary</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-secondary")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Secondary
-            </p>
+          <FooBottomTailwind className="bg-on-secondary">
+            <p>On Secondary</p>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("h-20 p-2 outline outline-1", "bg-tertiary")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Tertiary
-            </p>
+          <FooTopTailwind className="h-20 bg-tertiary">
+            <p>Tertiary</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-tertiary")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Tertiary
-            </p>
+          <FooBottomTailwind className="bg-on-tertiary">
+            <p>On Tertiary</p>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("h-20 p-2 outline outline-1", "bg-primary-container")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Primary Container
-            </p>
+          <FooTopTailwind className="h-20 bg-primary-container">
+            <p>Primary Container</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-primary-container")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Primary Container
-            </p>
+          <FooBottomTailwind className="bg-on-primary-container">
+            <p>On Primary Container</p>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind
-            className={cn(
-              "h-20 p-2 outline outline-1",
-              "bg-secondary-container",
-            )}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Secondary Container
-            </p>
+          <FooTopTailwind className="h-20 bg-secondary-container">
+            <p>Secondary Container</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-secondary-container")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Secondary Container
-            </p>
+          <FooBottomTailwind className="bg-on-secondary-container">
+            <p>On Secondary Container</p>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind
-            className={cn(
-              "h-20 p-2 outline outline-1",
-              "bg-tertiary-container",
-            )}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Tertiary Container
-            </p>
+          <FooTopTailwind className="h-20 bg-tertiary-container">
+            <p>Tertiary Container</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-tertiary-container")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Tertiary Container
-            </p>
+          <FooBottomTailwind className="bg-on-tertiary-container">
+            <p>On Tertiary Container</p>
           </FooBottomTailwind>
         </FooTailwind>
       </div>
@@ -877,35 +822,19 @@ function BarTailwind() {
 
       <div className="grid grid-cols-1 grid-rows-2 gap-2">
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("h-20 p-2 outline outline-1", "bg-error")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Error
-            </p>
+          <FooTopTailwind className="h-20 bg-error">
+            <p>Error</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-error")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Error
-            </p>
+          <FooBottomTailwind className="bg-on-error">
+            <p>On Error</p>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("h-20 p-2 outline outline-1", "bg-error-container")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Error Container
-            </p>
+          <FooTopTailwind className="h-20 bg-error-container">
+            <p>Error Container</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-on-error-container")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Error Container
-            </p>
+          <FooBottomTailwind className="bg-on-error-container">
+            <p>On Error Container</p>
           </FooBottomTailwind>
         </FooTailwind>
       </div>
@@ -921,84 +850,60 @@ function BarTailwind() {
       }
 
       <div className="grid grid-cols-3 grid-rows-1 gap-2">
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 grid grid-cols-2 grid-rows-1">
-            <div className="bg-primary-fixed p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                Primary Fixed
-              </p>
+        <FooTailwind>
+          <FooTopTailwind className="h-20 grid grid-cols-2 grid-rows-1">
+            <div className="bg-primary-fixed">
+              <p>Primary Fixed</p>
             </div>
-            <div className="bg-primary-fixed-dim p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                Primary Fixed Dim
-              </p>
+            <div className="bg-primary-fixed-dim">
+              <p>Primary Fixed Dim</p>
             </div>
-          </div>
-          <div className="grid grid-cols-1 grid-rows-2">
-            <div className="bg-on-primary-fixed p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                On Primary Fixed
-              </p>
+          </FooTopTailwind>
+          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2">
+            <div className="bg-on-primary-fixed">
+              <p>On Primary Fixed</p>
             </div>
-            <div className="bg-on-primary-fixed-variant p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                On Primary Fixed Variant
-              </p>
+            <div className="bg-on-primary-fixed-variant">
+              <p>On Primary Fixed Variant</p>
             </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 grid grid-cols-2 grid-rows-1">
-            <div className="bg-secondary-fixed p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                Secondary Fixed
-              </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind className="h-20 grid grid-cols-2 grid-rows-1">
+            <div className="bg-secondary-fixed">
+              <p>Secondary Fixed</p>
             </div>
-            <div className="bg-secondary-fixed-dim p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                Secondary Fixed Dim
-              </p>
+            <div className="bg-secondary-fixed-dim">
+              <p>Secondary Fixed Dim</p>
             </div>
-          </div>
-          <div className="grid grid-cols-1 grid-rows-2">
-            <div className="bg-on-secondary-fixed p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                On Secondary Fixed
-              </p>
+          </FooTopTailwind>
+          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2">
+            <div className="bg-on-secondary-fixed">
+              <p>On Secondary Fixed</p>
             </div>
-            <div className="bg-on-secondary-fixed-variant p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                On Secondary Fixed Variant
-              </p>
+            <div className="bg-on-secondary-fixed-variant">
+              <p>On Secondary Fixed Variant</p>
             </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-0">
-          <div className="h-20 grid grid-cols-2 grid-rows-1">
-            <div className="bg-tertiary-fixed p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                Tertiary Fixed
-              </p>
+          </FooBottomTailwind>
+        </FooTailwind>
+        <FooTailwind>
+          <FooTopTailwind className="h-20 grid grid-cols-2 grid-rows-1">
+            <div className="bg-tertiary-fixed">
+              <p>Tertiary Fixed</p>
             </div>
-            <div className="bg-tertiary-fixed-dim p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                Tertiary Fixed Dim
-              </p>
+            <div className="bg-tertiary-fixed-dim">
+              <p>Tertiary Fixed Dim</p>
             </div>
-          </div>
-          <div className="grid grid-cols-1 grid-rows-2">
-            <div className="bg-on-tertiary-fixed p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                On Tertiary Fixed
-              </p>
+          </FooTopTailwind>
+          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2">
+            <div className="bg-on-tertiary-fixed">
+              <p>On Tertiary Fixed</p>
             </div>
-            <div className="bg-on-tertiary-fixed-variant p-2 outline outline-1">
-              <p className="font-sans text-sm text-white mix-blend-difference">
-                On Tertiary Fixed Variant
-              </p>
+            <div className="bg-on-tertiary-fixed-variant">
+              <p>On Tertiary Fixed Variant</p>
             </div>
-          </div>
-        </div>
+          </FooBottomTailwind>
+        </FooTailwind>
       </div>
 
       {
@@ -1025,69 +930,45 @@ function BarTailwind() {
 
       <div className="grid grid-cols-1 gap-2">
         <div className="h-20 grid grid-cols-3 grid-rows-1">
-          <div className="bg-surface-dim p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface Dim
-            </p>
+          <div className="bg-surface-dim">
+            <p>Surface Dim</p>
           </div>
-          <div className="bg-surface p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface
-            </p>
+          <div className="bg-surface">
+            <p>Surface</p>
           </div>
-          <div className="bg-surface-bright p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface Bright
-            </p>
+          <div className="bg-surface-bright">
+            <p>Surface Bright</p>
           </div>
         </div>
         <div className="h-20 grid grid-cols-5 grid-rows-1">
-          <div className="bg-surface-container-lowest p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface Container Lowest
-            </p>
+          <div className="bg-surface-container-lowest">
+            <p>Surface Container Lowest</p>
           </div>
-          <div className="bg-surface-container-low p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface Container Low
-            </p>
+          <div className="bg-surface-container-low">
+            <p>Surface Container Low</p>
           </div>
-          <div className="bg-surface-container p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface Container
-            </p>
+          <div className="bg-surface-container">
+            <p>Surface Container</p>
           </div>
-          <div className="bg-surface-container-high p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface Container High
-            </p>
+          <div className="bg-surface-container-high">
+            <p>Surface Container High</p>
           </div>
-          <div className="bg-surface-container-highest p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Surface Container Highest
-            </p>
+          <div className="bg-surface-container-highest">
+            <p>Surface Container Highest</p>
           </div>
         </div>
         <div className="grid grid-cols-4 grid-rows-1">
-          <div className="bg-on-surface p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Surface
-            </p>
+          <div className="bg-on-surface">
+            <p>On Surface</p>
           </div>
-          <div className="bg-on-surface-variant p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              On Surface Variant
-            </p>
+          <div className="bg-on-surface-variant">
+            <p>On Surface Variant</p>
           </div>
-          <div className="bg-outline p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Outline
-            </p>
+          <div className="bg-outline">
+            <p>Outline</p>
           </div>
-          <div className="bg-outline-variant p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Outline Variant
-            </p>
+          <div className="bg-outline-variant">
+            <p>Outline Variant</p>
           </div>
         </div>
       </div>
@@ -1104,40 +985,24 @@ function BarTailwind() {
 
       <div className="flex flex-col gap-2">
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("h-20 p-2 outline outline-1", "bg-inverse-surface")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Inverse Surface
-            </p>
+          <FooTopTailwind className="h-20 bg-inverse-surface">
+            <p>Inverse Surface</p>
           </FooTopTailwind>
-          <FooBottomTailwind
-            className={cn("p-2 outline outline-1", "bg-inverse-on-surface")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Inverse On Surface
-            </p>
+          <FooBottomTailwind className="bg-inverse-on-surface">
+            <p>Inverse On Surface</p>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind
-            className={cn("p-2 outline outline-1", "bg-inverse-primary")}
-          >
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Inverse Primary
-            </p>
+          <FooTopTailwind className="bg-inverse-primary">
+            <p>Inverse Primary</p>
           </FooTopTailwind>
         </FooTailwind>
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-scrim p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Scrim
-            </p>
+          <div className="bg-scrim">
+            <p>Scrim</p>
           </div>
-          <div className="bg-shadow p-2 outline outline-1">
-            <p className="font-sans text-sm text-white mix-blend-difference">
-              Shadow
-            </p>
+          <div className="bg-shadow">
+            <p>Shadow</p>
           </div>
         </div>
       </div>
