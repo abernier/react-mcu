@@ -723,10 +723,14 @@ function FooTailwind({ children, ...props }: ComponentProps<"div">) {
 }
 
 function FooTopTailwind({ children, ...props }: ComponentProps<"div">) {
+  const { className, ...rest } = props;
   return (
-    <div {...props}>
+    <div
+      className={`p-2 outline outline-1 ${className || ""}`}
+      {...rest}
+    >
       {children || (
-        <p className="font-sans text-sm text-white mix-blend-difference">
+        <p className="all-unset font-sans text-sm text-white mix-blend-difference">
           FooTopTailwind
         </p>
       )}
@@ -735,10 +739,14 @@ function FooTopTailwind({ children, ...props }: ComponentProps<"div">) {
 }
 
 function FooBottomTailwind({ children, ...props }: ComponentProps<"div">) {
+  const { className, ...rest } = props;
   return (
-    <div {...props}>
+    <div
+      className={`p-2 outline outline-1 ${className || ""}`}
+      {...rest}
+    >
       {children || (
-        <p className="font-sans text-sm text-white mix-blend-difference">
+        <p className="all-unset font-sans text-sm text-white mix-blend-difference">
           FooBottomTailwind
         </p>
       )}
@@ -748,7 +756,7 @@ function FooBottomTailwind({ children, ...props }: ComponentProps<"div">) {
 
 function BarTailwind() {
   return (
-    <div className="grid grid-cols-[3fr_1fr] gap-6 [&_[class*='bg-']]:p-2 [&_[class*='bg-']]:outline [&_[class*='bg-']]:outline-1 [&_p]:font-sans [&_p]:text-sm [&_p]:text-white [&_p]:mix-blend-difference">
+    <div className="grid grid-cols-[3fr_1fr] gap-6 [&_p]:all-unset [&_p]:font-sans [&_p]:text-sm [&_p]:text-white [&_p]:mix-blend-difference">
       {
         //
         //  █████
@@ -761,7 +769,7 @@ function BarTailwind() {
 
       <div className="grid grid-cols-3 grid-rows-2 gap-2">
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-primary">
+          <FooTopTailwind className="bg-primary h-20">
             <p>Primary</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-primary">
@@ -769,7 +777,7 @@ function BarTailwind() {
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-secondary">
+          <FooTopTailwind className="bg-secondary h-20">
             <p>Secondary</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-secondary">
@@ -777,7 +785,7 @@ function BarTailwind() {
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-tertiary">
+          <FooTopTailwind className="bg-tertiary h-20">
             <p>Tertiary</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-tertiary">
@@ -785,7 +793,7 @@ function BarTailwind() {
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-primary-container">
+          <FooTopTailwind className="bg-primary-container h-20">
             <p>Primary Container</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-primary-container">
@@ -793,7 +801,7 @@ function BarTailwind() {
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-secondary-container">
+          <FooTopTailwind className="bg-secondary-container h-20">
             <p>Secondary Container</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-secondary-container">
@@ -801,7 +809,7 @@ function BarTailwind() {
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-tertiary-container">
+          <FooTopTailwind className="bg-tertiary-container h-20">
             <p>Tertiary Container</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-tertiary-container">
@@ -822,7 +830,7 @@ function BarTailwind() {
 
       <div className="grid grid-cols-1 grid-rows-2 gap-2">
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-error">
+          <FooTopTailwind className="bg-error h-20">
             <p>Error</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-error">
@@ -830,7 +838,7 @@ function BarTailwind() {
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-error-container">
+          <FooTopTailwind className="bg-error-container h-20">
             <p>Error Container</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-on-error-container">
@@ -851,55 +859,55 @@ function BarTailwind() {
 
       <div className="grid grid-cols-3 grid-rows-1 gap-2">
         <FooTailwind>
-          <FooTopTailwind className="h-20 grid grid-cols-2 grid-rows-1">
-            <div className="bg-primary-fixed">
+          <FooTopTailwind className="grid grid-cols-2 grid-rows-1 h-20 p-0 outline-0">
+            <div className="bg-primary-fixed p-2 outline outline-1">
               <p>Primary Fixed</p>
             </div>
-            <div className="bg-primary-fixed-dim">
+            <div className="bg-primary-fixed-dim p-2 outline outline-1">
               <p>Primary Fixed Dim</p>
             </div>
           </FooTopTailwind>
-          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2">
-            <div className="bg-on-primary-fixed">
+          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2 p-0 outline-0">
+            <div className="bg-on-primary-fixed p-2 outline outline-1">
               <p>On Primary Fixed</p>
             </div>
-            <div className="bg-on-primary-fixed-variant">
+            <div className="bg-on-primary-fixed-variant p-2 outline outline-1">
               <p>On Primary Fixed Variant</p>
             </div>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 grid grid-cols-2 grid-rows-1">
-            <div className="bg-secondary-fixed">
+          <FooTopTailwind className="grid grid-cols-2 grid-rows-1 h-20 p-0 outline-0">
+            <div className="bg-secondary-fixed p-2 outline outline-1">
               <p>Secondary Fixed</p>
             </div>
-            <div className="bg-secondary-fixed-dim">
+            <div className="bg-secondary-fixed-dim p-2 outline outline-1">
               <p>Secondary Fixed Dim</p>
             </div>
           </FooTopTailwind>
-          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2">
-            <div className="bg-on-secondary-fixed">
+          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2 p-0 outline-0">
+            <div className="bg-on-secondary-fixed p-2 outline outline-1">
               <p>On Secondary Fixed</p>
             </div>
-            <div className="bg-on-secondary-fixed-variant">
+            <div className="bg-on-secondary-fixed-variant p-2 outline outline-1">
               <p>On Secondary Fixed Variant</p>
             </div>
           </FooBottomTailwind>
         </FooTailwind>
         <FooTailwind>
-          <FooTopTailwind className="h-20 grid grid-cols-2 grid-rows-1">
-            <div className="bg-tertiary-fixed">
+          <FooTopTailwind className="grid grid-cols-2 grid-rows-1 h-20 p-0 outline-0">
+            <div className="bg-tertiary-fixed p-2 outline outline-1">
               <p>Tertiary Fixed</p>
             </div>
-            <div className="bg-tertiary-fixed-dim">
+            <div className="bg-tertiary-fixed-dim p-2 outline outline-1">
               <p>Tertiary Fixed Dim</p>
             </div>
           </FooTopTailwind>
-          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2">
-            <div className="bg-on-tertiary-fixed">
+          <FooBottomTailwind className="grid grid-cols-1 grid-rows-2 p-0 outline-0">
+            <div className="bg-on-tertiary-fixed p-2 outline outline-1">
               <p>On Tertiary Fixed</p>
             </div>
-            <div className="bg-on-tertiary-fixed-variant">
+            <div className="bg-on-tertiary-fixed-variant p-2 outline outline-1">
               <p>On Tertiary Fixed Variant</p>
             </div>
           </FooBottomTailwind>
@@ -930,44 +938,44 @@ function BarTailwind() {
 
       <div className="grid grid-cols-1 gap-2">
         <div className="h-20 grid grid-cols-3 grid-rows-1">
-          <div className="bg-surface-dim">
+          <div className="bg-surface-dim p-2 outline outline-1">
             <p>Surface Dim</p>
           </div>
-          <div className="bg-surface">
+          <div className="bg-surface p-2 outline outline-1">
             <p>Surface</p>
           </div>
-          <div className="bg-surface-bright">
+          <div className="bg-surface-bright p-2 outline outline-1">
             <p>Surface Bright</p>
           </div>
         </div>
         <div className="h-20 grid grid-cols-5 grid-rows-1">
-          <div className="bg-surface-container-lowest">
+          <div className="bg-surface-container-lowest p-2 outline outline-1">
             <p>Surface Container Lowest</p>
           </div>
-          <div className="bg-surface-container-low">
+          <div className="bg-surface-container-low p-2 outline outline-1">
             <p>Surface Container Low</p>
           </div>
-          <div className="bg-surface-container">
+          <div className="bg-surface-container p-2 outline outline-1">
             <p>Surface Container</p>
           </div>
-          <div className="bg-surface-container-high">
+          <div className="bg-surface-container-high p-2 outline outline-1">
             <p>Surface Container High</p>
           </div>
-          <div className="bg-surface-container-highest">
+          <div className="bg-surface-container-highest p-2 outline outline-1">
             <p>Surface Container Highest</p>
           </div>
         </div>
         <div className="grid grid-cols-4 grid-rows-1">
-          <div className="bg-on-surface">
+          <div className="bg-on-surface p-2 outline outline-1">
             <p>On Surface</p>
           </div>
-          <div className="bg-on-surface-variant">
+          <div className="bg-on-surface-variant p-2 outline outline-1">
             <p>On Surface Variant</p>
           </div>
-          <div className="bg-outline">
+          <div className="bg-outline p-2 outline outline-1">
             <p>Outline</p>
           </div>
-          <div className="bg-outline-variant">
+          <div className="bg-outline-variant p-2 outline outline-1">
             <p>Outline Variant</p>
           </div>
         </div>
@@ -985,7 +993,7 @@ function BarTailwind() {
 
       <div className="flex flex-col gap-2">
         <FooTailwind>
-          <FooTopTailwind className="h-20 bg-inverse-surface">
+          <FooTopTailwind className="bg-inverse-surface h-20">
             <p>Inverse Surface</p>
           </FooTopTailwind>
           <FooBottomTailwind className="bg-inverse-on-surface">
@@ -998,10 +1006,10 @@ function BarTailwind() {
           </FooTopTailwind>
         </FooTailwind>
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-scrim">
+          <div className="bg-scrim p-2 outline outline-1">
             <p>Scrim</p>
           </div>
-          <div className="bg-shadow">
+          <div className="bg-shadow p-2 outline outline-1">
             <p>Shadow</p>
           </div>
         </div>
