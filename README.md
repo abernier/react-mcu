@@ -28,11 +28,15 @@ import { Mcu } from "react-mcu";
   }}>
     Hello, MCU <span style={{
       backgroundColor: "var(--mcu-my-custom-color-1)",
-      color: "var(--mcu-my-custom-color2)",
+      color: "var(--mcu-on-my-custom-color-1)",
     }}>colors<span>!
   </p>
 </Mcu>
 ```
+
+> [!NOTE]
+>
+> CSS varnames are always kebab-cased, `myCustomColor1` → `--mcu-my-custom-color-1`
 
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
