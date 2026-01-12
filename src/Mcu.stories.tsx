@@ -713,3 +713,89 @@ export const St2: Story = {
     </Mcu>
   ),
 };
+
+export const St3: Story = {
+  name: "tailwind",
+  render: (args) => (
+    <Mcu {...args}>
+      <div className="p-6 space-y-6">
+        {/* Primary Colors */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-primary text-on-primary p-4 rounded">
+              primary
+            </div>
+            <div className="bg-primary-container text-on-primary-container p-4 rounded">
+              primary-container
+            </div>
+          </div>
+        </div>
+
+        {/* Secondary Colors */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-secondary text-on-secondary p-4 rounded">
+              secondary
+            </div>
+            <div className="bg-secondary-container text-on-secondary-container p-4 rounded">
+              secondary-container
+            </div>
+          </div>
+        </div>
+
+        {/* Tertiary Colors */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-tertiary text-on-tertiary p-4 rounded">
+              tertiary
+            </div>
+            <div className="bg-tertiary-container text-on-tertiary-container p-4 rounded">
+              tertiary-container
+            </div>
+          </div>
+        </div>
+
+        {/* Surface Colors */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-3 gap-2">
+            <div className="bg-surface-dim text-on-surface p-4 rounded">
+              surface-dim
+            </div>
+            <div className="bg-surface text-on-surface p-4 rounded">
+              surface
+            </div>
+            <div className="bg-surface-bright text-on-surface p-4 rounded">
+              surface-bright
+            </div>
+          </div>
+        </div>
+
+        {/* Error Colors */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-error text-on-error p-4 rounded">error</div>
+            <div className="bg-error-container text-on-error-container p-4 rounded">
+              error-container
+            </div>
+          </div>
+        </div>
+
+        {/* Outline */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-surface text-on-surface p-4 rounded border-2 border-outline">
+              outline
+            </div>
+            <div className="bg-surface text-on-surface p-4 rounded border-2 border-outline-variant">
+              outline-variant
+            </div>
+          </div>
+        </div>
+
+        <p className="text-sm italic text-center">
+          Non-exhaustive list, for a complete list see the light story
+        </p>
+      </div>
+    </Mcu>
+  ),
+};

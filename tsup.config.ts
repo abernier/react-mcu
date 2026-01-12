@@ -13,6 +13,6 @@ export default defineConfig({
   },
   onSuccess: async () => {
     // Copy tailwind.css to dist
-    copyFileSync("tailwind.css", "dist/tailwind.css");
+    copyFileSync("src/tailwind.css", "dist/tailwind.css");
   },
 });
