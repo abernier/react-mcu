@@ -725,10 +725,7 @@ function FooTailwind({ children, ...props }: ComponentProps<"div">) {
 function FooTopTailwind({ children, ...props }: ComponentProps<"div">) {
   const { className, ...rest } = props;
   return (
-    <div
-      className={`p-2 outline outline-1 ${className || ""}`}
-      {...rest}
-    >
+    <div className={`p-2 outline outline-1 ${className || ""}`} {...rest}>
       {children || (
         <p className="all-unset font-sans text-sm text-white mix-blend-difference">
           FooTopTailwind
@@ -741,10 +738,7 @@ function FooTopTailwind({ children, ...props }: ComponentProps<"div">) {
 function FooBottomTailwind({ children, ...props }: ComponentProps<"div">) {
   const { className, ...rest } = props;
   return (
-    <div
-      className={`p-2 outline outline-1 ${className || ""}`}
-      {...rest}
-    >
+    <div className={`p-2 outline outline-1 ${className || ""}`} {...rest}>
       {children || (
         <p className="all-unset font-sans text-sm text-white mix-blend-difference">
           FooBottomTailwind
