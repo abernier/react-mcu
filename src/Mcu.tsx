@@ -22,10 +22,14 @@ type HexCustomColor = Omit<CustomColor, "value"> & {
 };
 
 export type McuConfig = {
+  /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme */
   source: string;
-  scheme: SchemeName;
-  contrast: number;
-  customColors: HexCustomColor[];
+  /** Color scheme variant. Default: "tonalSpot" */
+  scheme?: SchemeName;
+  /** Contrast level from -1.0 (reduced) to 1.0 (increased). Default: 0 (standard) */
+  contrast?: number;
+  /** Array of custom colors to include in the generated palette */
+  customColors?: HexCustomColor[];
 };
 
 const schemesMap = {
@@ -42,15 +46,19 @@ export const schemeNames = Object.keys(
 ) as (keyof typeof schemesMap)[];
 type SchemeName = (typeof schemeNames)[number];
 
+const DEFAULT_SCHEME: SchemeName = "tonalSpot";
+const DEFAULT_CONTRAST = 0;
+const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
+
 const mcuStyleId = "mcu-styles";
 
 export function Mcu({
   source,
-  scheme,
-  contrast,
-  customColors,
+  scheme = DEFAULT_SCHEME,
+  contrast = DEFAULT_CONTRAST,
+  customColors = DEFAULT_CUSTOM_COLORS,
   children,
-}: McuConfig & { children: React.ReactNode }) {
+}: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
     () => ({
       source,
@@ -223,9 +231,9 @@ const toCssVars = (mergedColors: Record<string, number>) => {
 
 export function generateCss({
   source: hexSource,
-  customColors: hexCustomColors,
-  scheme,
-  contrast,
+  customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
+  scheme = DEFAULT_SCHEME,
+  contrast = DEFAULT_CONTRAST,
 }: McuConfig) {
   console.log("MCU generateCss");
 

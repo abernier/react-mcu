@@ -12,33 +12,20 @@ const meta = {
   tags: ["autodocs"],
   args: {
     source: "#63A002",
-    scheme: "tonalSpot",
-    contrast: 0,
-    customColors: [],
-    children: null,
   },
   argTypes: {
     source: {
       control: "color",
-      description: "The source color in hex format",
     },
     scheme: {
       control: "select",
       options: schemeNames,
-      description: "The Material Design color scheme",
     },
     contrast: {
       control: { type: "range", min: -1, max: 1, step: 0.1 },
-      description: "Contrast level from -1 to 1",
     },
     customColors: {
       control: "object",
-      description:
-        "Array of custom color objects, each with 'name' and 'hex' properties",
-    },
-    children: {
-      control: false,
-      description: "React children to render",
     },
   },
 } satisfies Meta<typeof Mcu>;
