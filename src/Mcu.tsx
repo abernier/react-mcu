@@ -64,10 +64,8 @@ export type McuConfig =
     });
 
 // Internal type - makes both source and primary optional for internal use
-type McuConfigInternal = Omit<McuConfigBase, never> & {
-  source?: string;
-  primary?: string;
-};
+type McuConfigInternal = McuConfigBase &
+  Partial<Pick<Extract<McuConfig, { source: string }>, "source" | "primary">>;
 
 const schemesMap = {
   tonalSpot: SchemeTonalSpot,

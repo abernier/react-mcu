@@ -14,11 +14,9 @@ import {
   type TokenName,
 } from "./Mcu";
 
-// Internal type - reuses McuConfig base but makes source and primary both optional for internal state management
-type McuConfigInternal = Omit<McuConfig, "source" | "primary"> & {
-  source?: string;
-  primary?: string;
-};
+// Internal type - reuses McuConfig but makes source and primary both optional for internal state management
+type McuConfigInternal = Omit<McuConfig, "source" | "primary"> &
+  Partial<Pick<McuConfig, "source" | "primary">>;
 
 type Api = {
   initials: McuConfigInternal;
