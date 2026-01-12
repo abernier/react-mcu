@@ -63,7 +63,9 @@ Or simply:
 @import "react-mcu/tailwind.css";
 ```
 
-> [!IMPORTANT] Do not forget to manually add your custom colors, as in:
+> [!IMPORTANT]
+>
+> Do not forget to manually add your custom colors, as in:
 > https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L52-L75
 
 # Dev
