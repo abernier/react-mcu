@@ -23,7 +23,7 @@ type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
 
-export type McuConfig = {
+export type McuConfigInternal = {
   /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. Optional if primary is provided. */
   source?: string;
   /** Color scheme variant. Default: "tonalSpot" */
@@ -52,6 +52,46 @@ export type McuConfig = {
   /** Array of custom colors to include in the generated palette */
   customColors?: HexCustomColor[];
 };
+
+type McuConfigBase = {
+  /** Color scheme variant. Default: "tonalSpot" */
+  scheme?: SchemeName;
+  /** Contrast level from -1.0 (reduced) to 1.0 (increased). Default: 0 (standard) */
+  contrast?: number;
+  /** Secondary color - accent color. Overrides the default palette generation. */
+  secondary?: string;
+  /** Tertiary color - additional accent color. Overrides the default palette generation. */
+  tertiary?: string;
+  /** Neutral color - used for surfaces. Overrides the default palette generation. */
+  neutral?: string;
+  /** Neutral variant color - used for surfaces with slight tint. Overrides the default palette generation. */
+  neutralVariant?: string;
+  /** Error color - used for error states. Overrides the default palette generation. */
+  error?: string;
+  /**
+   * Color match mode for core colors.
+   * When true, stays true to input colors without harmonization.
+   * When false (default), colors may be adjusted for better harmonization.
+   * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
+   */
+  colorMatch?: boolean;
+  /** Array of custom colors to include in the generated palette */
+  customColors?: HexCustomColor[];
+};
+
+export type McuConfig =
+  | (McuConfigBase & {
+      /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. */
+      source: string;
+      /** Primary color - the main brand color. Overrides the default palette generation. */
+      primary?: string;
+    })
+  | (McuConfigBase & {
+      /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. Optional if primary is provided. */
+      source?: string;
+      /** Primary color - the main brand color. Overrides the default palette generation. Required if source is not provided. */
+      primary: string;
+    });
 
 const schemesMap = {
   tonalSpot: SchemeTonalSpot,
@@ -112,7 +152,7 @@ export function Mcu({
   customColors = DEFAULT_CUSTOM_COLORS,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
-  const config = useMemo(
+  const config: McuConfigInternal = useMemo(
     () => ({
       source,
       scheme,
@@ -333,18 +373,13 @@ export function generateCss({
   colorMatch = DEFAULT_COLOR_MATCH,
   scheme = DEFAULT_SCHEME,
   contrast = DEFAULT_CONTRAST,
-}: McuConfig) {
+}: McuConfigInternal) {
   const hasCoreColors =
     primary || secondary || tertiary || neutral || neutralVariant || error;
   console.log("MCU generateCss", { hasCoreColors });
 
   // Use primary as source if source is not provided
-  const effectiveSource = hexSource || primary;
-  if (!effectiveSource) {
-    throw new Error(
-      "Either 'source' or 'primary' prop must be provided to generate the color scheme.",
-    );
-  }
+  const effectiveSource = hexSource || primary!;
 
   const sourceArgb = argbFromHex(effectiveSource);
   const hct = Hct.fromInt(sourceArgb);
