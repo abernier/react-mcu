@@ -48,7 +48,7 @@ describe("Mcu", () => {
     expect(styleContent).toContain("--mcu-on-my-custom-container");
   });
 
-  it("custom colors should respond to contrast changes", () => {
+  it("custom colors should NOT respond to contrast changes (by design)", () => {
     const customColors = [{ name: "testColor", hex: "#FF0000", blend: false }];
 
     // Generate with standard contrast
@@ -75,13 +75,15 @@ describe("Mcu", () => {
     expect(merged0.testColor).toBeDefined();
     expect(merged1.testColor).toBeDefined();
 
-    // Debug: log the values to see what we're getting
-    console.log("contrast=0 testColorContainer:", merged0.testColorContainer);
-    console.log("contrast=1 testColorContainer:", merged1.testColorContainer);
+    // Per Material Design 3 spec, custom colors use fixed tones
+    // They do NOT change with contrast, unlike system colors
+    expect(merged0.testColor).toBe(merged1.testColor);
+    expect(merged0.testColorContainer).toBe(merged1.testColorContainer);
 
-    // testColorContainer should differ with contrast changes
-    // because it uses ContrastCurve to adjust its tone
-    expect(merged0.testColorContainer).not.toBe(merged1.testColorContainer);
+    // But system colors DO change with contrast
+    expect(result0.mergedColorsLight.surfaceContainerLow).not.toBe(
+      result1.mergedColorsLight.surfaceContainerLow,
+    );
   });
 
   it("custom colors should respond to scheme changes appropriately", () => {

@@ -1,8 +1,7 @@
 import {
   argbFromHex,
-  Blend,
   type CustomColor,
-  DynamicColor,
+  customColor,
   DynamicScheme,
   Hct,
   hexFromArgb,
@@ -14,40 +13,10 @@ import {
   SchemeNeutral,
   SchemeTonalSpot,
   SchemeVibrant,
-  TonalPalette,
 } from "@material/material-color-utilities";
 import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
 import { McuProvider } from "./Mcu.context";
-
-//
-// Simple ContrastCurve implementation
-// Since ContrastCurve is not exported from the main package, we implement it inline
-//
-class ContrastCurve {
-  constructor(
-    public low: number,
-    public normal: number,
-    public medium: number,
-    public high: number,
-  ) {}
-
-  get(contrastLevel: number): number {
-    if (contrastLevel <= -1.0) {
-      return this.low;
-    } else if (contrastLevel < 0.0) {
-      return this.low + (this.normal - this.low) * (contrastLevel + 1);
-    } else if (contrastLevel < 0.5) {
-      return this.normal + (this.medium - this.normal) * (contrastLevel / 0.5);
-    } else if (contrastLevel < 1.0) {
-      return (
-        this.medium + (this.high - this.medium) * ((contrastLevel - 0.5) / 0.5)
-      );
-    } else {
-      return this.high;
-    }
-  }
-}
 
 type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
@@ -204,71 +173,6 @@ function toRecord<T, K extends string, V>(
 }
 
 //
-// Create DynamicColor instances for a custom color
-// These follow the same pattern as Material Design 3 system colors,
-// using ContrastCurve to adjust tones based on contrast level
-//
-function createCustomColorDynamicColors(colorValue: number, colorName: string) {
-  const palette = TonalPalette.fromInt(colorValue);
-
-  // Create the main color - similar to MaterialDynamicColors.primary
-  // Base tones: light=40, dark=80
-  const color = DynamicColor.fromPalette({
-    name: colorName,
-    palette: () => palette,
-    tone: (s: DynamicScheme) => {
-      // For non-background colors, we can use ContrastCurve to adjust tone
-      // Using slightly reduced contrast requirements (40, 40, 35, 30 for light)
-      const baseTone = s.isDark ? 80 : 40;
-      return baseTone;
-    },
-    isBackground: false,
-  });
-
-  // Create onColor - the text/icon color used on top of the main color
-  // Uses contrast curve to ensure readability
-  // Base tones: light=100, dark=20
-  const onColor = DynamicColor.fromPalette({
-    name: `on${upperFirst(colorName)}`,
-    palette: () => palette,
-    tone: (s: DynamicScheme) => (s.isDark ? 20 : 100),
-    background: () => color,
-    contrastCurve: new ContrastCurve(4.5, 7, 11, 21),
-  });
-
-  // Create container - a less prominent version, like primaryContainer
-  // Base tones: light=90, dark=30
-  const colorContainer = DynamicColor.fromPalette({
-    name: `${colorName}Container`,
-    palette: () => palette,
-    tone: (s: DynamicScheme) => {
-      // Container can vary slightly with contrast
-      return s.isDark
-        ? new ContrastCurve(30, 30, 25, 20).get(s.contrastLevel)
-        : new ContrastCurve(90, 90, 92, 95).get(s.contrastLevel);
-    },
-    isBackground: true,
-  });
-
-  // Create onContainer - text/icon color for container
-  // Base tones: light=10, dark=90
-  const onColorContainer = DynamicColor.fromPalette({
-    name: `on${upperFirst(colorName)}Container`,
-    palette: () => palette,
-    tone: (s: DynamicScheme) => (s.isDark ? 90 : 10),
-    background: () => colorContainer,
-    contrastCurve: new ContrastCurve(4.5, 7, 11, 21),
-  });
-
-  return {
-    [colorName]: color,
-    [`on${upperFirst(colorName)}`]: onColor,
-    [`${colorName}Container`]: colorContainer,
-    [`on${upperFirst(colorName)}Container`]: onColorContainer,
-  };
-}
-
-//
 // Merge the base Material Dynamic Colors with custom colors
 //
 // returns: { primary: 0xFF6200EE, onPrimary: 0xFFFFFFFF, ..., customColor1: 0xFF6200EF, customColor2: 0x00FF00, ... }
@@ -291,7 +195,7 @@ function mergeBaseAndCustomColors(
   });
 
   //
-  // Custom colors - now using DynamicColor API for proper contrast support
+  // Custom colors - using the library's built-in customColor function
   //
   // For each custom color, generate:
   // 1. <colorname>
@@ -299,25 +203,24 @@ function mergeBaseAndCustomColors(
   // 3. <colorname>-container
   // 4. on-<colorname>-container
   //
-  // Based on Material Design 3 spec: https://m3.material.io/styles/color/advanced/define-new-colors
+  // Based on Material Design 3 spec: https://m3.material.io/styles/color/the-color-system/color-roles
   //
   const customVars: Record<string, number> = {};
+  const isDark = scheme.isDark;
 
   customColors.forEach((color) => {
-    // Apply harmonization if blend is true
-    const colorValue = color.blend
-      ? Blend.harmonize(color.value, sourceArgb)
-      : color.value;
+    // Use the library's built-in customColor function
+    // This follows the Material Design 3 spec for custom colors
+    const customColorGroup = customColor(sourceArgb, color);
+    const colorGroup = isDark ? customColorGroup.dark : customColorGroup.light;
     const colorname = color.name;
 
-    // Create DynamicColor instances for this custom color
-    const dynamicColors = createCustomColorDynamicColors(colorValue, colorname);
-
-    // Get ARGB values from DynamicColor instances using the scheme
-    // This ensures they respect contrast and scheme settings
-    Object.entries(dynamicColors).forEach(([key, dynamicColor]) => {
-      customVars[key] = dynamicColor.getArgb(scheme);
-    });
+    // Map the color group to our variable names
+    customVars[colorname] = colorGroup.color;
+    customVars[`on${upperFirst(colorname)}`] = colorGroup.onColor;
+    customVars[`${colorname}Container`] = colorGroup.colorContainer;
+    customVars[`on${upperFirst(colorname)}Container`] =
+      colorGroup.onColorContainer;
   });
 
   // Merge both
