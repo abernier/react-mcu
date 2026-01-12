@@ -23,11 +23,15 @@ type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
 
-type McuConfigBase = {
+export type McuConfig = {
+  /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme */
+  source: string;
   /** Color scheme variant. Default: "tonalSpot" */
   scheme?: SchemeName;
   /** Contrast level from -1.0 (reduced) to 1.0 (increased). Default: 0 (standard) */
   contrast?: number;
+  /** Primary color - the main brand color. Overrides the default palette generation. */
+  primary?: string;
   /** Secondary color - accent color. Overrides the default palette generation. */
   secondary?: string;
   /** Tertiary color - additional accent color. Overrides the default palette generation. */
@@ -48,24 +52,6 @@ type McuConfigBase = {
   /** Array of custom colors to include in the generated palette */
   customColors?: HexCustomColor[];
 };
-
-export type McuConfig =
-  | (McuConfigBase & {
-      /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. */
-      source: string;
-      /** Primary color - the main brand color. Overrides the default palette generation. */
-      primary?: string;
-    })
-  | (McuConfigBase & {
-      /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. Optional if primary is provided. */
-      source?: string;
-      /** Primary color - the main brand color. Overrides the default palette generation. Required if source is not provided. */
-      primary: string;
-    });
-
-// Internal type - makes both source and primary optional for internal use
-type McuConfigInternal = McuConfigBase &
-  Partial<Pick<Extract<McuConfig, { source: string }>, "source" | "primary">>;
 
 const schemesMap = {
   tonalSpot: SchemeTonalSpot,
@@ -126,7 +112,7 @@ export function Mcu({
   customColors = DEFAULT_CUSTOM_COLORS,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
-  const config: McuConfigInternal = useMemo(
+  const config = useMemo(
     () => ({
       source,
       scheme,
@@ -347,15 +333,12 @@ export function generateCss({
   colorMatch = DEFAULT_COLOR_MATCH,
   scheme = DEFAULT_SCHEME,
   contrast = DEFAULT_CONTRAST,
-}: McuConfigInternal) {
+}: McuConfig) {
   const hasCoreColors =
     primary || secondary || tertiary || neutral || neutralVariant || error;
   console.log("MCU generateCss", { hasCoreColors });
 
-  // Use primary as source if source is not provided
-  const effectiveSource = hexSource || primary!;
-
-  const sourceArgb = argbFromHex(effectiveSource);
+  const sourceArgb = argbFromHex(hexSource);
   const hct = Hct.fromInt(sourceArgb);
 
   let lightScheme: DynamicScheme;
