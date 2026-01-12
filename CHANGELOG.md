@@ -1,5 +1,12 @@
 # react-mcu
 
+## 1.0.4
+
+### Patch Changes
+
+- 5941837: Export useMcu hook from package and add Tailwind CSS v4 integration file
+- c413069: tw x sb
+
 ## 1.0.3
 
 ### Patch Changes
