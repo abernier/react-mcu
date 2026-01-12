@@ -23,26 +23,6 @@ type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
 
-/**
- * Core colors to override the default palette generation.
- * Allows independent specification of key colors that will be used to generate tonal palettes and schemes.
- * Based on Material Design 3 spec: https://m3.material.io/styles/color/the-color-system/key-colors
- */
-export type CoreColors = {
-  /** Primary color - the main brand color */
-  primary?: string;
-  /** Secondary color - accent color */
-  secondary?: string;
-  /** Tertiary color - additional accent color */
-  tertiary?: string;
-  /** Neutral color - used for surfaces */
-  neutral?: string;
-  /** Neutral variant color - used for surfaces with slight tint */
-  neutralVariant?: string;
-  /** Error color - used for error states */
-  error?: string;
-};
-
 export type McuConfig = {
   /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme */
   source: string;
@@ -50,8 +30,18 @@ export type McuConfig = {
   scheme?: SchemeName;
   /** Contrast level from -1.0 (reduced) to 1.0 (increased). Default: 0 (standard) */
   contrast?: number;
-  /** Core colors to override the default palette generation. Allows independent specification of primary, secondary, tertiary, and other key colors. */
-  coreColors?: CoreColors;
+  /** Primary color - the main brand color. Overrides the default palette generation. */
+  primary?: string;
+  /** Secondary color - accent color. Overrides the default palette generation. */
+  secondary?: string;
+  /** Tertiary color - additional accent color. Overrides the default palette generation. */
+  tertiary?: string;
+  /** Neutral color - used for surfaces. Overrides the default palette generation. */
+  neutral?: string;
+  /** Neutral variant color - used for surfaces with slight tint. Overrides the default palette generation. */
+  neutralVariant?: string;
+  /** Error color - used for error states. Overrides the default palette generation. */
+  error?: string;
   /**
    * Color match mode for core colors.
    * When true, stays true to input colors without harmonization.
@@ -112,7 +102,13 @@ export function Mcu({
   source,
   scheme = DEFAULT_SCHEME,
   contrast = DEFAULT_CONTRAST,
-  coreColors,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+  error,
+  colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
@@ -121,10 +117,28 @@ export function Mcu({
       source,
       scheme,
       contrast,
-      coreColors,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+      error,
+      colorMatch,
       customColors,
     }),
-    [contrast, coreColors, customColors, scheme, source],
+    [
+      contrast,
+      customColors,
+      scheme,
+      source,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+      error,
+      colorMatch,
+    ],
   );
 
   const { css } = useMemo(() => generateCss(config), [config]);
@@ -310,12 +324,19 @@ const toCssVars = (mergedColors: Record<string, number>) => {
 export function generateCss({
   source: hexSource,
   customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
-  coreColors,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+  error,
   colorMatch = DEFAULT_COLOR_MATCH,
   scheme = DEFAULT_SCHEME,
   contrast = DEFAULT_CONTRAST,
 }: McuConfig) {
-  console.log("MCU generateCss", { coreColors: !!coreColors });
+  const hasCoreColors =
+    primary || secondary || tertiary || neutral || neutralVariant || error;
+  console.log("MCU generateCss", { hasCoreColors });
 
   const sourceArgb = argbFromHex(hexSource);
   const hct = Hct.fromInt(sourceArgb);
@@ -323,23 +344,15 @@ export function generateCss({
   let lightScheme: DynamicScheme;
   let darkScheme: DynamicScheme;
 
-  if (coreColors) {
+  if (hasCoreColors) {
     // Convert hex core colors to ARGB
     const coreColorsArgb = {
-      primary: coreColors.primary
-        ? argbFromHex(coreColors.primary)
-        : sourceArgb,
-      secondary: coreColors.secondary
-        ? argbFromHex(coreColors.secondary)
-        : undefined,
-      tertiary: coreColors.tertiary
-        ? argbFromHex(coreColors.tertiary)
-        : undefined,
-      neutral: coreColors.neutral ? argbFromHex(coreColors.neutral) : undefined,
-      neutralVariant: coreColors.neutralVariant
-        ? argbFromHex(coreColors.neutralVariant)
-        : undefined,
-      error: coreColors.error ? argbFromHex(coreColors.error) : undefined,
+      primary: primary ? argbFromHex(primary) : sourceArgb,
+      secondary: secondary ? argbFromHex(secondary) : undefined,
+      tertiary: tertiary ? argbFromHex(tertiary) : undefined,
+      neutral: neutral ? argbFromHex(neutral) : undefined,
+      neutralVariant: neutralVariant ? argbFromHex(neutralVariant) : undefined,
+      error: error ? argbFromHex(error) : undefined,
     };
 
     // Create a custom CorePalette with the specified colors
