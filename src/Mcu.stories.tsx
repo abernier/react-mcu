@@ -30,6 +30,24 @@ const meta = {
     contrast: {
       control: { type: "range", min: -1, max: 1, step: 0.1 },
     },
+    primary: {
+      control: "color",
+    },
+    secondary: {
+      control: "color",
+    },
+    tertiary: {
+      control: "color",
+    },
+    neutral: {
+      control: "color",
+    },
+    neutralVariant: {
+      control: "color",
+    },
+    error: {
+      control: "color",
+    },
   },
 } satisfies Meta<typeof Mcu>;
 
