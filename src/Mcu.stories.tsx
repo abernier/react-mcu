@@ -24,9 +24,6 @@ const meta = {
     contrast: {
       control: { type: "range", min: -1, max: 1, step: 0.1 },
     },
-    customColors: {
-      control: "object",
-    },
   },
 } satisfies Meta<typeof Mcu>;
 
