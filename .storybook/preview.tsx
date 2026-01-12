@@ -32,11 +32,11 @@ const preview: Preview = {
       const theme = context.globals.theme || "light";
 
       useEffect(() => {
-        if (theme === "dark") {
-          document.body.classList.add("sb-dark-theme");
-        } else {
+        document.body.classList.toggle("sb-dark-theme", theme === "dark");
+
+        return () => {
           document.body.classList.remove("sb-dark-theme");
-        }
+        };
       }, [theme]);
 
       return (
