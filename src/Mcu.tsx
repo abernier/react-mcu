@@ -1,7 +1,7 @@
 import {
   argbFromHex,
-  Blend,
   type CustomColor,
+  customColor,
   DynamicScheme,
   Hct,
   hexFromArgb,
@@ -13,7 +13,6 @@ import {
   SchemeNeutral,
   SchemeTonalSpot,
   SchemeVibrant,
-  TonalPalette,
 } from "@material/material-color-utilities";
 import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
@@ -196,7 +195,7 @@ function mergeBaseAndCustomColors(
   });
 
   //
-  // Custom colors (static colors) - generate 4 roles for each
+  // Custom colors - using the library's built-in customColor function
   //
   // For each custom color, generate:
   // 1. <colorname>
@@ -204,27 +203,24 @@ function mergeBaseAndCustomColors(
   // 3. <colorname>-container
   // 4. on-<colorname>-container
   //
-  // Based on Material Design 3 spec: https://m3.material.io/styles/color/advanced/define-new-colors
+  // Based on Material Design 3 spec: https://m3.material.io/styles/color/the-color-system/color-roles
   //
   const customVars: Record<string, number> = {};
   const isDark = scheme.isDark;
 
   customColors.forEach((color) => {
-    // Apply harmonization if blend is true
-    const colorValue = color.blend
-      ? Blend.harmonize(color.value, sourceArgb)
-      : color.value;
-    const palette = TonalPalette.fromInt(colorValue);
+    // Use the library's built-in customColor function
+    // This follows the Material Design 3 spec for custom colors
+    const customColorGroup = customColor(sourceArgb, color);
+    const colorGroup = isDark ? customColorGroup.dark : customColorGroup.light;
     const colorname = color.name;
 
-    // Generate the 4 roles with appropriate tones for light/dark mode
-    // Tone values (light/dark): color(40/80), onColor(100/20), container(90/30), onContainer(10/90)
-    customVars[colorname] = palette.tone(isDark ? 80 : 40);
-    customVars[`on${upperFirst(colorname)}`] = palette.tone(isDark ? 20 : 100);
-    customVars[`${colorname}Container`] = palette.tone(isDark ? 30 : 90);
-    customVars[`on${upperFirst(colorname)}Container`] = palette.tone(
-      isDark ? 90 : 10,
-    );
+    // Map the color group to our variable names
+    customVars[colorname] = colorGroup.color;
+    customVars[`on${upperFirst(colorname)}`] = colorGroup.onColor;
+    customVars[`${colorname}Container`] = colorGroup.colorContainer;
+    customVars[`on${upperFirst(colorname)}Container`] =
+      colorGroup.onColorContainer;
   });
 
   // Merge both
