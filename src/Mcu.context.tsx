@@ -14,19 +14,10 @@ import {
   type TokenName,
 } from "./Mcu";
 
-// Internal type - more permissive version of McuConfig for internal use
-type McuConfigInternal = {
+// Internal type - reuses McuConfig base but makes source and primary both optional for internal state management
+type McuConfigInternal = Omit<McuConfig, "source" | "primary"> & {
   source?: string;
-  scheme?: Parameters<typeof generateCss>[0]["scheme"];
-  contrast?: number;
   primary?: string;
-  secondary?: string;
-  tertiary?: string;
-  neutral?: string;
-  neutralVariant?: string;
-  error?: string;
-  colorMatch?: boolean;
-  customColors?: Parameters<typeof generateCss>[0]["customColors"];
 };
 
 type Api = {

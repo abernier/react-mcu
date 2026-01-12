@@ -23,36 +23,6 @@ type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
 
-type McuConfigInternal = {
-  /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. Optional if primary is provided. */
-  source?: string;
-  /** Color scheme variant. Default: "tonalSpot" */
-  scheme?: SchemeName;
-  /** Contrast level from -1.0 (reduced) to 1.0 (increased). Default: 0 (standard) */
-  contrast?: number;
-  /** Primary color - the main brand color. Overrides the default palette generation. */
-  primary?: string;
-  /** Secondary color - accent color. Overrides the default palette generation. */
-  secondary?: string;
-  /** Tertiary color - additional accent color. Overrides the default palette generation. */
-  tertiary?: string;
-  /** Neutral color - used for surfaces. Overrides the default palette generation. */
-  neutral?: string;
-  /** Neutral variant color - used for surfaces with slight tint. Overrides the default palette generation. */
-  neutralVariant?: string;
-  /** Error color - used for error states. Overrides the default palette generation. */
-  error?: string;
-  /**
-   * Color match mode for core colors.
-   * When true, stays true to input colors without harmonization.
-   * When false (default), colors may be adjusted for better harmonization.
-   * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
-   */
-  colorMatch?: boolean;
-  /** Array of custom colors to include in the generated palette */
-  customColors?: HexCustomColor[];
-};
-
 type McuConfigBase = {
   /** Color scheme variant. Default: "tonalSpot" */
   scheme?: SchemeName;
@@ -92,6 +62,12 @@ export type McuConfig =
       /** Primary color - the main brand color. Overrides the default palette generation. Required if source is not provided. */
       primary: string;
     });
+
+// Internal type - makes both source and primary optional for internal use
+type McuConfigInternal = Omit<McuConfigBase, never> & {
+  source?: string;
+  primary?: string;
+};
 
 const schemesMap = {
   tonalSpot: SchemeTonalSpot,
