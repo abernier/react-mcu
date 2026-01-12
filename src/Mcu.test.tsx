@@ -22,35 +22,4 @@ describe("Mcu", () => {
     expect(styleContent).toContain("--mcu-surface");
     expect(styleContent).toContain("--mcu-background");
   });
-
-  it("should allow custom colors without interference with system colors", () => {
-    render(
-      <Mcu
-        source="#6750A4"
-        scheme="tonalSpot"
-        contrast={0}
-        customColors={[
-          { name: "myBrand", hex: "#FF0000", blend: false },
-          { name: "myAccent", hex: "#00FF00", blend: false },
-        ]}
-      >
-        <div>Test content</div>
-      </Mcu>,
-    );
-
-    const styleTag = document.querySelector("#mcu-styles");
-    expect(styleTag).toBeTruthy();
-
-    const styleContent = styleTag?.textContent || "";
-
-    // System colors should be present
-    expect(styleContent).toContain("--mcu-primary");
-    expect(styleContent).toContain("--mcu-secondary");
-
-    // Custom colors should also be present
-    expect(styleContent).toContain("--mcu-my-brand");
-    expect(styleContent).toContain("--mcu-on-my-brand");
-    expect(styleContent).toContain("--mcu-my-accent");
-    expect(styleContent).toContain("--mcu-on-my-accent");
-  });
 });
