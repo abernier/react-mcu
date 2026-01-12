@@ -55,7 +55,7 @@ return (
 Compatible with Tailwind through
 [theme variables](https://tailwindcss.com/docs/theme):
 
-https://github.com/abernier/react-mcu/blob/fdff00861e77067678076a97193a1a6f53eb3557/src/tailwind.css#L3-L51
+https://github.com/abernier/react-mcu/blob/b62ed1391cd189aefcb04cb0c31a30fd5fa6f211/src/tailwind.css#L3-L76
 
 Or simply:
 
