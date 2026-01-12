@@ -796,6 +796,8 @@ export const St2CoreColors: Story = {
       primary: "#FF0000",
       secondary: "#00FF00",
       tertiary: "#0000FF",
+      neutral: "#8B4513",
+      neutralVariant: "#FF8C00",
     },
     customColors: [],
   },
