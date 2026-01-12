@@ -814,12 +814,12 @@ export const St2CoreColorsContentBased: Story = {
   args: {
     source: "#FFDE3F",
     coreColors: {
-      primary: "#FF0000",
-      secondary: "#00FF00",
-      tertiary: "#0000FF",
-      neutral: "#8B4513",
-      neutralVariant: "#FF8C00",
-      error: "#FF00FF",
+      primary: "#CC6666", // Desaturated red - chroma will be preserved
+      secondary: "#66CC66", // Desaturated green - chroma will be preserved
+      tertiary: "#6666CC", // Desaturated blue - chroma will be preserved
+      neutral: "#8B8B7A",
+      neutralVariant: "#CCA366",
+      error: "#CC66CC",
       contentBased: true,
     },
     customColors: [],
