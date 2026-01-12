@@ -809,6 +809,28 @@ export const St2CoreColors: Story = {
   ),
 };
 
+export const St2CoreColorsContentBased: Story = {
+  name: "[coreColors contentBased]",
+  args: {
+    source: "#FFDE3F",
+    coreColors: {
+      primary: "#FF0000",
+      secondary: "#00FF00",
+      tertiary: "#0000FF",
+      neutral: "#8B4513",
+      neutralVariant: "#FF8C00",
+      error: "#FF00FF",
+      contentBased: true,
+    },
+    customColors: [],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
 //
 
 export const St3: Story = {

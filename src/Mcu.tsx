@@ -41,6 +41,12 @@ export type CoreColors = {
   neutralVariant?: string;
   /** Error color - used for error states */
   error?: string;
+  /**
+   * When true, stays true to input colors without harmonization (content-based palettes).
+   * When false (default), colors may be harmonized to work better together.
+   * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
+   */
+  contentBased?: boolean;
 };
 
 export type McuConfig = {
@@ -334,7 +340,10 @@ export function generateCss({
     };
 
     // Create a custom CorePalette with the specified colors
-    const corePalette = CorePalette.fromColors(coreColorsArgb);
+    // Use contentFromColors if contentBased is true to stay true to input colors
+    const corePalette = coreColors.contentBased
+      ? CorePalette.contentFromColors(coreColorsArgb)
+      : CorePalette.fromColors(coreColorsArgb);
     const variant = schemeToVariant[scheme];
 
     // Create custom schemes with the core palette
