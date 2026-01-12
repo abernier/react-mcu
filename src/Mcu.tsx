@@ -209,11 +209,12 @@ function mergeBaseAndCustomColors(
   const isDark = scheme.isDark;
 
   customColors.forEach((color) => {
+    const colorname = color.name;
+
     // Use the library's built-in customColor function
     // This follows the Material Design 3 spec for custom colors
     const customColorGroup = customColor(sourceArgb, color);
     const colorGroup = isDark ? customColorGroup.dark : customColorGroup.light;
-    const colorname = color.name;
 
     // Map the color group to our variable names
     customVars[colorname] = colorGroup.color;
@@ -223,7 +224,8 @@ function mergeBaseAndCustomColors(
       colorGroup.onColorContainer;
   });
 
-  // Merge both
+  // Merge both - custom colors are added alongside system colors
+  // Custom colors with conflicting names have been filtered out at the entry point
   return { ...baseVars, ...customVars };
 }
 
@@ -265,7 +267,7 @@ export function generateCss({
   const lightScheme = new SchemeClass(hct, false, contrast);
   const darkScheme = new SchemeClass(hct, true, contrast);
 
-  // Prepare custom colors (keep ARGB so generateCssVars can use them)
+  // Prepare custom colors (convert hex to ARGB)
   const customColors = hexCustomColors.map(({ hex, ...rest }) => ({
     ...rest,
     value: argbFromHex(hex),

@@ -23,51 +23,34 @@ describe("Mcu", () => {
     expect(styleContent).toContain("--mcu-background");
   });
 
-  it("should allow custom colors to override system colors like primary", () => {
-    // Render without custom colors first to get the default primary color
-    render(
-      <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>
-        <div>Test content</div>
-      </Mcu>,
-    );
-    const styleTag1 = document.querySelector("#mcu-styles");
-    const defaultPrimaryMatch = styleTag1?.textContent?.match(
-      /--mcu-primary:(#[a-fA-F0-9]{6})/,
-    );
-    const defaultPrimary = defaultPrimaryMatch?.[1];
-
-    // Now render with a custom primary color (this will replace the style tag)
+  it("should allow custom colors without interference with system colors", () => {
     render(
       <Mcu
         source="#6750A4"
         scheme="tonalSpot"
         contrast={0}
-        customColors={[{ name: "primary", hex: "#FF0000", blend: false }]}
+        customColors={[
+          { name: "myBrand", hex: "#FF0000", blend: false },
+          { name: "myAccent", hex: "#00FF00", blend: false },
+        ]}
       >
         <div>Test content</div>
       </Mcu>,
     );
 
-    const styleTag2 = document.querySelector("#mcu-styles");
-    expect(styleTag2).toBeTruthy();
+    const styleTag = document.querySelector("#mcu-styles");
+    expect(styleTag).toBeTruthy();
 
-    const styleContent = styleTag2?.textContent || "";
+    const styleContent = styleTag?.textContent || "";
+
+    // System colors should be present
     expect(styleContent).toContain("--mcu-primary");
+    expect(styleContent).toContain("--mcu-secondary");
 
-    // Extract the custom primary color
-    const customPrimaryMatch = styleContent.match(
-      /--mcu-primary:(#[a-fA-F0-9]{6})/,
-    );
-    const customPrimary = customPrimaryMatch?.[1];
-
-    // The custom primary should be different from the default
-    expect(customPrimary).toBeTruthy();
-    expect(customPrimary).not.toBe(defaultPrimary);
-
-    // The color should be based on #FF0000 (the custom color)
-    // In light mode, tone 40 is used for the main color
-    // We can't predict the exact hex, but it should be different from the source color's primary
-    console.log("Default primary:", defaultPrimary);
-    console.log("Custom primary:", customPrimary);
+    // Custom colors should also be present
+    expect(styleContent).toContain("--mcu-my-brand");
+    expect(styleContent).toContain("--mcu-on-my-brand");
+    expect(styleContent).toContain("--mcu-my-accent");
+    expect(styleContent).toContain("--mcu-on-my-accent");
   });
 });

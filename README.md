@@ -38,37 +38,6 @@ import { Mcu } from "react-mcu";
 >
 > CSS varnames are always kebab-cased, `myCustomColor1` → `--mcu-my-custom-color-1`
 
-### Overriding System Colors
-
-Custom colors can also be used to **override system colors** like `primary`, `secondary`, `tertiary`, or `error`. This allows you to completely replace the automatically calculated color values:
-
-```tsx
-<Mcu
-  source="#6750A4"
-  customColors={[
-    // Override the primary color with a custom red
-    { name: "primary", hex: "#FF0000", blend: false },
-    // Override the secondary color
-    { name: "secondary", hex: "#00FF00", blend: false },
-  ]}
->
-  <p style={{ backgroundColor: "var(--mcu-primary)" }}>
-    Now uses #FF0000 instead of the auto-generated primary
-  </p>
-</Mcu>
-```
-
-> [!IMPORTANT]
->
-> When overriding system colors with custom colors, the following variants are generated and will override the defaults:
->
-> - `--mcu-{color}` (e.g., `--mcu-primary`)
-> - `--mcu-on-{color}` (e.g., `--mcu-on-primary`)
-> - `--mcu-{color}-container` (e.g., `--mcu-primary-container`)
-> - `--mcu-on-{color}-container` (e.g., `--mcu-on-primary-container`)
->
-> Other variants like `primaryFixed`, `primaryFixedDim`, `inversePrimary`, etc., will keep their auto-generated values based on the source color.
-
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
 A `useMcu` hook is also provided:
