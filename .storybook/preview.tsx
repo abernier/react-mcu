@@ -1,4 +1,6 @@
 import type { Preview } from "@storybook/react-vite";
+import { useEffect } from "react";
+import "./preview.css";
 import "../src/tailwind.css";
 
 const preview: Preview = {
@@ -28,6 +30,15 @@ const preview: Preview = {
   decorators: [
     (Story, context) => {
       const theme = context.globals.theme || "light";
+
+      useEffect(() => {
+        document.body.classList.toggle("sb-dark-theme", theme === "dark");
+
+        return () => {
+          document.body.classList.remove("sb-dark-theme");
+        };
+      }, [theme]);
+
       return (
         <div className={theme === "dark" ? "dark" : ""}>
           <Story />
