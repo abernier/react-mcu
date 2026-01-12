@@ -55,7 +55,7 @@ return (
 Compatible with Tailwind through
 [theme variables](https://tailwindcss.com/docs/theme):
 
-https://github.com/abernier/react-mcu/blob/b62ed1391cd189aefcb04cb0c31a30fd5fa6f211/src/tailwind.css#L3-L76
+https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L3-L76
 
 Or simply:
 
@@ -63,9 +63,8 @@ Or simply:
 @import "react-mcu/tailwind.css";
 ```
 
-> [!IMPORTANT]
-> Do not forget to manually add your custom colors, as in:
-> https://github.com/abernier/react-mcu/blob/b62ed1391cd189aefcb04cb0c31a30fd5fa6f211/src/tailwind.css#L52-L75
+> [!IMPORTANT] Do not forget to manually add your custom colors, as in:
+> https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L52-L75
 
 # Dev
 

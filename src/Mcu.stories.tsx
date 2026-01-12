@@ -781,17 +781,13 @@ export const St2: Story = {
   globals: {
     theme: "dark",
   },
-  render: (args) => (
-    <Mcu {...args}>
-      <Bar customColors={args.customColors} />
-    </Mcu>
-  ),
+  render: St1.render,
 };
 
 //
 
 export const St3: Story = {
-  name: "tailwind",
+  name: "tailwind light",
   render: (args) => (
     <Mcu {...args}>
       <div className="p-6 space-y-6">
@@ -910,4 +906,12 @@ export const St3: Story = {
       </div>
     </Mcu>
   ),
+};
+
+export const St4: Story = {
+  name: "tailwind dark",
+  globals: {
+    theme: "dark",
+  },
+  render: St3.render,
 };
