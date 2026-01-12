@@ -1,5 +1,6 @@
 import {
   argbFromHex,
+  Blend,
   type CustomColor,
   DynamicScheme,
   Hct,
@@ -12,8 +13,9 @@ import {
   SchemeNeutral,
   SchemeTonalSpot,
   SchemeVibrant,
+  TonalPalette,
 } from "@material/material-color-utilities";
-import { kebabCase } from "lodash-es";
+import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
 import { McuProvider } from "./Mcu.context";
 
@@ -180,6 +182,7 @@ function toRecord<T, K extends string, V>(
 function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
+  sourceArgb: number,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -193,14 +196,36 @@ function mergeBaseAndCustomColors(
   });
 
   //
-  // Custom colors
+  // Custom colors (static colors) - generate 4 roles for each
   //
-  // returns: { primary: 0xFF6200EF, customColor1: 0xFF0000, customColor2: 0x00FF00, ... }
+  // For each custom color, generate:
+  // 1. <colorname>
+  // 2. on-<colorname>
+  // 3. <colorname>-container
+  // 4. on-<colorname>-container
   //
-  const customVars = toRecord(customColors, (color) => [
-    color.name,
-    color.value,
-  ]);
+  // Based on Material Design 3 spec: https://m3.material.io/styles/color/advanced/define-new-colors
+  //
+  const customVars: Record<string, number> = {};
+  const isDark = scheme.isDark;
+
+  customColors.forEach((color) => {
+    // Apply harmonization if blend is true
+    const colorValue = color.blend
+      ? Blend.harmonize(color.value, sourceArgb)
+      : color.value;
+    const palette = TonalPalette.fromInt(colorValue);
+    const colorname = color.name;
+
+    // Generate the 4 roles with appropriate tones for light/dark mode
+    // Tone values (light/dark): color(40/80), onColor(100/20), container(90/30), onContainer(10/90)
+    customVars[colorname] = palette.tone(isDark ? 80 : 40);
+    customVars[`on${upperFirst(colorname)}`] = palette.tone(isDark ? 20 : 100);
+    customVars[`${colorname}Container`] = palette.tone(isDark ? 30 : 90);
+    customVars[`on${upperFirst(colorname)}Container`] = palette.tone(
+      isDark ? 90 : 10,
+    );
+  });
 
   // Merge both
   return { ...baseVars, ...customVars };
@@ -250,8 +275,16 @@ export function generateCss({
     value: argbFromHex(hex),
   }));
 
-  const mergedColorsLight = mergeBaseAndCustomColors(lightScheme, customColors);
-  const mergedColorsDark = mergeBaseAndCustomColors(darkScheme, customColors);
+  const mergedColorsLight = mergeBaseAndCustomColors(
+    lightScheme,
+    customColors,
+    sourceArgb,
+  );
+  const mergedColorsDark = mergeBaseAndCustomColors(
+    darkScheme,
+    customColors,
+    sourceArgb,
+  );
 
   const lightVars = toCssVars(mergedColorsLight);
   const darkVars = toCssVars(mergedColorsDark);

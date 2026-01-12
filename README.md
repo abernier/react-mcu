@@ -17,8 +17,9 @@ import { Mcu } from "react-mcu";
   scheme="vibrant"
   contrast={0.5}
   customColors={[
-    { name: "myCustomColor1", hex: "#FF5733", blend: true },
-    { name: "myCustomColor2", hex: "#3498DB", blend: false },
+    { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
+    { name: "myCustomColor2", hex: "#E126C6", blend: true },
+    { name: "myCustomColor3", hex: "#E126C6", blend: false },
   ]}
 >
   <p style={{
@@ -26,7 +27,7 @@ import { Mcu } from "react-mcu";
     color: "var(--mcu-on-surface)",
   }}>
     Hello, MCU <span style={{
-      backgroundColor: "var(--mcu-my-custom-color1)",
+      backgroundColor: "var(--mcu-my-custom-color-1)",
       color: "var(--mcu-my-custom-color2)",
     }}>colors<span>!
   </p>
@@ -61,6 +62,9 @@ Or simply:
 ```css
 @import "react-mcu/tailwind.css";
 ```
+
+> [!IMPORTANT] Do not forget to manually add your custom colors, as in:
+> https://github.com/abernier/react-mcu/blob/b62ed1391cd189aefcb04cb0c31a30fd5fa6f211/src/tailwind.css#L52-L75
 
 # Dev
 
