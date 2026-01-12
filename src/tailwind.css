@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+@theme inline {
   --color-background: var(--mcu-background);
   --color-on-background: var(--mcu-on-background);
   --color-surface: var(--mcu-surface);
