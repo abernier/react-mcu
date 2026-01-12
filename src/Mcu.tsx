@@ -24,8 +24,8 @@ type HexCustomColor = Omit<CustomColor, "value"> & {
 };
 
 export type McuConfig = {
-  /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme */
-  source: string;
+  /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. Optional if primary is provided. */
+  source?: string;
   /** Color scheme variant. Default: "tonalSpot" */
   scheme?: SchemeName;
   /** Contrast level from -1.0 (reduced) to 1.0 (increased). Default: 0 (standard) */
@@ -338,7 +338,15 @@ export function generateCss({
     primary || secondary || tertiary || neutral || neutralVariant || error;
   console.log("MCU generateCss", { hasCoreColors });
 
-  const sourceArgb = argbFromHex(hexSource);
+  // Use primary as source if source is not provided
+  const effectiveSource = hexSource || primary;
+  if (!effectiveSource) {
+    throw new Error(
+      "Either 'source' or 'primary' prop must be provided to generate the color scheme.",
+    );
+  }
+
+  const sourceArgb = argbFromHex(effectiveSource);
   const hct = Hct.fromInt(sourceArgb);
 
   let lightScheme: DynamicScheme;
