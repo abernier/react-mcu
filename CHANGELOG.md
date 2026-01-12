@@ -1,5 +1,12 @@
 # react-mcu
 
+## 1.0.5
+
+### Patch Changes
+
+- eab6a2c: defaults
+- 27d5e6f: fix custom-colors impl
+
 ## 1.0.4
 
 ### Patch Changes
