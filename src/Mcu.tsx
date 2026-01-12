@@ -23,7 +23,7 @@ type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
 
-export type McuConfigInternal = {
+type McuConfigInternal = {
   /** Source color in hex format (e.g., "#6750A4") used to generate the color scheme. Optional if primary is provided. */
   source?: string;
   /** Color scheme variant. Default: "tonalSpot" */

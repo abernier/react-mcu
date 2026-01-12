@@ -11,9 +11,23 @@ import { createRequiredContext } from "./lib/createRequiredContext";
 import {
   generateCss,
   type McuConfig,
-  type McuConfigInternal,
   type TokenName,
 } from "./Mcu";
+
+// Internal type - more permissive version of McuConfig for internal use
+type McuConfigInternal = {
+  source?: string;
+  scheme?: Parameters<typeof generateCss>[0]["scheme"];
+  contrast?: number;
+  primary?: string;
+  secondary?: string;
+  tertiary?: string;
+  neutral?: string;
+  neutralVariant?: string;
+  error?: string;
+  colorMatch?: boolean;
+  customColors?: Parameters<typeof generateCss>[0]["customColors"];
+};
 
 type Api = {
   initials: McuConfigInternal;
