@@ -1,5 +1,6 @@
 import type { Preview } from "@storybook/react-vite";
 import { useEffect } from "react";
+import "./preview.css";
 import "../src/tailwind.css";
 
 const preview: Preview = {
@@ -32,9 +33,9 @@ const preview: Preview = {
 
       useEffect(() => {
         if (theme === "dark") {
-          document.body.style.backgroundColor = "black";
+          document.body.classList.add("sb-dark-theme");
         } else {
-          document.body.style.backgroundColor = "";
+          document.body.classList.remove("sb-dark-theme");
         }
       }, [theme]);
 
