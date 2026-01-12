@@ -785,6 +785,28 @@ export const St2: Story = {
 };
 
 //
+// Core Colors Override
+//
+
+export const St2CoreColors: Story = {
+  name: "[coreColors]",
+  args: {
+    source: "#FFDE3F",
+    coreColors: {
+      primary: "#FF0000",
+      secondary: "#00FF00",
+      tertiary: "#0000FF",
+    },
+    customColors: [],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
 
 export const St3: Story = {
   name: "tailwind light",
