@@ -800,6 +800,7 @@ export const St2CoreColors: Story = {
       neutralVariant: "#FF8C00",
       error: "#FF00FF",
     },
+    colorMatch: false, // Harmonized (default)
     customColors: [],
   },
   render: (args) => (
@@ -810,7 +811,7 @@ export const St2CoreColors: Story = {
 };
 
 export const St2CoreColorsContentBased: Story = {
-  name: "[coreColors contentBased]",
+  name: "[coreColors colorMatch]",
   args: {
     source: "#FFDE3F",
     coreColors: {
@@ -820,8 +821,8 @@ export const St2CoreColorsContentBased: Story = {
       neutral: "#8B8B7A",
       neutralVariant: "#CCA366",
       error: "#CC66CC",
-      contentBased: true,
     },
+    colorMatch: true, // Stay true to input colors
     customColors: [],
   },
   render: (args) => (

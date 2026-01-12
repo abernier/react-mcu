@@ -41,12 +41,6 @@ export type CoreColors = {
   neutralVariant?: string;
   /** Error color - used for error states */
   error?: string;
-  /**
-   * When true, stays true to input colors without harmonization (content-based palettes).
-   * When false (default), colors may be harmonized to work better together.
-   * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
-   */
-  contentBased?: boolean;
 };
 
 export type McuConfig = {
@@ -58,6 +52,13 @@ export type McuConfig = {
   contrast?: number;
   /** Core colors to override the default palette generation. Allows independent specification of primary, secondary, tertiary, and other key colors. */
   coreColors?: CoreColors;
+  /**
+   * Color match mode for core colors.
+   * When true, stays true to input colors without harmonization (content-based palettes).
+   * When false (default), colors are harmonized to work better together.
+   * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
+   */
+  colorMatch?: boolean;
   /** Array of custom colors to include in the generated palette */
   customColors?: HexCustomColor[];
 };
@@ -78,6 +79,7 @@ type SchemeName = (typeof schemeNames)[number];
 
 const DEFAULT_SCHEME: SchemeName = "tonalSpot";
 const DEFAULT_CONTRAST = 0;
+const DEFAULT_COLOR_MATCH = false;
 const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 
 // Variant enum values (matching @material/material-color-utilities internal Variant)
@@ -309,6 +311,7 @@ export function generateCss({
   source: hexSource,
   customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
   coreColors,
+  colorMatch = DEFAULT_COLOR_MATCH,
   scheme = DEFAULT_SCHEME,
   contrast = DEFAULT_CONTRAST,
 }: McuConfig) {
@@ -340,8 +343,8 @@ export function generateCss({
     };
 
     // Create a custom CorePalette with the specified colors
-    // Use contentFromColors if contentBased is true to stay true to input colors
-    const corePalette = coreColors.contentBased
+    // Use contentFromColors if colorMatch is true to stay true to input colors
+    const corePalette = colorMatch
       ? CorePalette.contentFromColors(coreColorsArgb)
       : CorePalette.fromColors(coreColorsArgb);
     const variant = schemeToVariant[scheme];
