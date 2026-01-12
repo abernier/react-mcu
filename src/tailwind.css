@@ -48,4 +48,29 @@
   --color-on-error-container: var(--mcu-on-error-container);
   --color-scrim: var(--mcu-scrim);
   --color-shadow: var(--mcu-shadow);
+
+  /*
+   * Custom colors
+   */
+
+  --color-myCustomColor1: var(--mcu-my-custom-color-1);
+  --color-on-myCustomColor1: var(--mcu-on-my-custom-color-1);
+  --color-myCustomColor1-container: var(--mcu-my-custom-color-1-container);
+  --color-on-myCustomColor1-container: var(
+    --mcu-on-my-custom-color-1-container
+  );
+
+  --color-myCustomColor2: var(--mcu-my-custom-color-2);
+  --color-on-myCustomColor2: var(--mcu-on-my-custom-color-2);
+  --color-myCustomColor2-container: var(--mcu-my-custom-color-2-container);
+  --color-on-myCustomColor2-container: var(
+    --mcu-on-my-custom-color-2-container
+  );
+
+  --color-myCustomColor3: var(--mcu-my-custom-color-3);
+  --color-on-myCustomColor3: var(--mcu-on-my-custom-color-3);
+  --color-myCustomColor3-container: var(--mcu-my-custom-color-3-container);
+  --color-on-myCustomColor3-container: var(
+    --mcu-on-my-custom-color-3-container
+  );
 }

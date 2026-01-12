@@ -14,9 +14,9 @@ const meta = {
   args: {
     source: "#FFDE3F",
     customColors: [
-      { name: "grass", hex: "#6C8A0C", blend: true },
-      { name: "candy1", hex: "#E126C6", blend: true },
-      { name: "candy2", hex: "#E126C6", blend: false }, // harmonize disabled
+      { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
+      { name: "myCustomColor2", hex: "#E126C6", blend: true },
+      { name: "myCustomColor3", hex: "#E126C6", blend: false },
     ],
   },
   argTypes: {
@@ -690,6 +690,16 @@ function Bar({
         </div>
       </div>
 
+      {
+        //
+        //  ██████ ██    ██ ███████ ████████  ██████  ███    ███      ██████  ██████  ██       ██████  ██████  ███████
+        // ██      ██    ██ ██         ██    ██    ██ ████  ████     ██      ██    ██ ██      ██    ██ ██   ██ ██
+        // ██      ██    ██ ███████    ██    ██    ██ ██ ████ ██     ██      ██    ██ ██      ██    ██ ██████  ███████
+        // ██      ██    ██      ██    ██    ██    ██ ██  ██  ██     ██      ██    ██ ██      ██    ██ ██   ██      ██
+        //  ██████  ██████  ███████    ██     ██████  ██      ██      ██████  ██████  ███████  ██████  ██   ██ ███████
+        //
+      }
+
       <div>
         <style>{`
           @scope {
@@ -854,6 +864,42 @@ export const St3: Story = {
             </div>
             <div className="bg-surface text-on-surface p-4 rounded border-2 border-outline-variant">
               outline-variant
+            </div>
+          </div>
+        </div>
+
+        {/* myCustomColor1 */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-myCustomColor1 text-on-myCustomColor1 p-4 rounded">
+              myCustomColor1
+            </div>
+            <div className="bg-myCustomColor1-container text-on-myCustomColor1-container p-4 rounded">
+              myCustomColor1-container
+            </div>
+          </div>
+        </div>
+
+        {/* myCustomColor2 */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-myCustomColor2 text-on-myCustomColor2 p-4 rounded">
+              myCustomColor2
+            </div>
+            <div className="bg-myCustomColor2-container text-on-myCustomColor2-container p-4 rounded">
+              myCustomColor2-container
+            </div>
+          </div>
+        </div>
+
+        {/* myCustomColor3 custom color */}
+        <div className="space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-myCustomColor3 text-on-myCustomColor3 p-4 rounded">
+              myCustomColor3
+            </div>
+            <div className="bg-myCustomColor3-container text-on-myCustomColor3-container p-4 rounded">
+              myCustomColor3-container
             </div>
           </div>
         </div>
