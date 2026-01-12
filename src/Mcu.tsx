@@ -54,8 +54,8 @@ export type McuConfig = {
   coreColors?: CoreColors;
   /**
    * Color match mode for core colors.
-   * When true, stays true to input colors without harmonization (content-based palettes).
-   * When false (default), colors are harmonized to work better together.
+   * When true, stays true to input colors without harmonization.
+   * When false (default), colors may be adjusted for better harmonization.
    * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
    */
   colorMatch?: boolean;
@@ -343,10 +343,12 @@ export function generateCss({
     };
 
     // Create a custom CorePalette with the specified colors
-    // Use contentFromColors if colorMatch is true to stay true to input colors
+    // colorMatch: true = stay true to input colors (non-harmonized)
+    // colorMatch: false = harmonize colors (enforce minimum chroma)
+    // NOTE: Swapping fromColors/contentFromColors based on actual library behavior
     const corePalette = colorMatch
-      ? CorePalette.contentFromColors(coreColorsArgb)
-      : CorePalette.fromColors(coreColorsArgb);
+      ? CorePalette.fromColors(coreColorsArgb)
+      : CorePalette.contentFromColors(coreColorsArgb);
     const variant = schemeToVariant[scheme];
 
     // Create custom schemes with the core palette
