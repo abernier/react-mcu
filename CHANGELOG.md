@@ -1,5 +1,24 @@
 # react-mcu
 
+## 1.0.7
+
+### Patch Changes
+
+- 3274bf6: core colors impl
+
+## 1.0.6
+
+### Patch Changes
+
+- 7f27aca: tw fix
+
+## 1.0.5
+
+### Patch Changes
+
+- eab6a2c: defaults
+- 27d5e6f: fix custom-colors impl
+
 ## 1.0.4
 
 ### Patch Changes

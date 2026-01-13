@@ -17,8 +17,9 @@ import { Mcu } from "react-mcu";
   scheme="vibrant"
   contrast={0.5}
   customColors={[
-    { name: "myCustomColor1", hex: "#FF5733", blend: true },
-    { name: "myCustomColor2", hex: "#3498DB", blend: false },
+    { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
+    { name: "myCustomColor2", hex: "#E126C6", blend: true },
+    { name: "myCustomColor3", hex: "#E126C6", blend: false },
   ]}
 >
   <p style={{
@@ -26,12 +27,16 @@ import { Mcu } from "react-mcu";
     color: "var(--mcu-on-surface)",
   }}>
     Hello, MCU <span style={{
-      backgroundColor: "var(--mcu-my-custom-color1)",
-      color: "var(--mcu-my-custom-color2)",
+      backgroundColor: "var(--mcu-my-custom-color-1)",
+      color: "var(--mcu-on-my-custom-color-1)",
     }}>colors<span>!
   </p>
 </Mcu>
 ```
+
+> [!NOTE]
+>
+> CSS varnames are always kebab-cased, `myCustomColor1` → `--mcu-my-custom-color-1`
 
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
@@ -54,13 +59,18 @@ return (
 Compatible with Tailwind through
 [theme variables](https://tailwindcss.com/docs/theme):
 
-https://github.com/abernier/react-mcu/blob/fdff00861e77067678076a97193a1a6f53eb3557/src/tailwind.css#L3-L51
+https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L3-L76
 
 Or simply:
 
 ```css
 @import "react-mcu/tailwind.css";
 ```
+
+> [!IMPORTANT]
+>
+> Do not forget to manually add your custom colors, as in:
+> https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L52-L75
 
 # Dev
 
