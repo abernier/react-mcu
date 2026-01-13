@@ -2,7 +2,17 @@
 
 This GitHub Action workflow automatically captures a screenshot from the Material Theme Builder website for comparison purposes.
 
-## Usage
+## Automatic Trigger
+
+The workflow runs automatically when:
+
+- A pull request is opened or updated targeting the `main` branch
+- Changes are made to files in the `src/` directory
+- Changes are made to the workflow file itself
+
+The workflow uses the default source color `769CDF` (matching the Default story in Storybook).
+
+## Manual Trigger
 
 1. **Go to the Actions tab** in the GitHub repository
 2. **Select "Capture Material Theme Builder Screenshot"** from the workflows list

@@ -1,6 +1,12 @@
 name: Capture Material Theme Builder Screenshot
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - ".github/workflows/capture-material-screenshot.yml"
   workflow_dispatch:
     inputs:
       source_color:
@@ -13,6 +19,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set source color
+        id: color
+        run: |
+          # Use input color if provided (workflow_dispatch), otherwise use default
+          SOURCE_COLOR="${{ github.event.inputs.source_color }}"
+          if [ -z "$SOURCE_COLOR" ]; then
+            SOURCE_COLOR="769CDF"
+          fi
+          echo "value=$SOURCE_COLOR" >> $GITHUB_OUTPUT
+          echo "Using source color: $SOURCE_COLOR"
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -77,7 +94,7 @@ jobs:
                 
                 // Clear and type the color value
                 await sourceColorInput.fill('');
-                await sourceColorInput.type('${{ github.event.inputs.source_color }}');
+                await sourceColorInput.type('${{ steps.color.outputs.value }}');
                 await page.waitForTimeout(1000);
                 
                 // Press Enter to confirm
@@ -106,7 +123,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add material-theme-builder-screenshot.png
-          git commit -m "Add Material Theme Builder screenshot for comparison (source: #${{ github.event.inputs.source_color }})" || echo "No changes to commit"
+          git commit -m "Add Material Theme Builder screenshot for comparison (source: #${{ steps.color.outputs.value }})" || echo "No changes to commit"
           git push
 
       - name: Comment on PR
@@ -123,6 +140,6 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: prNumber,
-                body: '✅ Material Theme Builder screenshot has been captured and committed to the branch!\n\nSource color: #${{ github.event.inputs.source_color }}\n\nThe screenshot is now available in `material-theme-builder-screenshot.png`.'
+                body: '✅ Material Theme Builder screenshot has been captured and committed to the branch!\n\nSource color: #${{ steps.color.outputs.value }}\n\nThe screenshot is now available in `material-theme-builder-screenshot.png`.'
               });
             }
