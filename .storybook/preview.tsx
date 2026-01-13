@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import "./preview.css";
 import "../src/tailwind.css";
 
+import { withThemeByClassName } from "@storybook/addon-themes";
+
 const preview: Preview = {
   parameters: {
     controls: {
@@ -11,40 +13,16 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-  },
-  globalTypes: {
-    theme: {
-      description: "Global theme for components",
-      defaultValue: "light",
-      toolbar: {
-        title: "Theme",
-        icon: "circlehollow",
-        items: [
-          { value: "light", icon: "sun", title: "Light" },
-          { value: "dark", icon: "moon", title: "Dark" },
-        ],
-        dynamicTitle: true,
-      },
-    },
+    tags: ["autodocs"],
   },
   decorators: [
-    (Story, context) => {
-      const theme = context.globals.theme || "light";
-
-      useEffect(() => {
-        document.body.classList.toggle("sb-dark-theme", theme === "dark");
-
-        return () => {
-          document.body.classList.remove("sb-dark-theme");
-        };
-      }, [theme]);
-
-      return (
-        <div className={theme === "dark" ? "dark" : ""}>
-          <Story />
-        </div>
-      );
-    },
+    withThemeByClassName({
+      themes: {
+        light: "light",
+        dark: "dark",
+      },
+      defaultTheme: "light",
+    }),
   ],
 };
 

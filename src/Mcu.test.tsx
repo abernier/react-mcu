@@ -1,8 +1,12 @@
-import { render } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { render, cleanup } from "@testing-library/react";
+import { describe, it, expect, afterEach } from "vitest";
 import { Mcu } from "./Mcu.js";
 
 describe("Mcu", () => {
+  afterEach(() => {
+    cleanup();
+  });
+
   it("should inject style tag with --mcu-* CSS variables", () => {
     render(
       <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>

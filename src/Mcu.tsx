@@ -1,5 +1,6 @@
 import {
   argbFromHex,
+  CorePalette,
   type CustomColor,
   customColor,
   DynamicScheme,
@@ -29,6 +30,25 @@ export type McuConfig = {
   scheme?: SchemeName;
   /** Contrast level from -1.0 (reduced) to 1.0 (increased). Default: 0 (standard) */
   contrast?: number;
+  /** Primary color - the main brand color. Overrides the default palette generation. */
+  primary?: string;
+  /** Secondary color - accent color. Overrides the default palette generation. */
+  secondary?: string;
+  /** Tertiary color - additional accent color. Overrides the default palette generation. */
+  tertiary?: string;
+  /** Neutral color - used for surfaces. Overrides the default palette generation. */
+  neutral?: string;
+  /** Neutral variant color - used for surfaces with slight tint. Overrides the default palette generation. */
+  neutralVariant?: string;
+  /** Error color - used for error states. Overrides the default palette generation. */
+  error?: string;
+  /**
+   * Color match mode for core colors.
+   * When true, stays true to input colors without harmonization.
+   * When false (default), colors may be adjusted for better harmonization.
+   * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
+   */
+  colorMatch?: boolean;
   /** Array of custom colors to include in the generated palette */
   customColors?: HexCustomColor[];
 };
@@ -47,9 +67,34 @@ export const schemeNames = Object.keys(
 ) as (keyof typeof schemesMap)[];
 type SchemeName = (typeof schemeNames)[number];
 
-const DEFAULT_SCHEME: SchemeName = "tonalSpot";
-const DEFAULT_CONTRAST = 0;
-const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
+export const DEFAULT_SCHEME: SchemeName = "tonalSpot";
+export const DEFAULT_CONTRAST = 0;
+export const DEFAULT_COLOR_MATCH = false;
+export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
+
+// Variant enum values (matching @material/material-color-utilities internal Variant)
+const Variant = {
+  MONOCHROME: 0,
+  NEUTRAL: 1,
+  TONAL_SPOT: 2,
+  VIBRANT: 3,
+  EXPRESSIVE: 4,
+  FIDELITY: 5,
+  CONTENT: 6,
+  RAINBOW: 7,
+  FRUIT_SALAD: 8,
+} as const;
+
+// Map scheme names to Variant values
+const schemeToVariant: Record<SchemeName, number> = {
+  tonalSpot: Variant.TONAL_SPOT,
+  monochrome: Variant.MONOCHROME,
+  neutral: Variant.NEUTRAL,
+  vibrant: Variant.VIBRANT,
+  expressive: Variant.EXPRESSIVE,
+  fidelity: Variant.FIDELITY,
+  content: Variant.CONTENT,
+};
 
 const mcuStyleId = "mcu-styles";
 
@@ -57,6 +102,13 @@ export function Mcu({
   source,
   scheme = DEFAULT_SCHEME,
   contrast = DEFAULT_CONTRAST,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+  error,
+  colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
@@ -65,9 +117,28 @@ export function Mcu({
       source,
       scheme,
       contrast,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+      error,
+      colorMatch,
       customColors,
     }),
-    [contrast, customColors, scheme, source],
+    [
+      contrast,
+      customColors,
+      scheme,
+      source,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+      error,
+      colorMatch,
+    ],
   );
 
   const { css } = useMemo(() => generateCss(config), [config]);
@@ -252,18 +323,72 @@ const toCssVars = (mergedColors: Record<string, number>) => {
 
 export function generateCss({
   source: hexSource,
-  customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
   scheme = DEFAULT_SCHEME,
   contrast = DEFAULT_CONTRAST,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+  error,
+  colorMatch = DEFAULT_COLOR_MATCH,
+  customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
 }: McuConfig) {
-  console.log("MCU generateCss");
+  const hasCoreColors =
+    primary ?? secondary ?? tertiary ?? neutral ?? neutralVariant ?? error;
+  console.log("MCU generateCss", { hasCoreColors });
 
   const sourceArgb = argbFromHex(hexSource);
-  const hct = Hct.fromInt(sourceArgb);
 
-  const SchemeClass = schemesMap[scheme];
-  const lightScheme = new SchemeClass(hct, false, contrast);
-  const darkScheme = new SchemeClass(hct, true, contrast);
+  // Helper to create both light and dark schemes
+  const createSchemes = (
+    baseConfig: Omit<ConstructorParameters<typeof DynamicScheme>[0], "isDark">,
+  ): [DynamicScheme, DynamicScheme] => [
+    new DynamicScheme({ ...baseConfig, isDark: false }),
+    new DynamicScheme({ ...baseConfig, isDark: true }),
+  ];
+
+  let lightScheme: DynamicScheme;
+  let darkScheme: DynamicScheme;
+
+  if (hasCoreColors) {
+    // Convert hex core colors to ARGB
+    const coreColorsArgb = {
+      primary: primary ? argbFromHex(primary) : sourceArgb,
+      secondary: secondary ? argbFromHex(secondary) : undefined,
+      tertiary: tertiary ? argbFromHex(tertiary) : undefined,
+      neutral: neutral ? argbFromHex(neutral) : undefined,
+      neutralVariant: neutralVariant ? argbFromHex(neutralVariant) : undefined,
+      error: error ? argbFromHex(error) : undefined,
+    };
+
+    // Create a custom CorePalette with the specified colors
+    // colorMatch: true = stay true to input colors (non-harmonized)
+    // colorMatch: false = harmonize colors (enforce minimum chroma)
+    const corePalette = colorMatch
+      ? CorePalette.fromColors(coreColorsArgb)
+      : CorePalette.contentFromColors(coreColorsArgb);
+
+    const variant = schemeToVariant[scheme];
+
+    [lightScheme, darkScheme] = createSchemes({
+      sourceColorArgb: sourceArgb,
+      variant,
+      contrastLevel: contrast,
+      primaryPalette: corePalette.a1,
+      secondaryPalette: corePalette.a2,
+      tertiaryPalette: corePalette.a3,
+      neutralPalette: corePalette.n1,
+      neutralVariantPalette: corePalette.n2,
+    });
+  } else {
+    // Use default scheme generation
+    const SchemeClass = schemesMap[scheme];
+    const hct = Hct.fromInt(sourceArgb);
+
+    lightScheme = new SchemeClass(hct, false, contrast);
+    darkScheme = new SchemeClass(hct, true, contrast);
+  }
 
   // Prepare custom colors (keep ARGB so generateCssVars can use them)
   const customColors = hexCustomColors.map(({ hex, ...rest }) => ({
@@ -287,9 +412,9 @@ export function generateCss({
 
   return {
     css: `
-    :root { ${lightVars} }
-    .dark { ${darkVars} }
-    `,
+:root { ${lightVars} }
+.dark { ${darkVars} }
+`,
     mergedColorsLight,
     mergedColorsDark,
   };
