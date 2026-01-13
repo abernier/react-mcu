@@ -23,7 +23,6 @@ const meta = {
       },
     },
   },
-  tags: ["autodocs"],
   // args: {
   //   source: "#769CDF",
   //   scheme: DEFAULT_SCHEME,
