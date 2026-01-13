@@ -356,12 +356,11 @@ export function generateCss({
     };
 
     // Create a custom CorePalette with the specified colors
-    // colorMatch: true = stay true to input colors (non-harmonized)
-    // colorMatch: false = harmonize colors (enforce minimum chroma)
-    // NOTE: Swapping fromColors/contentFromColors based on actual library behavior
+    // colorMatch: true = stay true to input colors (use contentFromColors - no harmonization)
+    // colorMatch: false = harmonize colors (use fromColors - enforce minimum chroma)
     const corePalette = colorMatch
-      ? CorePalette.fromColors(coreColorsArgb)
-      : CorePalette.contentFromColors(coreColorsArgb);
+      ? CorePalette.contentFromColors(coreColorsArgb)
+      : CorePalette.fromColors(coreColorsArgb);
     const variant = schemeToVariant[scheme];
 
     // Create custom schemes with the core palette
