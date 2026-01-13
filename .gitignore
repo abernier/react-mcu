@@ -4,3 +4,7 @@ dist
 storybook-static
 
 src/stories
+
+# Temporary files
+extract-colors.mjs
+generated-colors.txt
