@@ -8,30 +8,11 @@ import React, {
   useState,
 } from "react";
 import { createRequiredContext } from "./lib/createRequiredContext";
-import {
-  generateCss,
-  type McuConfig,
-  type TokenName,
-} from "./Mcu";
-
-// Internal type - more permissive version of McuConfig for internal use
-type McuConfigInternal = {
-  source?: string;
-  scheme?: Parameters<typeof generateCss>[0]["scheme"];
-  contrast?: number;
-  primary?: string;
-  secondary?: string;
-  tertiary?: string;
-  neutral?: string;
-  neutralVariant?: string;
-  error?: string;
-  colorMatch?: boolean;
-  customColors?: Parameters<typeof generateCss>[0]["customColors"];
-};
+import { generateCss, type McuConfig, type TokenName } from "./Mcu";
 
 type Api = {
-  initials: McuConfigInternal;
-  setMcuConfig: (config: McuConfigInternal) => void;
+  initials: McuConfig;
+  setMcuConfig: (config: McuConfig) => void;
   getMcuColor: (colorName: TokenName, theme?: string) => string;
 };
 
@@ -41,31 +22,17 @@ export const McuProvider = ({
   source: initialSource,
   scheme: initialScheme,
   contrast: initialContrast,
-  primary: initialPrimary,
-  secondary: initialSecondary,
-  tertiary: initialTertiary,
-  neutral: initialNeutral,
-  neutralVariant: initialNeutralVariant,
-  error: initialError,
-  colorMatch: initialColorMatch,
   customColors: initialCustomColors,
   styleId,
   children,
-}: McuConfigInternal & {
+}: McuConfig & {
   styleId: string;
   children?: React.ReactNode;
 }) => {
-  const [initials] = useState<McuConfigInternal>(() => ({
+  const [initials] = useState<McuConfig>(() => ({
     source: initialSource,
     scheme: initialScheme,
     contrast: initialContrast,
-    primary: initialPrimary,
-    secondary: initialSecondary,
-    tertiary: initialTertiary,
-    neutral: initialNeutral,
-    neutralVariant: initialNeutralVariant,
-    error: initialError,
-    colorMatch: initialColorMatch,
     customColors: initialCustomColors,
   }));
   // console.log("McuProvider initials", initials);
