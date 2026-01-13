@@ -9,4 +9,4 @@
 # Repository administrators should review and approve this configuration.
 
 allowlist:
-  - '*'
+  - "*"
