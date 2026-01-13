@@ -340,6 +340,14 @@ export function generateCss({
 
   const sourceArgb = argbFromHex(hexSource);
 
+  // Helper to create both light and dark schemes
+  const createSchemes = (
+    baseConfig: Omit<ConstructorParameters<typeof DynamicScheme>[0], "isDark">,
+  ): [DynamicScheme, DynamicScheme] => [
+    new DynamicScheme({ ...baseConfig, isDark: false }),
+    new DynamicScheme({ ...baseConfig, isDark: true }),
+  ];
+
   let lightScheme: DynamicScheme;
   let darkScheme: DynamicScheme;
 
@@ -357,30 +365,16 @@ export function generateCss({
     // Create a custom CorePalette with the specified colors
     // colorMatch: true = stay true to input colors (non-harmonized)
     // colorMatch: false = harmonize colors (enforce minimum chroma)
-    // NOTE: Swapping fromColors/contentFromColors based on actual library behavior
     const corePalette = colorMatch
       ? CorePalette.fromColors(coreColorsArgb)
       : CorePalette.contentFromColors(coreColorsArgb);
+
     const variant = schemeToVariant[scheme];
 
-    // Create custom schemes with the core palette
-    lightScheme = new DynamicScheme({
+    [lightScheme, darkScheme] = createSchemes({
       sourceColorArgb: sourceArgb,
-      variant: variant,
+      variant,
       contrastLevel: contrast,
-      isDark: false,
-      primaryPalette: corePalette.a1,
-      secondaryPalette: corePalette.a2,
-      tertiaryPalette: corePalette.a3,
-      neutralPalette: corePalette.n1,
-      neutralVariantPalette: corePalette.n2,
-    });
-
-    darkScheme = new DynamicScheme({
-      sourceColorArgb: sourceArgb,
-      variant: variant,
-      contrastLevel: contrast,
-      isDark: true,
       primaryPalette: corePalette.a1,
       secondaryPalette: corePalette.a2,
       tertiaryPalette: corePalette.a3,
