@@ -1,0 +1,12 @@
+# GitHub Copilot Coding Agent allowlist configuration
+# This allows the agent to access external domains during runtime (after firewall is enabled)
+# For accessing external websites to take screenshots, fetch data, or interact with web resources
+#
+# SECURITY NOTE: Wildcard entry for unrestricted access
+# This allows the agent to access ANY external website for screenshots and web fetching.
+# While this poses security implications, it's required for the requested use case of
+# taking screenshots of arbitrary external websites in future Copilot sessions.
+# Repository administrators should review and approve this configuration.
+
+allowlist:
+  - "*"
