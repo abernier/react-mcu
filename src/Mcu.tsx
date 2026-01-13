@@ -323,7 +323,8 @@ const toCssVars = (mergedColors: Record<string, number>) => {
 
 export function generateCss({
   source: hexSource,
-  customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
+  scheme = DEFAULT_SCHEME,
+  contrast = DEFAULT_CONTRAST,
   primary,
   secondary,
   tertiary,
@@ -331,15 +332,13 @@ export function generateCss({
   neutralVariant,
   error,
   colorMatch = DEFAULT_COLOR_MATCH,
-  scheme = DEFAULT_SCHEME,
-  contrast = DEFAULT_CONTRAST,
+  customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
 }: McuConfig) {
   const hasCoreColors =
-    primary || secondary || tertiary || neutral || neutralVariant || error;
+    primary ?? secondary ?? tertiary ?? neutral ?? neutralVariant ?? error;
   console.log("MCU generateCss", { hasCoreColors });
 
   const sourceArgb = argbFromHex(hexSource);
-  const hct = Hct.fromInt(sourceArgb);
 
   let lightScheme: DynamicScheme;
   let darkScheme: DynamicScheme;
@@ -391,6 +390,8 @@ export function generateCss({
   } else {
     // Use default scheme generation
     const SchemeClass = schemesMap[scheme];
+    const hct = Hct.fromInt(sourceArgb);
+
     lightScheme = new SchemeClass(hct, false, contrast);
     darkScheme = new SchemeClass(hct, true, contrast);
   }
@@ -417,9 +418,9 @@ export function generateCss({
 
   return {
     css: `
-    :root { ${lightVars} }
-    .dark { ${darkVars} }
-    `,
+:root { ${lightVars} }
+.dark { ${darkVars} }
+`,
     mergedColorsLight,
     mergedColorsDark,
   };
