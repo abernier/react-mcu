@@ -1,9 +1,10 @@
 # GitHub Copilot Coding Agent allowlist configuration
-# This allows the agent to access specific external domains during runtime (after firewall is enabled)
-# For accessing external websites to take screenshots or fetch data
+# This allows the agent to access external domains during runtime (after firewall is enabled)
+# For accessing external websites to take screenshots, fetch data, or interact with web resources
+#
+# The allowlist starts with specific, commonly-used domains and ends with a wildcard
+# to enable unrestricted internet access for maximum flexibility in future sessions.
 
-# Allow all external sites (wildcard approach)
-# Note: This may need to be combined with repository settings configuration
 allowlist:
   # Material Design and related resources
   - material-foundation.github.io
@@ -32,5 +33,9 @@ allowlist:
   - developer.mozilla.org
   - stackoverflow.com
   
-  # Allow common web protocols
-  - '*'  # This allows all domains - may require admin approval
+  # SECURITY NOTE: Wildcard entry for unrestricted access
+  # This allows the agent to access ANY external website for screenshots and web fetching.
+  # While this poses security implications, it's required for the requested use case of
+  # taking screenshots of arbitrary external websites in future Copilot sessions.
+  # Repository administrators should review and approve this configuration.
+  - '*'
