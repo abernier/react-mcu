@@ -13,6 +13,14 @@ const meta = {
   tags: ["autodocs"],
   args: {
     source: "#FFDE3F",
+    // Core colors
+    colorMatch: false,
+    primary: "#63A002",
+    secondary: "#85976E",
+    tertiary: "#4D9D98",
+    error: "#FF5449",
+    neutral: "#91918B",
+    neutralVariant: "#8F9285",
     customColors: [
       { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
       { name: "myCustomColor2", hex: "#E126C6", blend: true },
@@ -800,50 +808,6 @@ export const St2: Story = {
     theme: "dark",
   },
   render: St1.render,
-};
-
-//
-// Core Colors Override
-//
-
-export const St2CoreColors: Story = {
-  name: "[coreColors]",
-  args: {
-    source: "#FFDE3F",
-    primary: "#FF0000",
-    secondary: "#00FF00",
-    tertiary: "#0000FF",
-    neutral: "#8B4513",
-    neutralVariant: "#FF8C00",
-    error: "#FF00FF",
-    colorMatch: false, // Harmonized (default)
-    customColors: [],
-  },
-  render: (args) => (
-    <Mcu {...args}>
-      <Bar customColors={args.customColors} />
-    </Mcu>
-  ),
-};
-
-export const St2CoreColorsContentBased: Story = {
-  name: "[coreColors colorMatch]",
-  args: {
-    source: "#FFDE3F",
-    primary: "#CC6666", // Desaturated red - chroma will be preserved
-    secondary: "#66CC66", // Desaturated green - chroma will be preserved
-    tertiary: "#6666CC", // Desaturated blue - chroma will be preserved
-    neutral: "#8B8B7A",
-    neutralVariant: "#CCA366",
-    error: "#CC66CC",
-    colorMatch: true, // Stay true to input colors
-    customColors: [],
-  },
-  render: (args) => (
-    <Mcu {...args}>
-      <Bar customColors={args.customColors} />
-    </Mcu>
-  ),
 };
 
 //
