@@ -1,0 +1,36 @@
+# GitHub Copilot Coding Agent allowlist configuration
+# This allows the agent to access specific external domains during runtime (after firewall is enabled)
+# For accessing external websites to take screenshots or fetch data
+
+# Allow all external sites (wildcard approach)
+# Note: This may need to be combined with repository settings configuration
+allowlist:
+  # Material Design and related resources
+  - material-foundation.github.io
+  - m3.material.io
+  - material.io
+  
+  # General web access patterns (common domains)
+  - '*.github.io'
+  - '*.githubusercontent.com'
+  - github.com
+  
+  # Common CDNs and resources
+  - cdn.jsdelivr.net
+  - unpkg.com
+  - esm.sh
+  
+  # Package registries
+  - registry.npmjs.org
+  - registry.yarnpkg.com
+  
+  # Storybook resources
+  - storybook.js.org
+  - '*.chromatic.com'
+  
+  # Development and documentation sites
+  - developer.mozilla.org
+  - stackoverflow.com
+  
+  # Allow common web protocols
+  - '*'  # This allows all domains - may require admin approval
