@@ -1,32 +1,46 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Mcu, schemeNames } from "./Mcu";
+import {
+  Mcu,
+  schemeNames,
+  DEFAULT_SCHEME,
+  DEFAULT_CONTRAST,
+  DEFAULT_COLOR_MATCH,
+} from "./Mcu";
 import type { ComponentProps } from "react";
 import { kebabCase, upperFirst } from "lodash-es";
+import { allModes } from "../.storybook/modes";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   component: Mcu,
   parameters: {
     // layout: "centered",
+    chromatic: {
+      modes: {
+        light: allModes["light"],
+        dark: allModes["dark"],
+      },
+    },
   },
   tags: ["autodocs"],
-  args: {
-    source: "#FFDE3F",
-    // Core colors
-    colorMatch: false,
-    primary: "#63A002",
-    secondary: "#85976E",
-    tertiary: "#4D9D98",
-    error: "#FF5449",
-    neutral: "#91918B",
-    neutralVariant: "#8F9285",
-    customColors: [
-      { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
-      { name: "myCustomColor2", hex: "#E126C6", blend: true },
-      { name: "myCustomColor3", hex: "#E126C6", blend: false },
-    ],
-  },
+  // args: {
+  //   source: "#769CDF",
+  //   scheme: DEFAULT_SCHEME,
+  //   contrast: DEFAULT_CONTRAST,
+  //   colorMatch: DEFAULT_COLOR_MATCH,
+  //   primary: "#63A002",
+  //   secondary: "#85976E",
+  //   tertiary: "#4D9D98",
+  //   error: "#FF5449",
+  //   neutral: "#91918B",
+  //   neutralVariant: "#8F9285",
+  //   customColors: [
+  //     { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
+  //     { name: "myCustomColor2", hex: "#E126C6", blend: true },
+  //     { name: "myCustomColor3", hex: "#E126C6", blend: false },
+  //   ],
+  // },
   argTypes: {
     source: {
       control: "color",
@@ -47,14 +61,17 @@ const meta = {
     tertiary: {
       control: "color",
     },
+    error: {
+      control: "color",
+    },
     neutral: {
       control: "color",
     },
     neutralVariant: {
       control: "color",
     },
-    error: {
-      control: "color",
+    children: {
+      table: { disable: true }, // hide
     },
   },
 } satisfies Meta<typeof Mcu>;
@@ -794,7 +811,10 @@ function Bar({
 }
 
 export const St1: Story = {
-  name: "light",
+  name: "Default",
+  args: {
+    source: "#769CDF",
+  },
   render: (args) => (
     <Mcu {...args}>
       <Bar customColors={args.customColors} />
@@ -802,18 +822,43 @@ export const St1: Story = {
   ),
 };
 
-export const St2: Story = {
-  name: "dark",
-  globals: {
-    theme: "dark",
+//
+
+export const CustomColorsSt: Story = {
+  name: "Custom colors",
+  args: {
+    source: "#769CDF",
+    customColors: [
+      { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
+      { name: "myCustomColor2", hex: "#E126C6", blend: true },
+      { name: "myCustomColor3", hex: "#E126C6", blend: false },
+    ],
   },
   render: St1.render,
 };
 
 //
 
-export const St3: Story = {
-  name: "tailwind light",
+export const ExtendedColorsSt: Story = {
+  name: "Extended colors",
+  args: {
+    source: "#769CDF",
+    colorMatch: DEFAULT_COLOR_MATCH,
+    primary: "#63A002",
+    secondary: "#85976E",
+    tertiary: "#4D9D98",
+    error: "#FF5449",
+    neutral: "#91918B",
+    neutralVariant: "#8F9285",
+  },
+  render: St1.render,
+};
+
+//
+
+export const TailwindSt: Story = {
+  name: "Tailwind",
+  args: CustomColorsSt.args,
   render: (args) => (
     <Mcu {...args}>
       <div className="p-6 space-y-6">
@@ -932,12 +977,4 @@ export const St3: Story = {
       </div>
     </Mcu>
   ),
-};
-
-export const St4: Story = {
-  name: "tailwind dark",
-  globals: {
-    theme: "dark",
-  },
-  render: St3.render,
 };

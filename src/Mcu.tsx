@@ -67,10 +67,10 @@ export const schemeNames = Object.keys(
 ) as (keyof typeof schemesMap)[];
 type SchemeName = (typeof schemeNames)[number];
 
-const DEFAULT_SCHEME: SchemeName = "tonalSpot";
-const DEFAULT_CONTRAST = 0;
-const DEFAULT_COLOR_MATCH = false;
-const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
+export const DEFAULT_SCHEME: SchemeName = "tonalSpot";
+export const DEFAULT_CONTRAST = 0;
+export const DEFAULT_COLOR_MATCH = false;
+export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 
 // Variant enum values (matching @material/material-color-utilities internal Variant)
 const Variant = {
