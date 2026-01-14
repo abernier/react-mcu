@@ -88,8 +88,7 @@ Or simply:
 
 Pre-requisites:
 
-- You should use `tailwind.cssVariables` in your
-  [`components.json`](https://ui.shadcn.com/docs/theming#css-variables)
+- You should use [`tailwind.cssVariables`](https://ui.shadcn.com/docs/theming#css-variables)
 
 Simply override
 [shadcn's CSS variables](https://ui.shadcn.com/docs/theming#list-of-variables):
