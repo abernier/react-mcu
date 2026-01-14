@@ -91,7 +91,7 @@ Pre-requisites:
 
 - You should use [`tailwind.cssVariables`](https://ui.shadcn.com/docs/theming#css-variables)
 
-Simply override
+Simply override/remap
 [shadcn's CSS variables](https://ui.shadcn.com/docs/theming#list-of-variables):
 
 ```css
