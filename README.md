@@ -2,8 +2,9 @@
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
 [![](https://img.shields.io/badge/storybook-171c23.svg?logo=storybook)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
 
-It injects `--mcu-*` CSS variables into the page, based on
-[m3 color system](https://m3.material.io/styles/color/system/overview).
+[Material Design colors](https://m3.material.io/styles/color/system/overview) for React.
+
+It injects `--mcu-*` CSS variables into the page.
 
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
