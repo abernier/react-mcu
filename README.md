@@ -82,6 +82,8 @@ Or simply:
 Pre-requisites:
 
 - [Tailwind setup](#tailwind)
+- You should use `tailwind.cssVariables` in your
+  [shadcn `components.json`](https://ui.shadcn.com/docs/theming#css-variables)
 
 Simply override
 [Shadcn's CSS variables](https://ui.shadcn.com/docs/theming#list-of-variables)
@@ -133,10 +135,8 @@ with MCU ones:
 
 > [!IMPORTANT]
 >
-> 1. You should use `tailwind.cssVariables` in your
->    [shadcn `components.json`](https://ui.shadcn.com/docs/theming#css-variables)
-> 2. Make sure `:root, .dark { ... }` comes AFTER `.root { ... } .dark { ... }`
->    to take precedence.
+> Make sure `:root, .dark { ... }` comes AFTER `.root { ... } .dark { ... }` to
+> take precedence.
 
 # Dev
 
