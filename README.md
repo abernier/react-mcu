@@ -40,7 +40,7 @@ import { Mcu } from "react-mcu";
 </Mcu>
 ```
 
-> [!HINT]
+> [!TIP]
 >
 > Typically wrapping `{children}` in a
 > [layout](https://nextjs.org/docs/app/getting-started/layouts-and-pages#creating-a-layout).
@@ -50,7 +50,9 @@ import { Mcu } from "react-mcu";
 > CSS varnames are always kebab-cased, `myCustomColor1` →
 > `--mcu-my-custom-color-1`
 
-A `useMcu` hook is also provided:
+## `useMcu`
+
+A hook is also provided:
 
 ```tsx
 import { useMcu } from "react-mcu";
