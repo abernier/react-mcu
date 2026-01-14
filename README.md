@@ -40,6 +40,11 @@ import { Mcu } from "react-mcu";
 </Mcu>
 ```
 
+> [!HINT]
+>
+> Typically wrapping `{children}` in a
+> [layout](https://nextjs.org/docs/app/getting-started/layouts-and-pages#creating-a-layout).
+
 > [!NOTE]
 >
 > CSS varnames are always kebab-cased, `myCustomColor1` →
@@ -77,7 +82,7 @@ Or simply:
 > Do not forget to manually add your custom colors, as in:
 > https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L52-L75
 
-## Shadcn
+## shadcn
 
 Pre-requisites:
 
