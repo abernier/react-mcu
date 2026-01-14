@@ -88,13 +88,11 @@ Or simply:
 
 Pre-requisites:
 
-- [Tailwind setup](#tailwind)
 - You should use `tailwind.cssVariables` in your
   [`components.json`](https://ui.shadcn.com/docs/theming#css-variables)
 
 Simply override
-[shadcn's CSS variables](https://ui.shadcn.com/docs/theming#list-of-variables)
-with MCU ones:
+[shadcn's CSS variables](https://ui.shadcn.com/docs/theming#list-of-variables):
 
 ```css
 :root {
