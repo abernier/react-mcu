@@ -8,9 +8,10 @@ It injects `--mcu-*` CSS variables into the page, based on
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
 M3 reference:
-|builder|roles|
-|-|-|
-|[<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 08 58 40@2x" src="https://github.com/user-attachments/assets/e4b47c00-716f-4b08-b393-de306d5ce302" />](https://material-foundation.github.io/material-theme-builder/)|[<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 09 01 23@2x" src="https://github.com/user-attachments/assets/826e502d-e173-43c4-807a-53d0ba075a88" />](https://m3.material.io/styles/color/roles)|
+
+| builder                                                                                                                                                                                                                             | roles                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 08 58 40@2x" src="https://github.com/user-attachments/assets/e4b47c00-716f-4b08-b393-de306d5ce302" />](https://material-foundation.github.io/material-theme-builder/) | [<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 09 01 23@2x" src="https://github.com/user-attachments/assets/826e502d-e173-43c4-807a-53d0ba075a88" />](https://m3.material.io/styles/color/roles) |
 
 # Usage
 
@@ -41,7 +42,8 @@ import { Mcu } from "react-mcu";
 
 > [!NOTE]
 >
-> CSS varnames are always kebab-cased, `myCustomColor1` → `--mcu-my-custom-color-1`
+> CSS varnames are always kebab-cased, `myCustomColor1` →
+> `--mcu-my-custom-color-1`
 
 A `useMcu` hook is also provided:
 
@@ -74,6 +76,75 @@ Or simply:
 >
 > Do not forget to manually add your custom colors, as in:
 > https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L52-L75
+
+## Shadcn
+
+Pre-requisites:
+
+- [Tailwind setup](#tailwind)
+- You should use `tailwind.cssVariables` in your
+  [`components.json`](https://ui.shadcn.com/docs/theming#css-variables)
+
+Simply override
+[shadcn's CSS variables](https://ui.shadcn.com/docs/theming#list-of-variables)
+with MCU ones:
+
+```css
+:root {
+  /* ... */
+}
+.dark {
+  /* ... */
+}
+
+:root,
+.dark {
+  --background: var(--mcu-surface);
+  --foreground: var(--mcu-on-surface);
+  --card: var(--mcu-surface-container-low);
+  --card-foreground: var(--mcu-on-surface);
+  --popover: var(--mcu-surface-container-high);
+  --popover-foreground: var(--mcu-on-surface);
+  --primary: var(--mcu-primary);
+  --primary-foreground: var(--mcu-on-primary);
+  --secondary: var(--mcu-secondary-container);
+  --secondary-foreground: var(--mcu-on-secondary-container);
+  --muted: var(--mcu-surface-container-highest);
+  --muted-foreground: var(--mcu-on-surface-variant);
+  --accent: var(--mcu-secondary-container);
+  --accent-foreground: var(--mcu-on-secondary-container);
+  --destructive: var(--mcu-error);
+  --border: var(--mcu-outline-variant);
+  --input: var(--mcu-outline);
+  --ring: var(--mcu-primary);
+  --chart-1: var(--mcu-primary-fixed);
+  --chart-2: var(--mcu-secondary-fixed);
+  --chart-3: var(--mcu-tertiary-fixed);
+  --chart-4: var(--mcu-primary-fixed-dim);
+  --chart-5: var(--mcu-secondary-fixed-dim);
+  --sidebar: var(--mcu-surface-container-low);
+  --sidebar-foreground: var(--mcu-on-surface);
+  --sidebar-primary: var(--mcu-primary);
+  --sidebar-primary-foreground: var(--mcu-on-primary);
+  --sidebar-accent: var(--mcu-secondary-container);
+  --sidebar-accent-foreground: var(--mcu-on-secondary-container);
+  --sidebar-border: var(--mcu-outline-variant);
+  --sidebar-ring: var(--mcu-primary);
+}
+```
+
+<details>
+  <summary>mapping details</summary>
+  see:
+  
+    - https://chatgpt.com/share/6899f20a-422c-8011-a072-62fb649589a0
+    - https://gemini.google.com/share/51e072b6f1d2
+</details>
+
+> [!IMPORTANT]
+>
+> Make sure `:root, .dark { ... }` comes AFTER `.root { ... } .dark { ... }` to
+> take precedence.
 
 # Dev
 
