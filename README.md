@@ -68,7 +68,7 @@ return (
 
 ## Tailwind
 
-Compatible with Tailwind through
+Compatible through
 [theme variables](https://tailwindcss.com/docs/theme):
 
 https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L3-L76
