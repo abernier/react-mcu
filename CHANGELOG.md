@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.0.8
+
+### Patch Changes
+
+- 5d50023: doc
+
 ## 1.0.7
 
 ### Patch Changes
