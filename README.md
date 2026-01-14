@@ -136,6 +136,7 @@ with MCU ones:
 <details>
   <summary>mapping details</summary>
   see:
+  
     - https://chatgpt.com/share/6899f20a-422c-8011-a072-62fb649589a0
     - https://gemini.google.com/share/51e072b6f1d2
 </details>
