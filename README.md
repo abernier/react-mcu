@@ -88,35 +88,21 @@ Simply override
 with MCU ones:
 
 ```css
-/* app/global.css */
-
 :root {
   /* ... */
 }
-
 .dark {
   /* ... */
 }
 
-/*
- * mcu -> shadcn mapping
- * 
- * @see:
- *   - https://chatgpt.com/share/6899f20a-422c-8011-a072-62fb649589a0
- *   - https://gemini.google.com/share/e8f2d63a52f0
- */
-
 :root,
 .dark {
-  /* surfaces & text */
   --background: var(--mcu-surface);
   --foreground: var(--mcu-on-surface);
-  /* containers */
   --card: var(--mcu-surface-container-low);
   --card-foreground: var(--mcu-on-surface);
   --popover: var(--mcu-surface-container-high);
   --popover-foreground: var(--mcu-on-surface);
-  /* emphasis colors */
   --primary: var(--mcu-primary);
   --primary-foreground: var(--mcu-on-primary);
   --secondary: var(--mcu-secondary-container);
@@ -126,17 +112,14 @@ with MCU ones:
   --accent: var(--mcu-secondary-container);
   --accent-foreground: var(--mcu-on-secondary-container);
   --destructive: var(--mcu-error);
-  /* strokes / states */
   --border: var(--mcu-outline-variant);
   --input: var(--mcu-outline);
   --ring: var(--mcu-primary);
-  /* data viz (tonal fixed = stables à travers l’élévation) */
   --chart-1: var(--mcu-primary-fixed);
   --chart-2: var(--mcu-secondary-fixed);
   --chart-3: var(--mcu-tertiary-fixed);
   --chart-4: var(--mcu-primary-fixed-dim);
   --chart-5: var(--mcu-secondary-fixed-dim);
-  /* sidebar */
   --sidebar: var(--mcu-surface-container-low);
   --sidebar-foreground: var(--mcu-on-surface);
   --sidebar-primary: var(--mcu-primary);
