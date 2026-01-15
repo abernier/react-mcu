@@ -338,7 +338,7 @@ export function generateCss({
 }: McuConfig) {
   const hasCoreColors =
     primary ?? secondary ?? tertiary ?? neutral ?? neutralVariant ?? error;
-  console.log("MCU generateCss", { hasCoreColors });
+  // console.log("MCU generateCss", { hasCoreColors });
 
   const sourceArgb = argbFromHex(hexSource);
 
