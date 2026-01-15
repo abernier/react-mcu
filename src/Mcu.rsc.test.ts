@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll } from "vitest";
 import { readFileSync } from "fs";
 import { resolve } from "path";
 
@@ -11,14 +11,22 @@ import { resolve } from "path";
  *
  * Related: https://github.com/abernier/react-mcu/pull/50
  */
+
+/**
+ * Helper function to find the first non-empty line in a file
+ */
+function getFirstNonEmptyLine(content: string): string | undefined {
+  const lines = content.split("\n");
+  return lines.find((line) => line.trim().length > 0);
+}
+
 describe("RSC Compatibility", () => {
   describe("Source files", () => {
     it("Mcu.tsx should have 'use client' directive", () => {
       const mcuSource = readFileSync(resolve(__dirname, "Mcu.tsx"), "utf-8");
 
       // Check that the file starts with "use client" (allowing for whitespace/comments)
-      const lines = mcuSource.split("\n");
-      const firstNonEmptyLine = lines.find((line) => line.trim().length > 0);
+      const firstNonEmptyLine = getFirstNonEmptyLine(mcuSource);
 
       expect(firstNonEmptyLine).toBe('"use client";');
     });
@@ -29,8 +37,7 @@ describe("RSC Compatibility", () => {
         "utf-8",
       );
 
-      const lines = contextSource.split("\n");
-      const firstNonEmptyLine = lines.find((line) => line.trim().length > 0);
+      const firstNonEmptyLine = getFirstNonEmptyLine(contextSource);
 
       expect(firstNonEmptyLine).toBe('"use client";');
     });
@@ -54,8 +61,7 @@ describe("RSC Compatibility", () => {
       }
 
       // The banner config in tsup.config.ts should add "use client"; as the first line
-      const lines = distContent.split("\n");
-      const firstNonEmptyLine = lines.find((line) => line.trim().length > 0);
+      const firstNonEmptyLine = getFirstNonEmptyLine(distContent);
 
       expect(firstNonEmptyLine).toBe('"use client";');
     });
@@ -90,18 +96,20 @@ describe("RSC Compatibility", () => {
   });
 
   describe("Export validation", () => {
-    it("should be able to import Mcu from the package", async () => {
+    let indexModule: typeof import("./index");
+
+    beforeAll(async () => {
       // This simulates what a Next.js server component would do when importing
       // a client component - it should not error during import
-      const indexModule = await import("./index.js");
+      indexModule = await import("./index");
+    });
 
+    it("should be able to import Mcu from the package", () => {
       expect(indexModule.Mcu).toBeDefined();
       expect(typeof indexModule.Mcu).toBe("function");
     });
 
-    it("should be able to import useMcu from the package", async () => {
-      const indexModule = await import("./index.js");
-
+    it("should be able to import useMcu from the package", () => {
       expect(indexModule.useMcu).toBeDefined();
       expect(typeof indexModule.useMcu).toBe("function");
     });
