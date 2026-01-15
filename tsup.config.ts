@@ -8,6 +8,9 @@ export default defineConfig({
   outDir: "dist",
   clean: true,
   external: ["react", "react-dom"],
+  banner: {
+    js: '"use client";',
+  },
   esbuildOptions(options) {
     options.jsx = "automatic";
   },
