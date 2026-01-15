@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.0.10
+
+### Patch Changes
+
+- 19b5825: Add 'use client' directive for React Server Components compatibility
+
 ## 1.0.9
 
 ### Patch Changes
