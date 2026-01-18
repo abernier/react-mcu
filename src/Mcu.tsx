@@ -75,9 +75,9 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 
-// Standard Material Design 3 tones
+// Standard Material Design 3 tones (as shown in Material Theme Builder)
 export const STANDARD_TONES = [
-  0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99, 100,
+  0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100,
 ] as const;
 
 // Variant enum values (matching @material/material-color-utilities internal Variant)
