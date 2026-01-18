@@ -6,6 +6,7 @@ import {
   DEFAULT_SCHEME,
   DEFAULT_CONTRAST,
   DEFAULT_COLOR_MATCH,
+  STANDARD_TONES,
 } from "./Mcu";
 import type { ComponentProps } from "react";
 import { kebabCase, upperFirst } from "lodash-es";
@@ -803,6 +804,113 @@ function Bar({
                 <p>On {upperFirst(customColor.name)} Container</p>
               </FooTop>
             </Foo>
+          </div>
+        ))}
+      </div>
+
+      {
+        //
+        // ████████  ██████  ███    ██  █████  ██           ███████ ██   ██  █████  ███████  ███████ ███████
+        //    ██    ██    ██ ████   ██ ██   ██ ██           ██      ██   ██ ██   ██ ██   ██  ██      ██
+        //    ██    ██    ██ ██ ██  ██ ███████ ██           ███████ ███████ ███████ ██   ██  █████   ███████
+        //    ██    ██    ██ ██  ██ ██ ██   ██ ██                ██ ██   ██ ██   ██ ██   ██  ██           ██
+        //    ██     ██████  ██   ████ ██   ██ ███████      ███████ ██   ██ ██   ██ ███████  ███████ ███████
+        //
+      }
+
+      <div>
+        <style>{`
+          @scope {
+            & {
+              display:flex; flex-direction:column; gap:24px; margin-top:48px;
+            }
+          }
+        `}</style>
+
+        {/* Core color palettes */}
+        {[
+          "primary",
+          "secondary",
+          "tertiary",
+          "error",
+          "neutral",
+          "neutral-variant",
+        ].map((paletteName) => (
+          <div key={paletteName}>
+            <h3
+              style={{
+                fontFamily: "sans-serif",
+                fontSize: "1rem",
+                fontWeight: "600",
+                marginBottom: "8px",
+                textTransform: "capitalize",
+              }}
+            >
+              {paletteName.replace("-", " ")} Tones
+            </h3>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
+                gap: "4px",
+              }}
+            >
+              {STANDARD_TONES.map((tone) => (
+                <div
+                  key={tone}
+                  style={{
+                    backgroundColor: `var(--mcu-${paletteName}-${tone})`,
+                    height: "4rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    outline: "1px solid",
+                  }}
+                >
+                  <p style={{ fontSize: "0.75rem" }}>{tone}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        {/* Custom color tonal shades */}
+        {customColors?.map((customColor) => (
+          <div key={customColor.name}>
+            <h3
+              style={{
+                fontFamily: "sans-serif",
+                fontSize: "1rem",
+                fontWeight: "600",
+                marginBottom: "8px",
+                textTransform: "capitalize",
+              }}
+            >
+              {upperFirst(customColor.name)} Tones
+            </h3>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
+                gap: "4px",
+              }}
+            >
+              {STANDARD_TONES.map((tone) => (
+                <div
+                  key={tone}
+                  style={{
+                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-${tone})`,
+                    height: "4rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    outline: "1px solid",
+                  }}
+                >
+                  <p style={{ fontSize: "0.75rem" }}>{tone}</p>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
