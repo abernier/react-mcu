@@ -16,6 +16,7 @@ import {
   SchemeNeutral,
   SchemeTonalSpot,
   SchemeVibrant,
+  TonalPalette,
 } from "@material/material-color-utilities";
 import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
@@ -73,6 +74,11 @@ export const DEFAULT_SCHEME: SchemeName = "tonalSpot";
 export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
+
+// Standard Material Design 3 tones (as shown in Material Theme Builder)
+export const STANDARD_TONES = [
+  0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100,
+] as const;
 
 // Variant enum values (matching @material/material-color-utilities internal Variant)
 const Variant = {
@@ -314,6 +320,19 @@ const cssVar = (colorName: string, colorValue: number) => {
 };
 
 //
+// Generate CSS variables for all tones in a tonal palette
+//
+const generateTonalPaletteVars = (
+  paletteName: string,
+  palette: TonalPalette,
+) => {
+  return STANDARD_TONES.map((tone) => {
+    const color = palette.tone(tone);
+    return cssVar(`${paletteName}-${tone}`, color);
+  }).join(" ");
+};
+
+//
 // Generate full CSS styles string (for insertion into a <style> tag)
 //
 
@@ -352,6 +371,7 @@ export function generateCss({
 
   let lightScheme: DynamicScheme;
   let darkScheme: DynamicScheme;
+  let corePalette: CorePalette;
 
   if (hasCoreColors) {
     // Convert hex core colors to ARGB
@@ -367,7 +387,7 @@ export function generateCss({
     // Create a custom CorePalette with the specified colors
     // colorMatch: true = stay true to input colors (non-harmonized)
     // colorMatch: false = harmonize colors (enforce minimum chroma)
-    const corePalette = colorMatch
+    corePalette = colorMatch
       ? CorePalette.fromColors(coreColorsArgb)
       : CorePalette.contentFromColors(coreColorsArgb);
 
@@ -390,6 +410,9 @@ export function generateCss({
 
     lightScheme = new SchemeClass(hct, false, contrast);
     darkScheme = new SchemeClass(hct, true, contrast);
+
+    // Create CorePalette for tonal palette access
+    corePalette = CorePalette.of(sourceArgb);
   }
 
   // Prepare custom colors (keep ARGB so generateCssVars can use them)
@@ -412,9 +435,29 @@ export function generateCss({
   const lightVars = toCssVars(mergedColorsLight);
   const darkVars = toCssVars(mergedColorsDark);
 
+  // Generate core colors tonal palette CSS variables
+  const coreColorsTonalVars = [
+    generateTonalPaletteVars("primary", corePalette.a1),
+    generateTonalPaletteVars("secondary", corePalette.a2),
+    generateTonalPaletteVars("tertiary", corePalette.a3),
+    generateTonalPaletteVars("neutral", corePalette.n1),
+    generateTonalPaletteVars("neutral-variant", corePalette.n2),
+    generateTonalPaletteVars("error", corePalette.error),
+  ].join(" ");
+
+  // Generate custom color tonal palette CSS variables
+  const customColorTonalVars = customColors
+    .map((customColorObj) => {
+      // Custom colors have their own TonalPalette
+      // The palette can be accessed from the customColor result
+      const palette = TonalPalette.fromInt(customColorObj.value);
+      return generateTonalPaletteVars(kebabCase(customColorObj.name), palette);
+    })
+    .join(" ");
+
   return {
     css: `
-:root { ${lightVars} }
+:root { ${lightVars} ${coreColorsTonalVars} ${customColorTonalVars} }
 .dark { ${darkVars} }
 `,
     mergedColorsLight,

@@ -6,6 +6,7 @@ import {
   DEFAULT_SCHEME,
   DEFAULT_CONTRAST,
   DEFAULT_COLOR_MATCH,
+  STANDARD_TONES,
 } from "./Mcu";
 import type { ComponentProps } from "react";
 import { kebabCase, upperFirst } from "lodash-es";
@@ -806,6 +807,71 @@ function Bar({
           </div>
         ))}
       </div>
+
+      {
+        // ███████ ██   ██  █████  ███████  ███████ ███████
+        // ██      ██   ██ ██   ██ ██   ██  ██      ██
+        // ███████ ███████ ███████ ██   ██  █████   ███████
+        //      ██ ██   ██ ██   ██ ██   ██  ██           ██
+        // ███████ ██   ██ ██   ██ ███████  ███████ ███████
+      }
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+          marginTop: "24px",
+        }}
+      >
+        {[
+          ...[
+            "primary",
+            "secondary",
+            "tertiary",
+            "error",
+            "neutral",
+            "neutral-variant",
+          ].map((name) => ({ name, isCustom: false })),
+          ...(customColors?.map((cc) => ({ name: cc.name, isCustom: true })) ||
+            []),
+        ].map(({ name, isCustom }) => (
+          <div key={name}>
+            <h3
+              style={{
+                fontWeight: "bold",
+                marginBottom: "8px",
+                textTransform: "capitalize",
+              }}
+            >
+              {isCustom ? upperFirst(name) : name.replace("-", " ")}
+            </h3>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
+              }}
+            >
+              {STANDARD_TONES.slice()
+                .reverse()
+                .map((tone) => (
+                  <div
+                    key={tone}
+                    style={{
+                      backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
+                      height: "4rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      outline: "1px solid",
+                    }}
+                  >
+                    <p style={{ fontSize: "0.75rem" }}>{tone}</p>
+                  </div>
+                ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -967,6 +1033,369 @@ export const TailwindSt: Story = {
             </div>
             <div className="bg-myCustomColor3-container text-on-myCustomColor3-container p-4 rounded">
               myCustomColor3-container
+            </div>
+          </div>
+        </div>
+
+        {/* Shades */}
+        <div className="space-y-4">
+          {/* Primary Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Primary</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-primary-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-primary-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-primary-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-primary-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-primary-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-primary-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-primary-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-primary-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-primary-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-primary-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-primary-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* Secondary Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Secondary</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-secondary-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-secondary-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-secondary-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-secondary-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-secondary-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-secondary-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-secondary-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-secondary-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-secondary-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-secondary-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-secondary-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* Tertiary Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Tertiary</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-tertiary-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-tertiary-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-tertiary-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-tertiary-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-tertiary-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-tertiary-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-tertiary-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-tertiary-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-tertiary-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-tertiary-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-tertiary-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* Error Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Error</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-error-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-error-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-error-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-error-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-error-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-error-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-error-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-error-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-error-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-error-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-error-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* Neutral Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Neutral</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-neutral-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-neutral-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-neutral-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-neutral-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-neutral-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-neutral-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-neutral-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-neutral-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-neutral-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-neutral-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-neutral-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* Neutral Variant Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">Neutral Variant</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-neutral-variant-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-neutral-variant-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-neutral-variant-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-neutral-variant-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-neutral-variant-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-neutral-variant-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-neutral-variant-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-neutral-variant-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-neutral-variant-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-neutral-variant-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-neutral-variant-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* myCustomColor1 Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">myCustomColor1</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-myCustomColor1-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-myCustomColor1-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-myCustomColor1-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-myCustomColor1-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-myCustomColor1-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-myCustomColor1-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-myCustomColor1-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-myCustomColor1-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-myCustomColor1-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-myCustomColor1-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-myCustomColor1-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* myCustomColor2 Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">myCustomColor2</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-myCustomColor2-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-myCustomColor2-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-myCustomColor2-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-myCustomColor2-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-myCustomColor2-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-myCustomColor2-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-myCustomColor2-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-myCustomColor2-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-myCustomColor2-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-myCustomColor2-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-myCustomColor2-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
+            </div>
+          </div>
+
+          {/* myCustomColor3 Shades */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold">myCustomColor3</h4>
+            <div className="grid grid-cols-11 rounded-md overflow-hidden">
+              <div className="bg-myCustomColor3-50 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                50
+              </div>
+              <div className="bg-myCustomColor3-100 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                100
+              </div>
+              <div className="bg-myCustomColor3-200 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                200
+              </div>
+              <div className="bg-myCustomColor3-300 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                300
+              </div>
+              <div className="bg-myCustomColor3-400 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                400
+              </div>
+              <div className="bg-myCustomColor3-500 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                500
+              </div>
+              <div className="bg-myCustomColor3-600 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                600
+              </div>
+              <div className="bg-myCustomColor3-700 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                700
+              </div>
+              <div className="bg-myCustomColor3-800 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                800
+              </div>
+              <div className="bg-myCustomColor3-900 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                900
+              </div>
+              <div className="bg-myCustomColor3-950 aspect-square flex items-center justify-center text-center text-xs text-white mix-blend-difference">
+                950
+              </div>
             </div>
           </div>
         </div>
