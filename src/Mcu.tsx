@@ -1,5 +1,15 @@
 "use client";
 
+//
+// Note: This implementation uses @material/material-color-utilities directly
+// rather than the themeFromSourceColor utility because:
+// 1. We already use the main utility (customColor) from theme_utils
+// 2. themeFromSourceColor uses deprecated Scheme class (not DynamicScheme)
+// 3. It doesn't support scheme variants, contrast levels, or custom core colors
+// 4. It provides only 29 tokens vs 60+ Material Design 3 tokens we support
+// 5. Our implementation is more feature-complete and uses modern APIs
+//
+
 import {
   argbFromHex,
   CorePalette,
