@@ -2,7 +2,8 @@
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
 [![](https://img.shields.io/badge/storybook-171c23.svg?logo=storybook)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
 
-[Material Design colors](https://m3.material.io/styles/color/system/overview) for React.
+[Material Design colors](https://m3.material.io/styles/color/system/overview)
+for React.
 
 It injects `--mcu-*` CSS variables into the page.
 
@@ -69,10 +70,9 @@ return (
 
 ## Tailwind
 
-Compatible through
-[theme variables](https://tailwindcss.com/docs/theme):
+Compatible through [theme variables](https://tailwindcss.com/docs/theme):
 
-https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L3-L76
+https://github.com/abernier/react-mcu/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L3-L186
 
 Or simply:
 
@@ -83,13 +83,14 @@ Or simply:
 > [!IMPORTANT]
 >
 > Do not forget to manually add your custom colors, as in:
-> https://github.com/abernier/react-mcu/blob/f981087651d77f6b11fc76cb783a5220a1b56e87/src/tailwind.css#L52-L75
+> https://github.com/abernier/react-mcu/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L126-L185
 
 ## shadcn
 
 Pre-requisites:
 
-- You should use [`tailwind.cssVariables`](https://ui.shadcn.com/docs/theming#css-variables)
+- You should use
+  [`tailwind.cssVariables`](https://ui.shadcn.com/docs/theming#css-variables)
 
 Simply override/remap
 [shadcn's CSS variables](https://ui.shadcn.com/docs/theming#list-of-variables):
