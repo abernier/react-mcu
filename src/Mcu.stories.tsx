@@ -809,44 +809,43 @@ function Bar({
       </div>
 
       {
-        //
-        // ████████  ██████  ███    ██  █████  ██           ███████ ██   ██  █████  ███████  ███████ ███████
-        //    ██    ██    ██ ████   ██ ██   ██ ██           ██      ██   ██ ██   ██ ██   ██  ██      ██
-        //    ██    ██    ██ ██ ██  ██ ███████ ██           ███████ ███████ ███████ ██   ██  █████   ███████
-        //    ██    ██    ██ ██  ██ ██ ██   ██ ██                ██ ██   ██ ██   ██ ██   ██  ██           ██
-        //    ██     ██████  ██   ████ ██   ██ ███████      ███████ ██   ██ ██   ██ ███████  ███████ ███████
-        //
+        // ███████ ██   ██  █████  ███████  ███████ ███████
+        // ██      ██   ██ ██   ██ ██   ██  ██      ██
+        // ███████ ███████ ███████ ██   ██  █████   ███████
+        //      ██ ██   ██ ██   ██ ██   ██  ██           ██
+        // ███████ ██   ██ ██   ██ ███████  ███████ ███████
       }
-
-      <div>
-        <style>{`
-          @scope {
-            & {
-              display:flex; flex-direction:column; gap:24px; margin-top:48px;
-            }
-          }
-        `}</style>
-
-        {/* Core color palettes */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "16px",
+          marginTop: "24px",
+        }}
+      >
         {[
-          "primary",
-          "secondary",
-          "tertiary",
-          "error",
-          "neutral",
-          "neutral-variant",
-        ].map((paletteName) => (
-          <div key={paletteName}>
+          ...[
+            "primary",
+            "secondary",
+            "tertiary",
+            "error",
+            "neutral",
+            "neutral-variant",
+          ].map((name) => ({ name, isCustom: false })),
+          ...(customColors?.map((cc) => ({ name: cc.name, isCustom: true })) ||
+            []),
+        ].map(({ name, isCustom }) => (
+          <div key={name}>
             <h3
               style={{
                 fontFamily: "sans-serif",
                 fontSize: "1rem",
-                fontWeight: "600",
+                fontWeight: "bold",
                 marginBottom: "8px",
                 textTransform: "capitalize",
               }}
             >
-              {paletteName.replace("-", " ")} Tones
+              {isCustom ? upperFirst(name) : name.replace("-", " ")} Tones
             </h3>
             <div
               style={{
@@ -861,49 +860,7 @@ function Bar({
                   <div
                     key={tone}
                     style={{
-                      backgroundColor: `var(--mcu-${paletteName}-${tone})`,
-                      height: "4rem",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      outline: "1px solid",
-                    }}
-                  >
-                    <p style={{ fontSize: "0.75rem" }}>{tone}</p>
-                  </div>
-                ))}
-            </div>
-          </div>
-        ))}
-
-        {/* Custom color tonal shades */}
-        {customColors?.map((customColor) => (
-          <div key={customColor.name}>
-            <h3
-              style={{
-                fontFamily: "sans-serif",
-                fontSize: "1rem",
-                fontWeight: "600",
-                marginBottom: "8px",
-                textTransform: "capitalize",
-              }}
-            >
-              {upperFirst(customColor.name)} Tones
-            </h3>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
-                gap: "4px",
-              }}
-            >
-              {STANDARD_TONES.slice()
-                .reverse()
-                .map((tone) => (
-                  <div
-                    key={tone}
-                    style={{
-                      backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-${tone})`,
+                      backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
                       height: "4rem",
                       display: "flex",
                       alignItems: "center",
