@@ -73,4 +73,116 @@
   --color-on-myCustomColor3-container: var(
     --mcu-on-my-custom-color-3-container
   );
+
+  /*
+   * Shades
+   */
+
+  --color-primary-50: var(--mcu-primary-5);
+  --color-primary-100: var(--mcu-primary-10);
+  --color-primary-200: var(--mcu-primary-20);
+  --color-primary-300: var(--mcu-primary-30);
+  --color-primary-400: var(--mcu-primary-40);
+  --color-primary-500: var(--mcu-primary-50);
+  --color-primary-600: var(--mcu-primary-60);
+  --color-primary-700: var(--mcu-primary-70);
+  --color-primary-800: var(--mcu-primary-80);
+  --color-primary-900: var(--mcu-primary-90);
+  --color-primary-950: var(--mcu-primary-95);
+
+  --color-secondary-50: var(--mcu-secondary-5);
+  --color-secondary-100: var(--mcu-secondary-10);
+  --color-secondary-200: var(--mcu-secondary-20);
+  --color-secondary-300: var(--mcu-secondary-30);
+  --color-secondary-400: var(--mcu-secondary-40);
+  --color-secondary-500: var(--mcu-secondary-50);
+  --color-secondary-600: var(--mcu-secondary-60);
+  --color-secondary-700: var(--mcu-secondary-70);
+  --color-secondary-800: var(--mcu-secondary-80);
+  --color-secondary-900: var(--mcu-secondary-90);
+  --color-secondary-950: var(--mcu-secondary-95);
+
+  --color-tertiary-50: var(--mcu-tertiary-5);
+  --color-tertiary-100: var(--mcu-tertiary-10);
+  --color-tertiary-200: var(--mcu-tertiary-20);
+  --color-tertiary-300: var(--mcu-tertiary-30);
+  --color-tertiary-400: var(--mcu-tertiary-40);
+  --color-tertiary-500: var(--mcu-tertiary-50);
+  --color-tertiary-600: var(--mcu-tertiary-60);
+  --color-tertiary-700: var(--mcu-tertiary-70);
+  --color-tertiary-800: var(--mcu-tertiary-80);
+  --color-tertiary-900: var(--mcu-tertiary-90);
+  --color-tertiary-950: var(--mcu-tertiary-95);
+
+  --color-error-50: var(--mcu-error-5);
+  --color-error-100: var(--mcu-error-10);
+  --color-error-200: var(--mcu-error-20);
+  --color-error-300: var(--mcu-error-30);
+  --color-error-400: var(--mcu-error-40);
+  --color-error-500: var(--mcu-error-50);
+  --color-error-600: var(--mcu-error-60);
+  --color-error-700: var(--mcu-error-70);
+  --color-error-800: var(--mcu-error-80);
+  --color-error-900: var(--mcu-error-90);
+  --color-error-950: var(--mcu-error-95);
+
+  --color-neutral-50: var(--mcu-neutral-5);
+  --color-neutral-100: var(--mcu-neutral-10);
+  --color-neutral-200: var(--mcu-neutral-20);
+  --color-neutral-300: var(--mcu-neutral-30);
+  --color-neutral-400: var(--mcu-neutral-40);
+  --color-neutral-500: var(--mcu-neutral-50);
+  --color-neutral-600: var(--mcu-neutral-60);
+  --color-neutral-700: var(--mcu-neutral-70);
+  --color-neutral-800: var(--mcu-neutral-80);
+  --color-neutral-900: var(--mcu-neutral-90);
+  --color-neutral-950: var(--mcu-neutral-95);
+
+  --color-neutral-variant-50: var(--mcu-neutral-variant-5);
+  --color-neutral-variant-100: var(--mcu-neutral-variant-10);
+  --color-neutral-variant-200: var(--mcu-neutral-variant-20);
+  --color-neutral-variant-300: var(--mcu-neutral-variant-30);
+  --color-neutral-variant-400: var(--mcu-neutral-variant-40);
+  --color-neutral-variant-500: var(--mcu-neutral-variant-50);
+  --color-neutral-variant-600: var(--mcu-neutral-variant-60);
+  --color-neutral-variant-700: var(--mcu-neutral-variant-70);
+  --color-neutral-variant-800: var(--mcu-neutral-variant-80);
+  --color-neutral-variant-900: var(--mcu-neutral-variant-90);
+  --color-neutral-variant-950: var(--mcu-neutral-variant-95);
+
+  --color-myCustomColor1-50: var(--mcu-my-custom-color-1-5);
+  --color-myCustomColor1-100: var(--mcu-my-custom-color-1-10);
+  --color-myCustomColor1-200: var(--mcu-my-custom-color-1-20);
+  --color-myCustomColor1-300: var(--mcu-my-custom-color-1-30);
+  --color-myCustomColor1-400: var(--mcu-my-custom-color-1-40);
+  --color-myCustomColor1-500: var(--mcu-my-custom-color-1-50);
+  --color-myCustomColor1-600: var(--mcu-my-custom-color-1-60);
+  --color-myCustomColor1-700: var(--mcu-my-custom-color-1-70);
+  --color-myCustomColor1-800: var(--mcu-my-custom-color-1-80);
+  --color-myCustomColor1-900: var(--mcu-my-custom-color-1-90);
+  --color-myCustomColor1-950: var(--mcu-my-custom-color-1-95);
+
+  --color-myCustomColor2-50: var(--mcu-my-custom-color-2-5);
+  --color-myCustomColor2-100: var(--mcu-my-custom-color-2-10);
+  --color-myCustomColor2-200: var(--mcu-my-custom-color-2-20);
+  --color-myCustomColor2-300: var(--mcu-my-custom-color-2-30);
+  --color-myCustomColor2-400: var(--mcu-my-custom-color-2-40);
+  --color-myCustomColor2-500: var(--mcu-my-custom-color-2-50);
+  --color-myCustomColor2-600: var(--mcu-my-custom-color-2-60);
+  --color-myCustomColor2-700: var(--mcu-my-custom-color-2-70);
+  --color-myCustomColor2-800: var(--mcu-my-custom-color-2-80);
+  --color-myCustomColor2-900: var(--mcu-my-custom-color-2-90);
+  --color-myCustomColor2-950: var(--mcu-my-custom-color-2-95);
+
+  --color-myCustomColor3-50: var(--mcu-my-custom-color-3-5);
+  --color-myCustomColor3-100: var(--mcu-my-custom-color-3-10);
+  --color-myCustomColor3-200: var(--mcu-my-custom-color-3-20);
+  --color-myCustomColor3-300: var(--mcu-my-custom-color-3-30);
+  --color-myCustomColor3-400: var(--mcu-my-custom-color-3-40);
+  --color-myCustomColor3-500: var(--mcu-my-custom-color-3-50);
+  --color-myCustomColor3-600: var(--mcu-my-custom-color-3-60);
+  --color-myCustomColor3-700: var(--mcu-my-custom-color-3-70);
+  --color-myCustomColor3-800: var(--mcu-my-custom-color-3-80);
+  --color-myCustomColor3-900: var(--mcu-my-custom-color-3-90);
+  --color-myCustomColor3-950: var(--mcu-my-custom-color-3-95);
 }
