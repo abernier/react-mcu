@@ -838,20 +838,17 @@ function Bar({
           <div key={name}>
             <h3
               style={{
-                fontFamily: "sans-serif",
-                fontSize: "1rem",
                 fontWeight: "bold",
                 marginBottom: "8px",
                 textTransform: "capitalize",
               }}
             >
-              {isCustom ? upperFirst(name) : name.replace("-", " ")} Tones
+              {isCustom ? upperFirst(name) : name.replace("-", " ")}
             </h3>
             <div
               style={{
                 display: "grid",
                 gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
-                gap: "4px",
               }}
             >
               {STANDARD_TONES.slice()
