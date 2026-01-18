@@ -448,7 +448,6 @@ export function generateCss({
   // Generate custom color tonal palette CSS variables
   const customColorTonalVars = customColors
     .map((customColorObj) => {
-      const colorGroup = customColor(sourceArgb, customColorObj);
       // Custom colors have their own TonalPalette
       // The palette can be accessed from the customColor result
       const palette = TonalPalette.fromInt(customColorObj.value);
