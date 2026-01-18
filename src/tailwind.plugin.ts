@@ -1,24 +1,28 @@
 /**
  * Tailwind CSS v4 plugin for react-mcu color variables
  *
- * This plugin automatically generates --color-* variables from --mcu-* variables,
+ * This plugin generates --color-* variables from --mcu-* variables,
  * making Material Design 3 colors available as Tailwind utilities.
  *
- * Usage:
- * ```ts
- * // In your CSS file
- * import mcuPlugin from 'react-mcu/tailwind.plugin';
+ * Usage in PostCSS config:
+ * ```js
+ * // postcss.config.js
+ * import mcuPlugin from 'react-mcu';
  *
- * // Then use the generated CSS string
- * const cssString = mcuPlugin({ customColors: ['myCustomColor1'] });
+ * export default {
+ *   plugins: {
+ *     '@tailwindcss/postcss': {},
+ *     mcuPlugin({ customColors: ['myCustomColor1', 'myCustomColor2'] }),
+ *   }
+ * }
  * ```
  *
- * Or use the helper function to generate a CSS file:
- * ```ts
- * import { generateMcuTheme } from 'react-mcu/tailwind.plugin';
+ * Or use the helper function to generate CSS:
+ * ```js
+ * import { generateMcuTheme } from 'react-mcu';
  *
- * const theme = generateMcuTheme({ customColors: ['myCustomColor1', 'myCustomColor2'] });
- * // Write theme to a CSS file or use it in your build process
+ * const theme = generateMcuTheme({ customColors: ['myCustomColor1'] });
+ * // Write to a file or use in your build
  * ```
  */
 
@@ -117,17 +121,28 @@ export interface McuPluginOptions {
 export function generateMcuTheme(options: McuPluginOptions = {}): string {
   const { customColors = [] } = options;
 
-  return `@theme inline {
+  return `@theme {
   ${generateColorVars(customColors)}
 }`;
 }
 
 /**
- * Default export - generates theme CSS
+ * Create a PostCSS plugin for Tailwind CSS v4
+ * This allows the plugin to be used in PostCSS config
  */
-export default function mcuPlugin(options: McuPluginOptions = {}): string {
-  return generateMcuTheme(options);
+export default function mcuPlugin(options: McuPluginOptions = {}): any {
+  const themeContent = generateMcuTheme(options);
+
+  return {
+    postcssPlugin: "react-mcu",
+    Once(root: any) {
+      // Insert the theme at the end of the root
+      root.append(themeContent);
+    },
+  };
 }
+
+mcuPlugin.postcss = true;
 
 // Named export for backward compatibility
 export { mcuPlugin };

@@ -6,8 +6,8 @@ describe("tailwind.plugin", () => {
     it("should generate base colors without custom colors", () => {
       const theme = generateMcuTheme();
 
-      // Check for base colors
-      expect(theme).toContain("@theme inline");
+      // Check for base colors (changed from @theme inline to @theme)
+      expect(theme).toContain("@theme {");
       expect(theme).toContain("--color-background: var(--mcu-background);");
       expect(theme).toContain("--color-primary: var(--mcu-primary);");
       expect(theme).toContain("--color-onPrimary: var(--mcu-on-primary);");
@@ -107,11 +107,23 @@ describe("tailwind.plugin", () => {
   });
 
   describe("mcuPlugin (default export)", () => {
-    it("should work the same as generateMcuTheme", () => {
-      const theme1 = generateMcuTheme({ customColors: ["testColor"] });
-      const theme2 = mcuPlugin({ customColors: ["testColor"] });
+    it("should return a PostCSS plugin object", () => {
+      const plugin = mcuPlugin({ customColors: ["testColor"] });
 
-      expect(theme1).toBe(theme2);
+      // mcuPlugin returns a PostCSS plugin object, not a string
+      expect(plugin).toHaveProperty("postcssPlugin", "react-mcu");
+      expect(plugin).toHaveProperty("Once");
+      expect(typeof plugin.Once).toBe("function");
+    });
+
+    it("should generate theme content for custom colors", () => {
+      const theme = generateMcuTheme({ customColors: ["testColor"] });
+
+      // Verify the theme content includes custom colors
+      expect(theme).toContain("--color-testColor: var(--mcu-test-color);");
+      expect(theme).toContain(
+        "--color-on-testColor: var(--mcu-on-test-color);",
+      );
     });
   });
 });
