@@ -70,6 +70,37 @@ return (
 
 ## Tailwind
 
+### Option 1: Using the Plugin (Recommended for Custom Colors)
+
+For Tailwind CSS v4, use the provided plugin to automatically generate color variables, especially when using custom colors:
+
+```ts
+// src/mcu-theme.css (or any name you prefer)
+import { generateMcuTheme } from "react-mcu/tailwind.plugin";
+
+const theme = generateMcuTheme({
+  customColors: ["myCustomColor1", "myCustomColor2", "myCustomColor3"],
+});
+
+// Export or write to a file
+export default theme;
+```
+
+Then import this in your main CSS file:
+
+```css
+@import "./mcu-theme.css";
+@import "tailwindcss";
+```
+
+The plugin automatically generates all `--color-*` variables from `--mcu-*` variables, including:
+
+- All base Material Design 3 color roles
+- Color shades (50-950) for primary, secondary, tertiary, error, neutral, and neutral-variant
+- Custom colors and their shades
+
+### Option 2: Static CSS Import
+
 Compatible through [theme variables](https://tailwindcss.com/docs/theme):
 
 https://github.com/abernier/react-mcu/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L3-L186
@@ -82,8 +113,10 @@ Or simply:
 
 > [!IMPORTANT]
 >
-> Do not forget to manually add your custom colors, as in:
+> When using the static CSS import, you need to manually add your custom colors to the CSS file, as in:
 > https://github.com/abernier/react-mcu/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L126-L185
+>
+> With the plugin approach (Option 1), this is handled automatically!
 
 ## shadcn
 
