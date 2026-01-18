@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.1.0
+
+### Minor Changes
+
+- 05568d5: shades
+
 ## 1.0.10
 
 ### Patch Changes
