@@ -855,21 +855,23 @@ function Bar({
                 gap: "4px",
               }}
             >
-              {STANDARD_TONES.map((tone) => (
-                <div
-                  key={tone}
-                  style={{
-                    backgroundColor: `var(--mcu-${paletteName}-${tone})`,
-                    height: "4rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    outline: "1px solid",
-                  }}
-                >
-                  <p style={{ fontSize: "0.75rem" }}>{tone}</p>
-                </div>
-              ))}
+              {STANDARD_TONES.slice()
+                .reverse()
+                .map((tone) => (
+                  <div
+                    key={tone}
+                    style={{
+                      backgroundColor: `var(--mcu-${paletteName}-${tone})`,
+                      height: "4rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      outline: "1px solid",
+                    }}
+                  >
+                    <p style={{ fontSize: "0.75rem" }}>{tone}</p>
+                  </div>
+                ))}
             </div>
           </div>
         ))}
@@ -895,21 +897,23 @@ function Bar({
                 gap: "4px",
               }}
             >
-              {STANDARD_TONES.map((tone) => (
-                <div
-                  key={tone}
-                  style={{
-                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-${tone})`,
-                    height: "4rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    outline: "1px solid",
-                  }}
-                >
-                  <p style={{ fontSize: "0.75rem" }}>{tone}</p>
-                </div>
-              ))}
+              {STANDARD_TONES.slice()
+                .reverse()
+                .map((tone) => (
+                  <div
+                    key={tone}
+                    style={{
+                      backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-${tone})`,
+                      height: "4rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      outline: "1px solid",
+                    }}
+                  >
+                    <p style={{ fontSize: "0.75rem" }}>{tone}</p>
+                  </div>
+                ))}
             </div>
           </div>
         ))}
