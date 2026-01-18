@@ -435,8 +435,8 @@ export function generateCss({
   const lightVars = toCssVars(mergedColorsLight);
   const darkVars = toCssVars(mergedColorsDark);
 
-  // Generate tonal palette CSS variables
-  const tonalPaletteVars = [
+  // Generate core colors tonal palette CSS variables
+  const coreColorsTonalVars = [
     generateTonalPaletteVars("primary", corePalette.a1),
     generateTonalPaletteVars("secondary", corePalette.a2),
     generateTonalPaletteVars("tertiary", corePalette.a3),
@@ -457,7 +457,7 @@ export function generateCss({
 
   return {
     css: `
-:root { ${lightVars} ${tonalPaletteVars} ${customColorTonalVars} }
+:root { ${lightVars} ${coreColorsTonalVars} ${customColorTonalVars} }
 .dark { ${darkVars} }
 `,
     mergedColorsLight,
