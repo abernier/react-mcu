@@ -12,7 +12,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./tailwind.css": "./dist/tailwind.css"
+    "./tailwind.css": "./dist/tailwind.css",
+    "./tailwind.plugin": {
+      "types": "./dist/tailwind.plugin.d.ts",
+      "import": "./dist/tailwind.plugin.js"
+    }
   },
   "homepage": "https://github.com/abernier/react-mcu",
   "bugs": {

@@ -2,7 +2,7 @@ import { defineConfig } from "tsup";
 import { copyFileSync } from "fs";
 
 export default defineConfig({
-  entryPoints: ["src/index.ts"],
+  entryPoints: ["src/index.ts", "src/tailwind.plugin.ts"],
   format: ["esm"],
   dts: true,
   outDir: "dist",
