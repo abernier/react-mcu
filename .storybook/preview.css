@@ -1,4 +1,14 @@
-html.dark {
-  background-color: black;
-  color: white;
+:root {
+  --sb-background: white;
+  --sb-foreground: black;
+}
+.dark {
+  --sb-background: black;
+  --sb-foreground: white;
+}
+
+body:not(:has(.sbdocs)),
+.docs-story {
+  background: var(--sb-background);
+  color: var(--sb-foreground);
 }
