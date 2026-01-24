@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadcn MCU Test Page</title>
+    <style>
+        /* Simulate shadcn CSS variables */
+        :root {
+            --primary: 222.2 47.4% 11.2%;
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .primary-color {
+            background-color: hsl(var(--primary));
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .mcu-demo {
+            background-color: var(--mcu-surface);
+            color: var(--mcu-on-surface);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .mcu-primary {
+            background-color: var(--mcu-primary);
+            color: var(--mcu-on-primary);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .mcu-secondary {
+            background-color: var(--mcu-secondary-container);
+            color: var(--mcu-on-secondary-container);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        code {
+            background-color: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Shadcn MCU Colors Test Page</h1>
+    
+    <div class="card">
+        <h2>Original Shadcn Primary Color</h2>
+        <p>This page uses shadcn CSS variables. The primary color is set to:</p>
+        <code>--primary: 222.2 47.4% 11.2%</code>
+        <div class="primary-color">
+            This box uses the shadcn primary color
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>MCU Generated Colors</h2>
+        <p>Once the userscript runs, these boxes will display with MCU colors:</p>
+        
+        <div class="mcu-demo">
+            <strong>MCU Surface:</strong> This uses <code>--mcu-surface</code> and <code>--mcu-on-surface</code>
+        </div>
+
+        <div class="mcu-primary">
+            <strong>MCU Primary:</strong> This uses <code>--mcu-primary</code> and <code>--mcu-on-primary</code>
+        </div>
+
+        <div class="mcu-secondary">
+            <strong>MCU Secondary Container:</strong> This uses <code>--mcu-secondary-container</code> and <code>--mcu-on-secondary-container</code>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Available Variables</h2>
+        <p>After the userscript runs, check the computed styles to see all available <code>--mcu-*</code> variables.</p>
+        <button onclick="showMcuVars()">Show MCU Variables</button>
+        <div id="variables-output" style="margin-top: 1rem; max-height: 300px; overflow-y: auto;"></div>
+    </div>
+
+    <script>
+        function showMcuVars() {
+            const rootStyles = getComputedStyle(document.documentElement);
+            const output = document.getElementById('variables-output');
+            
+            // Get all CSS variables that start with --mcu-
+            const mcuVars = [];
+            for (let i = 0; i < document.styleSheets.length; i++) {
+                try {
+                    const sheet = document.styleSheets[i];
+                    if (!sheet.cssRules) continue;
+                    
+                    for (let j = 0; j < sheet.cssRules.length; j++) {
+                        const rule = sheet.cssRules[j];
+                        if (rule.style) {
+                            for (let k = 0; k < rule.style.length; k++) {
+                                const prop = rule.style[k];
+                                if (prop.startsWith('--mcu-')) {
+                                    const value = rule.style.getPropertyValue(prop);
+                                    mcuVars.push({ name: prop, value: value });
+                                }
+                            }
+                        }
+                    }
+                } catch (e) {
+                    // Skip stylesheets we can't access
+                }
+            }
+
+            if (mcuVars.length === 0) {
+                output.innerHTML = '<p style="color: #ef4444;">No MCU variables found. Make sure the userscript is installed and running.</p>';
+            } else {
+                output.innerHTML = '<pre style="background: #f3f4f6; padding: 1rem; border-radius: 4px;">' +
+                    mcuVars.map(v => `${v.name}: ${v.value}`).join('\n') +
+                    '</pre>';
+            }
+        }
+
+        // Auto-show vars after a delay to let the userscript run
+        setTimeout(() => {
+            console.log('Checking for MCU variables...');
+            const rootStyles = getComputedStyle(document.documentElement);
+            const mcuPrimary = rootStyles.getPropertyValue('--mcu-primary');
+            if (mcuPrimary) {
+                console.log('✅ MCU variables detected!');
+                console.log('--mcu-primary:', mcuPrimary);
+            } else {
+                console.log('❌ MCU variables not found. Is the userscript installed?');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
