@@ -152,6 +152,12 @@ Simply override/remap
 > Make sure `:root, .dark { ... }` comes AFTER `.root { ... } .dark { ... }` to
 > take precedence.
 
+## Userscript for shadcn sites
+
+A userscript is available that automatically extracts the primary color from any shadcn website and generates MCU colors. This allows you to use MCU color variables on any shadcn site without modifying the site's code.
+
+See [userscripts/README.md](./userscripts/README.md) for installation and usage instructions.
+
 # Dev
 
 ## INSTALL
