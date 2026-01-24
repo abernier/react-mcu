@@ -59,6 +59,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "build:userscript": "tsup --config userscripts/tsup.config.ts",
     "lgtm": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run typecheck && pnpm run test",
     "typecheck": "tsc",
     "test": "vitest run",
