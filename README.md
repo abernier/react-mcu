@@ -88,7 +88,7 @@ If you're using custom colors, pass them to the plugin:
 ```css
 @import "tailwindcss";
 @plugin "react-mcu/tailwind-plugin" {
-  customcolors:
+  customColors:
     [ "myCustomColor1",
     "myCustomColor2",
     "myCustomColor3"];
