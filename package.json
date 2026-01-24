@@ -12,7 +12,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./tailwind.css": "./dist/tailwind.css"
+    "./tailwind.css": "./dist/tailwind.css",
+    "./tailwind-plugin": {
+      "types": "./dist/tailwind-plugin.d.ts",
+      "import": "./dist/tailwind-plugin.js"
+    }
   },
   "homepage": "https://github.com/abernier/react-mcu",
   "bugs": {
@@ -26,7 +30,9 @@
   "license": "MIT",
   "files": [
     "dist",
-    "src/tailwind.css"
+    "src/tailwind.css",
+    "src/tailwind-plugin.js",
+    "src/tailwind-plugin.d.ts"
   ],
   "type": "module",
   "packageManager": "pnpm@10.27.0",
@@ -58,7 +64,7 @@
     "vitest": "^4.0.16"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && node scripts/post-build.js",
     "lgtm": "pnpm run build && pnpm run check-format && pnpm run check-exports && pnpm run typecheck && pnpm run test",
     "typecheck": "tsc",
     "test": "vitest run",

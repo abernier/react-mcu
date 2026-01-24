@@ -70,6 +70,35 @@ return (
 
 ## Tailwind
 
+### Using the Tailwind Plugin (Recommended)
+
+The easiest way to integrate react-mcu with Tailwind CSS is to use the plugin:
+
+```css
+@import "tailwindcss";
+@plugin "react-mcu/tailwind-plugin";
+```
+
+This automatically maps all `--mcu-*` CSS variables to Tailwind theme colors, so you can use classes like `bg-primary`, `text-on-surface`, `bg-surface-container`, etc.
+
+#### With Custom Colors
+
+If you're using custom colors, pass them to the plugin:
+
+```css
+@import "tailwindcss";
+@plugin "react-mcu/tailwind-plugin" {
+  customcolors:
+    [ "myCustomColor1",
+    "myCustomColor2",
+    "myCustomColor3"];
+}
+```
+
+This enables classes like `bg-myCustomColor1`, `text-on-myCustomColor1`, `bg-myCustomColor1-container`, `bg-myCustomColor1-500`, etc.
+
+### Manual Setup (Alternative)
+
 Compatible through [theme variables](https://tailwindcss.com/docs/theme):
 
 https://github.com/abernier/react-mcu/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L3-L186
