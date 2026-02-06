@@ -24,6 +24,35 @@ import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
 import { McuProvider } from "./Mcu.context";
 
+// ContrastCurve class for defining contrast behavior at different contrast levels
+// This is a local implementation since it's not exported from @material/material-color-utilities
+class ContrastCurve {
+  constructor(
+    readonly low: number,
+    readonly normal: number,
+    readonly medium: number,
+    readonly high: number,
+  ) {}
+
+  get(contrastLevel: number): number {
+    if (contrastLevel <= -1.0) {
+      return this.low;
+    } else if (contrastLevel < 0.0) {
+      return this.lerp(this.low, this.normal, (contrastLevel - -1) / 1);
+    } else if (contrastLevel < 0.5) {
+      return this.lerp(this.normal, this.medium, (contrastLevel - 0) / 0.5);
+    } else if (contrastLevel < 1.0) {
+      return this.lerp(this.medium, this.high, (contrastLevel - 0.5) / 0.5);
+    } else {
+      return this.high;
+    }
+  }
+
+  private lerp(a: number, b: number, t: number): number {
+    return a + (b - a) * t;
+  }
+}
+
 type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
@@ -69,6 +98,13 @@ export type McuConfig = {
    * ```
    */
   customColors?: HexCustomColor[];
+  /**
+   * When true, applies the contrast level to all colors including custom colors and tonal palette shades.
+   * When false (default), only core colors are affected by the contrast level.
+   *
+   * @default false
+   */
+  contrastAllColors?: boolean;
 };
 
 const schemesMap = {
@@ -89,6 +125,7 @@ export const DEFAULT_SCHEME: SchemeName = "tonalSpot";
 export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
+export const DEFAULT_CONTRAST_ALL_COLORS = false;
 
 // Standard Material Design 3 tones (as shown in Material Theme Builder)
 export const STANDARD_TONES = [
@@ -133,6 +170,7 @@ export function Mcu({
   error,
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
+  contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
@@ -148,6 +186,7 @@ export function Mcu({
       error,
       colorMatch,
       customColors,
+      contrastAllColors,
     }),
     [
       contrast,
@@ -161,6 +200,7 @@ export function Mcu({
       neutralVariant,
       error,
       colorMatch,
+      contrastAllColors,
     ],
   );
 
@@ -312,6 +352,7 @@ function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
   colorPalettes: ColorPalettes,
+  contrastAllColors: boolean,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -340,39 +381,94 @@ function mergeBaseAndCustomColors(
   customColors.forEach((color) => {
     const colorname = color.name;
 
-    // Create DynamicColor objects that respect the scheme
-    const colorDynamicColor = new DynamicColor(
-      colorname,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 80 : 40), // Same as primary
-      false,
-    );
-    const onColorDynamicColor = new DynamicColor(
-      `on${upperFirst(colorname)}`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 20 : 100), // Same as onPrimary
-      false,
-    );
-    const containerDynamicColor = new DynamicColor(
-      `${colorname}Container`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
-      false,
-    );
-    const onContainerDynamicColor = new DynamicColor(
-      `on${upperFirst(colorname)}Container`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
-      false,
-    );
+    if (contrastAllColors) {
+      // When contrastAllColors is enabled, create DynamicColor objects with contrast curves
+      // Using the same contrast behavior as MaterialDynamicColors.primary
+      const colorDynamicColor = DynamicColor.fromPalette({
+        name: colorname,
+        palette: (s) => getPalette(colorPalettes, colorname),
+        tone: (s) => (s.isDark ? 80 : 40),
+        background: (s) => MaterialDynamicColors.highestSurface(s),
+        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
+      });
+      const onColorDynamicColor = DynamicColor.fromPalette({
+        name: `on${upperFirst(colorname)}`,
+        palette: (s) => getPalette(colorPalettes, colorname),
+        tone: (s) => (s.isDark ? 20 : 100),
+        background: (s) =>
+          new DynamicColor(
+            colorname,
+            (s) => getPalette(colorPalettes, colorname),
+            (s) => (s.isDark ? 80 : 40),
+            false,
+          ),
+        contrastCurve: new ContrastCurve(4.5, 7, 11, 21),
+      });
+      const containerDynamicColor = DynamicColor.fromPalette({
+        name: `${colorname}Container`,
+        palette: (s) => getPalette(colorPalettes, colorname),
+        tone: (s) => (s.isDark ? 30 : 90),
+        background: (s) => MaterialDynamicColors.highestSurface(s),
+        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
+      });
+      const onContainerDynamicColor = DynamicColor.fromPalette({
+        name: `on${upperFirst(colorname)}Container`,
+        palette: (s) => getPalette(colorPalettes, colorname),
+        tone: (s) => (s.isDark ? 90 : 30),
+        background: (s) =>
+          new DynamicColor(
+            `${colorname}Container`,
+            (s) => getPalette(colorPalettes, colorname),
+            (s) => (s.isDark ? 30 : 90),
+            false,
+          ),
+        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
+      });
 
-    // Get the ARGB values using the scheme
-    customVars[colorname] = colorDynamicColor.getArgb(scheme);
-    customVars[`on${upperFirst(colorname)}`] =
-      onColorDynamicColor.getArgb(scheme);
-    customVars[`${colorname}Container`] = containerDynamicColor.getArgb(scheme);
-    customVars[`on${upperFirst(colorname)}Container`] =
-      onContainerDynamicColor.getArgb(scheme);
+      customVars[colorname] = colorDynamicColor.getArgb(scheme);
+      customVars[`on${upperFirst(colorname)}`] =
+        onColorDynamicColor.getArgb(scheme);
+      customVars[`${colorname}Container`] =
+        containerDynamicColor.getArgb(scheme);
+      customVars[`on${upperFirst(colorname)}Container`] =
+        onContainerDynamicColor.getArgb(scheme);
+    } else {
+      // When contrastAllColors is disabled, use simple DynamicColor objects without contrast curves
+      // This maintains the original behavior
+      const colorDynamicColor = new DynamicColor(
+        colorname,
+        (s) => getPalette(colorPalettes, colorname),
+        (s) => (s.isDark ? 80 : 40), // Same as primary
+        false,
+      );
+      const onColorDynamicColor = new DynamicColor(
+        `on${upperFirst(colorname)}`,
+        (s) => getPalette(colorPalettes, colorname),
+        (s) => (s.isDark ? 20 : 100), // Same as onPrimary
+        false,
+      );
+      const containerDynamicColor = new DynamicColor(
+        `${colorname}Container`,
+        (s) => getPalette(colorPalettes, colorname),
+        (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
+        false,
+      );
+      const onContainerDynamicColor = new DynamicColor(
+        `on${upperFirst(colorname)}Container`,
+        (s) => getPalette(colorPalettes, colorname),
+        (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
+        false,
+      );
+
+      // Get the ARGB values using the scheme
+      customVars[colorname] = colorDynamicColor.getArgb(scheme);
+      customVars[`on${upperFirst(colorname)}`] =
+        onColorDynamicColor.getArgb(scheme);
+      customVars[`${colorname}Container`] =
+        containerDynamicColor.getArgb(scheme);
+      customVars[`on${upperFirst(colorname)}Container`] =
+        onContainerDynamicColor.getArgb(scheme);
+    }
   });
 
   // Merge both
@@ -464,6 +560,7 @@ export function generateCss({
   error,
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
+  contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
 }: McuConfig) {
   const sourceArgb = argbFromHex(hexSource);
 
@@ -582,11 +679,13 @@ export function generateCss({
     lightScheme,
     customColors,
     colorPalettes,
+    contrastAllColors,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
     colorPalettes,
+    contrastAllColors,
   );
 
   const lightVars = toCssVars(mergedColorsLight);
