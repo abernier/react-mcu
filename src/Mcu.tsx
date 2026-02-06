@@ -349,10 +349,7 @@ const createPaletteFromHex = (
   chromaOverride?: number,
 ): TonalPalette => {
   const hct = Hct.fromInt(argbFromHex(hexColor));
-  return TonalPalette.fromHueAndChroma(
-    hct.hue,
-    chromaOverride !== undefined ? chromaOverride : hct.chroma,
-  );
+  return TonalPalette.fromHueAndChroma(hct.hue, chromaOverride ?? hct.chroma);
 };
 
 export function generateCss({
