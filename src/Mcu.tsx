@@ -55,7 +55,17 @@ export type McuConfig = {
    * @deprecated Not yet implemented. This prop is currently ignored.
    */
   colorMatch?: boolean;
-  /** Array of custom colors to include in the generated palette */
+  /**
+   * Array of custom colors to include in the generated palette.
+   *
+   * @example
+   * ```ts
+   * customColors={[
+   *   { name: "brand", hex: "#FF5733", blend: true },
+   *   { name: "success", hex: "#28A745", blend: false }
+   * ]}
+   * ```
+   */
   customColors?: HexCustomColor[];
 };
 
