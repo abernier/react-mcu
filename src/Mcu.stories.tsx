@@ -1081,25 +1081,25 @@ export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantSt: Story = {
 
 //
 
-export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantColorMatchSt: Story =
-  {
-    name: "[primary][secondary][tertiary][error][neutral][neutralVariant][colorMatch]",
-    args: {
-      source: "#769CDF", // keep source because required (but primary will be considered effective one)
-      primary: "#cab337",
-      secondary: "#b03a3a",
-      tertiary: "#2138d2",
-      error: "#479200",
-      neutral: "#957FF1",
-      neutralVariant: "#007EDF",
-      colorMatch: true,
-    },
-    render: (args) => (
-      <Mcu {...args}>
-        <Bar customColors={args.customColors} />
-      </Mcu>
-    ),
-  };
+// export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantColorMatchSt: Story =
+//   {
+//     name: "[primary][secondary][tertiary][error][neutral][neutralVariant][colorMatch]",
+//     args: {
+//       source: "#769CDF", // keep source because required (but primary will be considered effective one)
+//       primary: "#cab337",
+//       secondary: "#b03a3a",
+//       tertiary: "#2138d2",
+//       error: "#479200",
+//       neutral: "#957FF1",
+//       neutralVariant: "#007EDF",
+//       colorMatch: true,
+//     },
+//     render: (args) => (
+//       <Mcu {...args}>
+//         <Bar customColors={args.customColors} />
+//       </Mcu>
+//     ),
+//   };
 
 //
 
@@ -1108,9 +1108,20 @@ export const CustomColorsSt: Story = {
   args: {
     source: "#769CDF",
     customColors: [
-      { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
-      { name: "myCustomColor2", hex: "#E126C6", blend: true },
-      { name: "myCustomColor3", hex: "#E126C6", blend: false },
+      { name: "myCustomColor1", hex: "#C00999", blend: false },
+      { name: "myCustomColor2", hex: "#4E15D1", blend: false },
+    ],
+  },
+  render: St1.render,
+};
+
+export const CustomColorsHarmonizedSt: Story = {
+  name: "Custom colors with harmonization",
+  args: {
+    source: "#769CDF",
+    customColors: [
+      { name: "myCustomColor1", hex: "#C00999", blend: true },
+      { name: "myCustomColor2", hex: "#4E15D1", blend: true },
     ],
   },
   render: St1.render,

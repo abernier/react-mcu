@@ -50,9 +50,22 @@ export type McuConfig = {
    * When true, stays true to input colors without harmonization.
    * When false (default), colors may be adjusted for better harmonization.
    * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
+   *
+   * @default false
+   * @deprecated Not yet implemented. This prop is currently ignored.
    */
   colorMatch?: boolean;
-  /** Array of custom colors to include in the generated palette */
+  /**
+   * Array of custom colors to include in the generated palette.
+   *
+   * @example
+   * ```ts
+   * customColors={[
+   *   { name: "brand", hex: "#FF5733", blend: true },
+   *   { name: "success", hex: "#28A745", blend: false }
+   * ]}
+   * ```
+   */
   customColors?: HexCustomColor[];
 };
 
@@ -384,12 +397,7 @@ export function generateCss({
     const primaryHct = Hct.fromInt(effectiveSourceArgb);
     const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
-    // Determine chroma to use based on colorMatch mode
-    // colorMatch=true: use original chroma (color fidelity)
-    // colorMatch=false: use scheme-adjusted chroma (harmonized)
-    const primaryChroma = colorMatch
-      ? primaryHct.chroma // Original chroma for color fidelity
-      : baseScheme.primaryPalette.chroma; // Scheme-adjusted chroma
+    const primaryChroma = baseScheme.primaryPalette.chroma;
 
     // Create custom palettes for each defined core color
     const customPrimaryPalette = TonalPalette.fromHueAndChroma(
@@ -400,47 +408,37 @@ export function generateCss({
     const customSecondaryPalette = secondary
       ? TonalPalette.fromHueAndChroma(
           Hct.fromInt(argbFromHex(secondary)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(secondary)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
+          primaryChroma,
         )
       : baseScheme.secondaryPalette;
 
     const customTertiaryPalette = tertiary
       ? TonalPalette.fromHueAndChroma(
           Hct.fromInt(argbFromHex(tertiary)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(tertiary)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
+          primaryChroma,
         )
       : baseScheme.tertiaryPalette;
 
     const customNeutralPalette = neutral
       ? TonalPalette.fromHueAndChroma(
           Hct.fromInt(argbFromHex(neutral)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(neutral)).chroma // Original chroma
-            : baseScheme.neutralPalette.chroma,
+          baseScheme.neutralPalette.chroma,
         )
       : baseScheme.neutralPalette;
 
     const customNeutralVariantPalette = neutralVariant
       ? TonalPalette.fromHueAndChroma(
           Hct.fromInt(argbFromHex(neutralVariant)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(neutralVariant)).chroma // Original chroma
-            : baseScheme.neutralVariantPalette.chroma,
+          baseScheme.neutralVariantPalette.chroma,
         )
       : baseScheme.neutralVariantPalette;
 
     const customErrorPalette = error
       ? TonalPalette.fromHueAndChroma(
           Hct.fromInt(argbFromHex(error)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(error)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
+          primaryChroma,
         )
-      : undefined; // Will use default if not specified
+      : undefined;
 
     // Create schemes with custom palettes
     const variant = schemeToVariant[scheme];
