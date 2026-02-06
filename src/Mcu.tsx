@@ -289,11 +289,11 @@ type ColorDefinition = {
 // but for custom colors, following the same tone mapping patterns
 //
 
-type CustomColorPalettes = Map<string, TonalPalette>;
+type ColorPalettes = Record<string, TonalPalette>;
 
-// Helper to safely get a palette from the map
-function getPalette(palettes: CustomColorPalettes, colorName: string) {
-  const palette = palettes.get(colorName);
+// Helper to safely get a palette from the record
+function getPalette(palettes: ColorPalettes, colorName: string) {
+  const palette = palettes[colorName];
   if (!palette) {
     throw new Error(
       `Custom color palette not found for '${colorName}'. This is likely a bug in the implementation.`,
@@ -311,7 +311,7 @@ function getPalette(palettes: CustomColorPalettes, colorName: string) {
 function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
-  customColorPalettes: CustomColorPalettes,
+  colorPalettes: ColorPalettes,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -343,25 +343,25 @@ function mergeBaseAndCustomColors(
     // Create DynamicColor objects that respect the scheme
     const colorDynamicColor = new DynamicColor(
       colorname,
-      (s) => getPalette(customColorPalettes, colorname),
+      (s) => getPalette(colorPalettes, colorname),
       (s) => (s.isDark ? 80 : 40), // Same as primary
       false,
     );
     const onColorDynamicColor = new DynamicColor(
       `on${upperFirst(colorname)}`,
-      (s) => getPalette(customColorPalettes, colorname),
+      (s) => getPalette(colorPalettes, colorname),
       (s) => (s.isDark ? 20 : 100), // Same as onPrimary
       false,
     );
     const containerDynamicColor = new DynamicColor(
       `${colorname}Container`,
-      (s) => getPalette(customColorPalettes, colorname),
+      (s) => getPalette(colorPalettes, colorname),
       (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
       false,
     );
     const onContainerDynamicColor = new DynamicColor(
       `on${upperFirst(colorname)}Container`,
-      (s) => getPalette(customColorPalettes, colorname),
+      (s) => getPalette(colorPalettes, colorname),
       (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
       false,
     );
@@ -480,7 +480,7 @@ export function generateCss({
   const primaryHct = Hct.fromInt(effectiveSourceArgb);
   const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
-  // Unified color processing: Combine core colors and custom colors
+  // Unified color processing: Combine core colors and custom colors, filter to only those with hex defined
   const allColors: ColorDefinition[] = [
     // Core colors (hex may be undefined)
     {
@@ -523,21 +523,17 @@ export function generateCss({
     })),
   ];
 
-  // Filter to only colors with hex defined
   const definedColors = allColors.filter(
     (c): c is ColorDefinition & { hex: string } => c.hex !== undefined,
   );
 
-  // Create palettes for all colors using unified logic
-  const colorPalettes = new Map<string, TonalPalette>();
-  definedColors.forEach((colorDef) => {
-    const palette = createColorPalette(
-      colorDef,
-      baseScheme,
-      effectiveSourceForHarmonization,
-    );
-    colorPalettes.set(colorDef.name, palette);
-  });
+  // Create palettes for all defined colors
+  const colorPalettes = Object.fromEntries(
+    definedColors.map((colorDef) => [
+      colorDef.name,
+      createColorPalette(colorDef, baseScheme, effectiveSourceForHarmonization),
+    ]),
+  );
 
   // Helper to create both light and dark schemes
   const createSchemes = (
@@ -555,29 +551,30 @@ export function generateCss({
     sourceColorArgb: effectiveSourceArgb,
     variant,
     contrastLevel: contrast,
-    primaryPalette: colorPalettes.get("primary") || baseScheme.primaryPalette,
-    secondaryPalette:
-      colorPalettes.get("secondary") || baseScheme.secondaryPalette,
-    tertiaryPalette:
-      colorPalettes.get("tertiary") || baseScheme.tertiaryPalette,
-    neutralPalette: colorPalettes.get("neutral") || baseScheme.neutralPalette,
+    primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
+    secondaryPalette: colorPalettes["secondary"] || baseScheme.secondaryPalette,
+    tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
+    neutralPalette: colorPalettes["neutral"] || baseScheme.neutralPalette,
     neutralVariantPalette:
-      colorPalettes.get("neutralVariant") || baseScheme.neutralVariantPalette,
+      colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
   });
 
   // Note: DynamicScheme constructor doesn't accept errorPalette as parameter
   // We need to set it after creation
-  const errorPalette = colorPalettes.get("error");
+  const errorPalette = colorPalettes["error"];
   if (errorPalette) {
     lightScheme.errorPalette = errorPalette;
     darkScheme.errorPalette = errorPalette;
   }
 
-  // Prepare custom colors for merging (non-core colors only)
-  const customColors = hexCustomColors.map(({ hex, ...rest }) => ({
-    ...rest,
-    value: argbFromHex(hex),
-  }));
+  // Extract custom colors (non-core) for merging
+  const customColors = definedColors
+    .filter((c) => !c.isCoreColor)
+    .map((c) => ({
+      name: c.name,
+      blend: c.blend ?? false,
+      value: argbFromHex(c.hex),
+    }));
 
   const mergedColorsLight = mergeBaseAndCustomColors(
     lightScheme,
