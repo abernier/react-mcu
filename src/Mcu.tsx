@@ -278,7 +278,7 @@ type ColorDefinition = {
   name: string;
   hex?: string;
   blend?: boolean;
-  isCoreColor?: boolean;
+  core?: boolean;
   chromaSource?: "primary" | "neutral" | "neutralVariant";
 };
 
@@ -424,7 +424,7 @@ function createColorPalette(
 
   // Determine which chroma to use based on color type
   let targetChroma: number;
-  if (colorDef.isCoreColor && colorDef.chromaSource) {
+  if (colorDef.core && colorDef.chromaSource) {
     // Core colors use specific chroma values from the base scheme
     if (colorDef.chromaSource === "neutral") {
       targetChroma = baseScheme.neutralPalette.chroma;
@@ -486,40 +486,42 @@ export function generateCss({
     {
       name: "primary",
       hex: primary,
-      isCoreColor: true,
+      core: true,
       chromaSource: "primary",
     },
     {
       name: "secondary",
       hex: secondary,
-      isCoreColor: true,
+      core: true,
       chromaSource: "primary",
     },
     {
       name: "tertiary",
       hex: tertiary,
-      isCoreColor: true,
+      core: true,
       chromaSource: "primary",
     },
+    { name: "error", hex: error, core: true, chromaSource: "primary" },
     {
       name: "neutral",
       hex: neutral,
-      isCoreColor: true,
+      core: true,
       chromaSource: "neutral",
     },
     {
       name: "neutralVariant",
       hex: neutralVariant,
-      isCoreColor: true,
+      core: true,
       chromaSource: "neutralVariant",
     },
-    { name: "error", hex: error, isCoreColor: true, chromaSource: "primary" },
+    //
     // Custom colors
+    //
     ...hexCustomColors.map((c) => ({
       name: c.name,
       hex: c.hex,
       blend: c.blend,
-      isCoreColor: false,
+      core: false,
     })),
   ];
 
@@ -569,7 +571,7 @@ export function generateCss({
 
   // Extract custom colors (non-core) for merging
   const customColors = definedColors
-    .filter((c) => !c.isCoreColor)
+    .filter((c) => !c.core)
     .map((c) => ({
       name: c.name,
       blend: c.blend ?? false,
