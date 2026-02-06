@@ -381,94 +381,86 @@ function mergeBaseAndCustomColors(
   customColors.forEach((color) => {
     const colorname = color.name;
 
-    if (contrastAllColors) {
-      // When contrastAllColors is enabled, create DynamicColor objects with contrast curves
-      // Using the same contrast behavior as MaterialDynamicColors.primary
-      const colorDynamicColor = DynamicColor.fromPalette({
-        name: colorname,
-        palette: (s) => getPalette(colorPalettes, colorname),
-        tone: (s) => (s.isDark ? 80 : 40),
-        background: (s) => MaterialDynamicColors.highestSurface(s),
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-      });
-      const onColorDynamicColor = DynamicColor.fromPalette({
-        name: `on${upperFirst(colorname)}`,
-        palette: (s) => getPalette(colorPalettes, colorname),
-        tone: (s) => (s.isDark ? 20 : 100),
-        background: (s) =>
-          new DynamicColor(
-            colorname,
-            (s) => getPalette(colorPalettes, colorname),
-            (s) => (s.isDark ? 80 : 40),
-            false,
-          ),
-        contrastCurve: new ContrastCurve(4.5, 7, 11, 21),
-      });
-      const containerDynamicColor = DynamicColor.fromPalette({
-        name: `${colorname}Container`,
-        palette: (s) => getPalette(colorPalettes, colorname),
-        tone: (s) => (s.isDark ? 30 : 90),
-        background: (s) => MaterialDynamicColors.highestSurface(s),
-        contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-      });
-      const onContainerDynamicColor = DynamicColor.fromPalette({
-        name: `on${upperFirst(colorname)}Container`,
-        palette: (s) => getPalette(colorPalettes, colorname),
-        tone: (s) => (s.isDark ? 90 : 30),
-        background: (s) =>
-          new DynamicColor(
-            `${colorname}Container`,
-            (s) => getPalette(colorPalettes, colorname),
-            (s) => (s.isDark ? 30 : 90),
-            false,
-          ),
-        contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-      });
+    // Create DynamicColor objects with or without contrast curves based on contrastAllColors flag
+    const colorDynamicColor = contrastAllColors
+      ? DynamicColor.fromPalette({
+          name: colorname,
+          palette: (s) => getPalette(colorPalettes, colorname),
+          tone: (s) => (s.isDark ? 80 : 40),
+          background: (s) => MaterialDynamicColors.highestSurface(s),
+          contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
+        })
+      : new DynamicColor(
+          colorname,
+          (s) => getPalette(colorPalettes, colorname),
+          (s) => (s.isDark ? 80 : 40),
+          false,
+        );
 
-      customVars[colorname] = colorDynamicColor.getArgb(scheme);
-      customVars[`on${upperFirst(colorname)}`] =
-        onColorDynamicColor.getArgb(scheme);
-      customVars[`${colorname}Container`] =
-        containerDynamicColor.getArgb(scheme);
-      customVars[`on${upperFirst(colorname)}Container`] =
-        onContainerDynamicColor.getArgb(scheme);
-    } else {
-      // When contrastAllColors is disabled, use simple DynamicColor objects without contrast curves
-      // This maintains the original behavior
-      const colorDynamicColor = new DynamicColor(
-        colorname,
-        (s) => getPalette(colorPalettes, colorname),
-        (s) => (s.isDark ? 80 : 40), // Same as primary
-        false,
-      );
-      const onColorDynamicColor = new DynamicColor(
-        `on${upperFirst(colorname)}`,
-        (s) => getPalette(colorPalettes, colorname),
-        (s) => (s.isDark ? 20 : 100), // Same as onPrimary
-        false,
-      );
-      const containerDynamicColor = new DynamicColor(
-        `${colorname}Container`,
-        (s) => getPalette(colorPalettes, colorname),
-        (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
-        false,
-      );
-      const onContainerDynamicColor = new DynamicColor(
-        `on${upperFirst(colorname)}Container`,
-        (s) => getPalette(colorPalettes, colorname),
-        (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
-        false,
-      );
+    const onColorDynamicColor = contrastAllColors
+      ? DynamicColor.fromPalette({
+          name: `on${upperFirst(colorname)}`,
+          palette: (s) => getPalette(colorPalettes, colorname),
+          tone: (s) => (s.isDark ? 20 : 100),
+          background: (s) =>
+            new DynamicColor(
+              colorname,
+              (s) => getPalette(colorPalettes, colorname),
+              (s) => (s.isDark ? 80 : 40),
+              false,
+            ),
+          contrastCurve: new ContrastCurve(4.5, 7, 11, 21),
+        })
+      : new DynamicColor(
+          `on${upperFirst(colorname)}`,
+          (s) => getPalette(colorPalettes, colorname),
+          (s) => (s.isDark ? 20 : 100),
+          false,
+        );
 
-      // Get the ARGB values using the scheme
-      customVars[colorname] = colorDynamicColor.getArgb(scheme);
-      customVars[`on${upperFirst(colorname)}`] =
-        onColorDynamicColor.getArgb(scheme);
-      customVars[`${colorname}Container`] =
-        containerDynamicColor.getArgb(scheme);
-      customVars[`on${upperFirst(colorname)}Container`] =
-        onContainerDynamicColor.getArgb(scheme);
-    }
+    const containerDynamicColor = contrastAllColors
+      ? DynamicColor.fromPalette({
+          name: `${colorname}Container`,
+          palette: (s) => getPalette(colorPalettes, colorname),
+          tone: (s) => (s.isDark ? 30 : 90),
+          background: (s) => MaterialDynamicColors.highestSurface(s),
+          contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
+        })
+      : new DynamicColor(
+          `${colorname}Container`,
+          (s) => getPalette(colorPalettes, colorname),
+          (s) => (s.isDark ? 30 : 90),
+          false,
+        );
+
+    const onContainerDynamicColor = contrastAllColors
+      ? DynamicColor.fromPalette({
+          name: `on${upperFirst(colorname)}Container`,
+          palette: (s) => getPalette(colorPalettes, colorname),
+          tone: (s) => (s.isDark ? 90 : 30),
+          background: (s) =>
+            new DynamicColor(
+              `${colorname}Container`,
+              (s) => getPalette(colorPalettes, colorname),
+              (s) => (s.isDark ? 30 : 90),
+              false,
+            ),
+          contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
+        })
+      : new DynamicColor(
+          `on${upperFirst(colorname)}Container`,
+          (s) => getPalette(colorPalettes, colorname),
+          (s) => (s.isDark ? 90 : 30),
+          false,
+        );
+
+    // Get the ARGB values using the scheme
+    customVars[colorname] = colorDynamicColor.getArgb(scheme);
+    customVars[`on${upperFirst(colorname)}`] =
+      onColorDynamicColor.getArgb(scheme);
+    customVars[`${colorname}Container`] = containerDynamicColor.getArgb(scheme);
+    customVars[`on${upperFirst(colorname)}Container`] =
+      onContainerDynamicColor.getArgb(scheme);
   });
 
   // Merge both
