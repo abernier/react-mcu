@@ -2,7 +2,6 @@
 
 import {
   argbFromHex,
-  CorePalette,
   type CustomColor,
   customColor,
   DynamicScheme,
