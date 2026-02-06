@@ -1108,20 +1108,20 @@ export const CustomColorsSt: Story = {
   args: {
     source: "#769CDF",
     customColors: [
-      { name: "myCustomColor1", hex: "#C00999", blend: false },
-      { name: "myCustomColor2", hex: "#4E15D1", blend: false },
+      { name: "myCustomColor1", hex: "#C00999", blend: true },
+      { name: "myCustomColor2", hex: "#4E15D1", blend: true },
     ],
   },
   render: St1.render,
 };
 
 export const CustomColorsHarmonizedSt: Story = {
-  name: "Custom colors with harmonization",
+  name: "Custom colors (no harmonization)",
   args: {
     source: "#769CDF",
     customColors: [
-      { name: "myCustomColor1", hex: "#C00999", blend: true },
-      { name: "myCustomColor2", hex: "#4E15D1", blend: true },
+      { name: "myCustomColor1", hex: "#C00999", blend: false },
+      { name: "myCustomColor2", hex: "#4E15D1", blend: false },
     ],
   },
   render: St1.render,
