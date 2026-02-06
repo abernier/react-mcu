@@ -110,12 +110,12 @@ function Layout({ children }: { children: React.ReactNode }) {
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
       <style>{`
         @scope {
-          & {
+          & {  
             --gap1: .75rem;
             --gap2: .25rem;
 
-            max-width: 54rem; margin-inline:auto;
-            p {all:unset; font-family: sans-serif; font-size: 0.75rem; color:white;mix-blend-mode:difference;}
+            max-width: 52rem; margin-inline:auto;
+            p {all:unset; font-family: sans-serif; font-size: 0.8rem; color:white;mix-blend-mode:difference;}
           }
         }
       `}</style>
@@ -138,7 +138,7 @@ function Scheme({
       @scope {
         & {
           padding: 1rem;
-          background-color: ${isDark ? "#1c1b1f" : "#ffffff"};border-radius: .5rem;
+          background-color: ${isDark ? "#1c1b1f" : "#ffffff"}; border-radius:4px;
           color: ${isDark ? "var(--sb-foreground)" : "var(--sb-background)"};
           [style*="background-color"] {padding:.35rem;}
         }
