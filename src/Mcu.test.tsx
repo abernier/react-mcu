@@ -1,6 +1,7 @@
 import { render, cleanup } from "@testing-library/react";
 import { describe, it, expect, afterEach } from "vitest";
-import { Mcu } from "./Mcu.js";
+import { Mcu, generateCss } from "./Mcu.js";
+import { hexFromArgb } from "@material/material-color-utilities";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -25,5 +26,103 @@ describe("Mcu", () => {
     expect(styleContent).toContain("--mcu-on-primary");
     expect(styleContent).toContain("--mcu-surface");
     expect(styleContent).toContain("--mcu-background");
+  });
+
+  it("should align custom colors with scheme (monochrome produces grayscale)", () => {
+    // Test with monochrome scheme - custom colors should be grayscale
+    const { mergedColorsLight } = generateCss({
+      source: "#6750A4",
+      scheme: "monochrome",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: false }],
+    });
+
+    // Get the custom color value
+    const brandColor = (mergedColorsLight as Record<string, number>)["brand"]!;
+    const brandHex = hexFromArgb(brandColor);
+
+    // In monochrome scheme, all colors should be grayscale (R=G=B)
+    const r = (brandColor >> 16) & 0xff;
+    const g = (brandColor >> 8) & 0xff;
+    const b = brandColor & 0xff;
+
+    // Allow small variance for rounding
+    expect(Math.abs(r - g)).toBeLessThanOrEqual(1);
+    expect(Math.abs(g - b)).toBeLessThanOrEqual(1);
+    expect(Math.abs(r - b)).toBeLessThanOrEqual(1);
+  });
+
+  it("should make custom colors respect different schemes", () => {
+    // Compare custom colors between different schemes
+    const tonalSpotResult = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: false }],
+    });
+
+    const monochromeResult = generateCss({
+      source: "#6750A4",
+      scheme: "monochrome",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: false }],
+    });
+
+    // The colors should be different between schemes
+    expect(
+      (tonalSpotResult.mergedColorsLight as Record<string, number>)["brand"],
+    ).not.toBe(
+      (monochromeResult.mergedColorsLight as Record<string, number>)["brand"],
+    );
+
+    // TonalSpot should have color (not grayscale)
+    const tonalColor = (
+      tonalSpotResult.mergedColorsLight as Record<string, number>
+    )["brand"]!;
+    const tr = (tonalColor >> 16) & 0xff;
+    const tg = (tonalColor >> 8) & 0xff;
+    const tb = tonalColor & 0xff;
+
+    // TonalSpot should not be perfectly grayscale
+    const isGrayscale =
+      Math.abs(tr - tg) <= 1 &&
+      Math.abs(tg - tb) <= 1 &&
+      Math.abs(tr - tb) <= 1;
+    expect(isGrayscale).toBe(false);
+  });
+
+  it("should make custom colors respect light/dark mode", () => {
+    const result = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: false }],
+    });
+
+    // Light and dark mode should produce different colors
+    expect(
+      (result.mergedColorsLight as Record<string, number>)["brand"],
+    ).not.toBe((result.mergedColorsDark as Record<string, number>)["brand"]);
+
+    // Dark mode brand should be lighter (higher tone) than light mode
+    const lightBrand = (result.mergedColorsLight as Record<string, number>)[
+      "brand"
+    ]!;
+    const darkBrand = (result.mergedColorsDark as Record<string, number>)[
+      "brand"
+    ]!;
+
+    // Extract luminance (approximate using RGB average)
+    const lightLum =
+      ((lightBrand >> 16) & 0xff) +
+      ((lightBrand >> 8) & 0xff) +
+      (lightBrand & 0xff);
+    const darkLum =
+      ((darkBrand >> 16) & 0xff) +
+      ((darkBrand >> 8) & 0xff) +
+      (darkBrand & 0xff);
+
+    // Dark mode should be lighter than light mode (higher tone)
+    expect(darkLum).toBeGreaterThan(lightLum);
   });
 });
