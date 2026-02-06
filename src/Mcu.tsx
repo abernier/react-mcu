@@ -385,61 +385,62 @@ export function generateCss({
     const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
     // Determine chroma to use based on colorMatch mode
-    // colorMatch=true: use original chroma (color fidelity)
+    // colorMatch=true: use TonalPalette.fromInt() to preserve original color
     // colorMatch=false: use scheme-adjusted chroma (harmonized)
-    const primaryChroma = colorMatch
-      ? primaryHct.chroma // Original chroma for color fidelity
-      : baseScheme.primaryPalette.chroma; // Scheme-adjusted chroma
 
-    // Create custom palettes for each defined core color
-    const customPrimaryPalette = TonalPalette.fromHueAndChroma(
-      primaryHct.hue,
-      primaryChroma,
-    );
+    // When colorMatch=true, use TonalPalette.fromInt() which preserves the
+    // exact hue, chroma, and tone characteristics of the input color.
+    // When colorMatch=false, extract hue and use harmonized chroma.
+    const customPrimaryPalette = colorMatch
+      ? TonalPalette.fromInt(effectiveSourceArgb)
+      : TonalPalette.fromHueAndChroma(
+          primaryHct.hue,
+          baseScheme.primaryPalette.chroma,
+        );
 
     const customSecondaryPalette = secondary
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(secondary)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(secondary)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
-        )
+      ? colorMatch
+        ? TonalPalette.fromInt(argbFromHex(secondary))
+        : TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(secondary)).hue,
+            baseScheme.primaryPalette.chroma,
+          )
       : baseScheme.secondaryPalette;
 
     const customTertiaryPalette = tertiary
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(tertiary)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(tertiary)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
-        )
+      ? colorMatch
+        ? TonalPalette.fromInt(argbFromHex(tertiary))
+        : TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(tertiary)).hue,
+            baseScheme.primaryPalette.chroma,
+          )
       : baseScheme.tertiaryPalette;
 
     const customNeutralPalette = neutral
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(neutral)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(neutral)).chroma // Original chroma
-            : baseScheme.neutralPalette.chroma,
-        )
+      ? colorMatch
+        ? TonalPalette.fromInt(argbFromHex(neutral))
+        : TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(neutral)).hue,
+            baseScheme.neutralPalette.chroma,
+          )
       : baseScheme.neutralPalette;
 
     const customNeutralVariantPalette = neutralVariant
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(neutralVariant)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(neutralVariant)).chroma // Original chroma
-            : baseScheme.neutralVariantPalette.chroma,
-        )
+      ? colorMatch
+        ? TonalPalette.fromInt(argbFromHex(neutralVariant))
+        : TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(neutralVariant)).hue,
+            baseScheme.neutralVariantPalette.chroma,
+          )
       : baseScheme.neutralVariantPalette;
 
     const customErrorPalette = error
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(error)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(error)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
-        )
+      ? colorMatch
+        ? TonalPalette.fromInt(argbFromHex(error))
+        : TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(error)).hue,
+            baseScheme.primaryPalette.chroma,
+          )
       : undefined; // Will use default if not specified
 
     // Create schemes with custom palettes
