@@ -161,4 +161,33 @@ describe("Mcu", () => {
     // Both should be valid colors but different
     expect(blendedHex).not.toBe(nonBlendedHex);
   });
+
+  it("should harmonize custom colors with effective source (primary if defined, else source)", () => {
+    // Test harmonization with just source
+    const withSourceOnly = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: true }],
+    });
+
+    // Test harmonization with primary defined (should use primary as effective source)
+    const withPrimary = generateCss({
+      source: "#6750A4",
+      primary: "#00FF00", // Different color as primary
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: true }],
+    });
+
+    // The harmonized colors should be different because they harmonize with different sources
+    const sourceOnlyColor = (
+      withSourceOnly.mergedColorsLight as Record<string, number>
+    )["brand"]!;
+    const primaryColor = (
+      withPrimary.mergedColorsLight as Record<string, number>
+    )["brand"]!;
+
+    expect(sourceOnlyColor).not.toBe(primaryColor);
+  });
 });

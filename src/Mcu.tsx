@@ -578,15 +578,21 @@ export function generateCss({
     value: argbFromHex(hex),
   }));
 
+  // Determine the effective source for harmonization (same logic as core colors)
+  // When primary is defined, it becomes the effective source
+  const effectiveSourceForHarmonization = primary
+    ? argbFromHex(primary)
+    : sourceArgb;
+
   // Create custom color palettes that respect the scheme
   // Use the scheme's primary chroma (similar to core colors)
   const customColorPalettes: CustomColorPalettes = new Map();
   const primaryChroma = lightScheme.primaryPalette.chroma;
 
   customColors.forEach((customColorObj) => {
-    // Handle blend property: harmonize with source if blend is true
+    // Handle blend property: harmonize with effective source if blend is true
     const colorValue = customColorObj.blend
-      ? Blend.harmonize(customColorObj.value, sourceArgb)
+      ? Blend.harmonize(customColorObj.value, effectiveSourceForHarmonization)
       : customColorObj.value;
 
     const hct = Hct.fromInt(colorValue);
