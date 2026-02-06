@@ -371,38 +371,96 @@ export function generateCss({
 
   let lightScheme: DynamicScheme;
   let darkScheme: DynamicScheme;
-  let corePalette: CorePalette;
 
   if (hasCoreColors) {
-    // Convert hex core colors to ARGB
-    const coreColorsArgb = {
-      primary: primary ? argbFromHex(primary) : sourceArgb,
-      secondary: secondary ? argbFromHex(secondary) : undefined,
-      tertiary: tertiary ? argbFromHex(tertiary) : undefined,
-      neutral: neutral ? argbFromHex(neutral) : undefined,
-      neutralVariant: neutralVariant ? argbFromHex(neutralVariant) : undefined,
-      error: error ? argbFromHex(error) : undefined,
-    };
+    // According to Material Theme Builder:
+    // "The primary key color will be used for the source color"
+    // When core colors are defined, primary becomes the source
+    const effectiveSource = primary || hexSource;
+    const effectiveSourceArgb = argbFromHex(effectiveSource);
 
-    // Create a custom CorePalette with the specified colors
-    // colorMatch: true = stay true to input colors (non-harmonized)
-    // colorMatch: false = harmonize colors (enforce minimum chroma)
-    corePalette = colorMatch
-      ? CorePalette.fromColors(coreColorsArgb)
-      : CorePalette.contentFromColors(coreColorsArgb);
+    // First, create a base scheme to get the standard chroma values
+    const SchemeClass = schemesMap[scheme];
+    const primaryHct = Hct.fromInt(effectiveSourceArgb);
+    const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
+    // Determine chroma to use based on colorMatch mode
+    // colorMatch=true: use original chroma (color fidelity)
+    // colorMatch=false: use scheme-adjusted chroma (harmonized)
+    const primaryChroma = colorMatch
+      ? primaryHct.chroma // Original chroma for color fidelity
+      : baseScheme.primaryPalette.chroma; // Scheme-adjusted chroma
+
+    // Create custom palettes for each defined core color
+    const customPrimaryPalette = TonalPalette.fromHueAndChroma(
+      primaryHct.hue,
+      primaryChroma,
+    );
+
+    const customSecondaryPalette = secondary
+      ? TonalPalette.fromHueAndChroma(
+          Hct.fromInt(argbFromHex(secondary)).hue,
+          colorMatch
+            ? Hct.fromInt(argbFromHex(secondary)).chroma // Original chroma
+            : primaryChroma, // Use same chroma as primary for consistency
+        )
+      : baseScheme.secondaryPalette;
+
+    const customTertiaryPalette = tertiary
+      ? TonalPalette.fromHueAndChroma(
+          Hct.fromInt(argbFromHex(tertiary)).hue,
+          colorMatch
+            ? Hct.fromInt(argbFromHex(tertiary)).chroma // Original chroma
+            : primaryChroma, // Use same chroma as primary for consistency
+        )
+      : baseScheme.tertiaryPalette;
+
+    const customNeutralPalette = neutral
+      ? TonalPalette.fromHueAndChroma(
+          Hct.fromInt(argbFromHex(neutral)).hue,
+          colorMatch
+            ? Hct.fromInt(argbFromHex(neutral)).chroma // Original chroma
+            : baseScheme.neutralPalette.chroma,
+        )
+      : baseScheme.neutralPalette;
+
+    const customNeutralVariantPalette = neutralVariant
+      ? TonalPalette.fromHueAndChroma(
+          Hct.fromInt(argbFromHex(neutralVariant)).hue,
+          colorMatch
+            ? Hct.fromInt(argbFromHex(neutralVariant)).chroma // Original chroma
+            : baseScheme.neutralVariantPalette.chroma,
+        )
+      : baseScheme.neutralVariantPalette;
+
+    const customErrorPalette = error
+      ? TonalPalette.fromHueAndChroma(
+          Hct.fromInt(argbFromHex(error)).hue,
+          colorMatch
+            ? Hct.fromInt(argbFromHex(error)).chroma // Original chroma
+            : primaryChroma, // Use same chroma as primary for consistency
+        )
+      : undefined; // Will use default if not specified
+
+    // Create schemes with custom palettes
     const variant = schemeToVariant[scheme];
-
     [lightScheme, darkScheme] = createSchemes({
-      sourceColorArgb: sourceArgb,
+      sourceColorArgb: effectiveSourceArgb,
       variant,
       contrastLevel: contrast,
-      primaryPalette: corePalette.a1,
-      secondaryPalette: corePalette.a2,
-      tertiaryPalette: corePalette.a3,
-      neutralPalette: corePalette.n1,
-      neutralVariantPalette: corePalette.n2,
+      primaryPalette: customPrimaryPalette,
+      secondaryPalette: customSecondaryPalette,
+      tertiaryPalette: customTertiaryPalette,
+      neutralPalette: customNeutralPalette,
+      neutralVariantPalette: customNeutralVariantPalette,
     });
+
+    // Note: DynamicScheme constructor doesn't accept errorPalette as parameter
+    // We need to set it after creation
+    if (customErrorPalette) {
+      lightScheme.errorPalette = customErrorPalette;
+      darkScheme.errorPalette = customErrorPalette;
+    }
   } else {
     // Use default scheme generation
     const SchemeClass = schemesMap[scheme];
@@ -410,9 +468,6 @@ export function generateCss({
 
     lightScheme = new SchemeClass(hct, false, contrast);
     darkScheme = new SchemeClass(hct, true, contrast);
-
-    // Create CorePalette for tonal palette access
-    corePalette = CorePalette.of(sourceArgb);
   }
 
   // Prepare custom colors (keep ARGB so generateCssVars can use them)
@@ -436,13 +491,17 @@ export function generateCss({
   const darkVars = toCssVars(mergedColorsDark);
 
   // Generate core colors tonal palette CSS variables
+  // Use the palettes from the light scheme to ensure consistency with Material Theme Builder
   const coreColorsTonalVars = [
-    generateTonalPaletteVars("primary", corePalette.a1),
-    generateTonalPaletteVars("secondary", corePalette.a2),
-    generateTonalPaletteVars("tertiary", corePalette.a3),
-    generateTonalPaletteVars("neutral", corePalette.n1),
-    generateTonalPaletteVars("neutral-variant", corePalette.n2),
-    generateTonalPaletteVars("error", corePalette.error),
+    generateTonalPaletteVars("primary", lightScheme.primaryPalette),
+    generateTonalPaletteVars("secondary", lightScheme.secondaryPalette),
+    generateTonalPaletteVars("tertiary", lightScheme.tertiaryPalette),
+    generateTonalPaletteVars("error", lightScheme.errorPalette),
+    generateTonalPaletteVars("neutral", lightScheme.neutralPalette),
+    generateTonalPaletteVars(
+      "neutral-variant",
+      lightScheme.neutralVariantPalette,
+    ),
   ].join(" ");
 
   // Generate custom color tonal palette CSS variables

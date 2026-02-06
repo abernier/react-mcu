@@ -25,6 +25,9 @@ const meta = {
       },
     },
   },
+  globals: {
+    // backgrounds: { grid: true },
+  },
   // args: {
   //   source: "#769CDF",
   //   scheme: DEFAULT_SCHEME,
@@ -113,7 +116,7 @@ function Bar({
       <style>{`
       @scope {
         & {
-          [style*="background-color"] {padding:.5rem; outline:1px solid;}
+          [style*="background-color"] {padding:.5rem;}
           p {all:unset; font-family: sans-serif; font-size: 0.875rem; color:white;mix-blend-mode:difference;}
         }
       }
@@ -862,7 +865,6 @@ function Bar({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      outline: "1px solid",
                     }}
                   >
                     <p style={{ fontSize: "0.75rem" }}>{tone}</p>
@@ -889,6 +891,217 @@ export const St1: Story = {
 };
 
 //
+// [scheme]
+//
+
+export const MonochromeSt: Story = {
+  name: "[scheme=monochrome]",
+  args: {
+    source: "#769CDF",
+    scheme: "monochrome",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+export const NeutralSt: Story = {
+  name: "[scheme=neutral]",
+  args: {
+    source: "#769CDF",
+    scheme: "neutral",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+export const VibrantSt: Story = {
+  name: "[scheme=vibrant]",
+  args: {
+    source: "#769CDF",
+    scheme: "vibrant",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+export const ExpressiveSt: Story = {
+  name: "[scheme=expressive]",
+  args: {
+    source: "#769CDF",
+    scheme: "expressive",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+export const FidelitySt: Story = {
+  name: "[scheme=fidelity]",
+  args: {
+    source: "#769CDF",
+    scheme: "fidelity",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+export const ContentSt: Story = {
+  name: "[scheme=content]",
+  args: {
+    source: "#769CDF",
+    scheme: "content",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
+// core colors
+//
+
+export const PrimarySt: Story = {
+  name: "[primary]",
+  args: {
+    source: "#769CDF", // keep source because required (but primary will be considered effective one)
+    primary: "#cab337",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
+
+export const PrimarySecondarySt: Story = {
+  name: "[primary][secondary]",
+  args: {
+    source: "#769CDF", // keep source because required (but primary will be considered effective one)
+    primary: "#cab337",
+    secondary: "#b03a3a",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
+
+export const PrimarySecondaryTertiarySt: Story = {
+  name: "[primary][secondary][tertiary]",
+  args: {
+    source: "#769CDF", // keep source because required (but primary will be considered effective one)
+    primary: "#cab337",
+    secondary: "#b03a3a",
+    tertiary: "#2138d2",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
+
+export const PrimarySecondaryTertiaryErrorSt: Story = {
+  name: "[primary][secondary][tertiary][error]",
+  args: {
+    source: "#769CDF", // keep source because required (but primary will be considered effective one)
+    primary: "#cab337",
+    secondary: "#b03a3a",
+    tertiary: "#2138d2",
+    error: "#479200",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
+
+export const PrimarySecondaryTertiaryErrorNeutralSt: Story = {
+  name: "[primary][secondary][tertiary][error][neutral]",
+  args: {
+    source: "#769CDF", // keep source because required (but primary will be considered effective one)
+    primary: "#cab337",
+    secondary: "#b03a3a",
+    tertiary: "#2138d2",
+    error: "#479200",
+    neutral: "#957FF1",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
+
+export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantSt: Story = {
+  name: "[primary][secondary][tertiary][error][neutral][neutralVariant]",
+  args: {
+    source: "#769CDF", // keep source because required (but primary will be considered effective one)
+    primary: "#cab337",
+    secondary: "#b03a3a",
+    tertiary: "#2138d2",
+    error: "#479200",
+    neutral: "#957FF1",
+    neutralVariant: "#007EDF",
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Bar customColors={args.customColors} />
+    </Mcu>
+  ),
+};
+
+//
+
+export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantColorMatchSt: Story =
+  {
+    name: "[primary][secondary][tertiary][error][neutral][neutralVariant][colorMatch]",
+    args: {
+      source: "#769CDF", // keep source because required (but primary will be considered effective one)
+      primary: "#cab337",
+      secondary: "#b03a3a",
+      tertiary: "#2138d2",
+      error: "#479200",
+      neutral: "#957FF1",
+      neutralVariant: "#007EDF",
+      colorMatch: true,
+    },
+    render: (args) => (
+      <Mcu {...args}>
+        <Bar customColors={args.customColors} />
+      </Mcu>
+    ),
+  };
+
+//
 
 export const CustomColorsSt: Story = {
   name: "Custom colors",
@@ -899,23 +1112,6 @@ export const CustomColorsSt: Story = {
       { name: "myCustomColor2", hex: "#E126C6", blend: true },
       { name: "myCustomColor3", hex: "#E126C6", blend: false },
     ],
-  },
-  render: St1.render,
-};
-
-//
-
-export const ExtendedColorsSt: Story = {
-  name: "Extended colors",
-  args: {
-    source: "#769CDF",
-    colorMatch: DEFAULT_COLOR_MATCH,
-    primary: "#63A002",
-    secondary: "#85976E",
-    tertiary: "#4D9D98",
-    error: "#FF5449",
-    neutral: "#91918B",
-    neutralVariant: "#8F9285",
   },
   render: St1.render,
 };
