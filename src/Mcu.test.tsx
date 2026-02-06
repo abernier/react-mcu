@@ -1,7 +1,6 @@
 import { render, cleanup } from "@testing-library/react";
 import { describe, it, expect, afterEach } from "vitest";
-import { Mcu, generateCss } from "./Mcu.js";
-import { hexFromArgb } from "@material/material-color-utilities";
+import { Mcu } from "./Mcu.js";
 
 describe("Mcu", () => {
   afterEach(() => {
