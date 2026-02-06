@@ -342,6 +342,20 @@ const toCssVars = (mergedColors: Record<string, number>) => {
     .join(" ");
 };
 
+//
+// Helper function to create a tonal palette from a hex color with optional chroma override
+//
+const createPaletteFromHex = (
+  hexColor: string,
+  chromaOverride?: number,
+): TonalPalette => {
+  const hct = Hct.fromInt(argbFromHex(hexColor));
+  return TonalPalette.fromHueAndChroma(
+    hct.hue,
+    chromaOverride !== undefined ? chromaOverride : hct.chroma,
+  );
+};
+
 export function generateCss({
   source: hexSource,
   scheme = DEFAULT_SCHEME,
@@ -398,48 +412,29 @@ export function generateCss({
     );
 
     const customSecondaryPalette = secondary
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(secondary)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(secondary)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
-        )
+      ? createPaletteFromHex(secondary, colorMatch ? undefined : primaryChroma)
       : baseScheme.secondaryPalette;
 
     const customTertiaryPalette = tertiary
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(tertiary)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(tertiary)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
-        )
+      ? createPaletteFromHex(tertiary, colorMatch ? undefined : primaryChroma)
       : baseScheme.tertiaryPalette;
 
     const customNeutralPalette = neutral
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(neutral)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(neutral)).chroma // Original chroma
-            : baseScheme.neutralPalette.chroma,
+      ? createPaletteFromHex(
+          neutral,
+          colorMatch ? undefined : baseScheme.neutralPalette.chroma,
         )
       : baseScheme.neutralPalette;
 
     const customNeutralVariantPalette = neutralVariant
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(neutralVariant)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(neutralVariant)).chroma // Original chroma
-            : baseScheme.neutralVariantPalette.chroma,
+      ? createPaletteFromHex(
+          neutralVariant,
+          colorMatch ? undefined : baseScheme.neutralVariantPalette.chroma,
         )
       : baseScheme.neutralVariantPalette;
 
     const customErrorPalette = error
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(error)).hue,
-          colorMatch
-            ? Hct.fromInt(argbFromHex(error)).chroma // Original chroma
-            : primaryChroma, // Use same chroma as primary for consistency
-        )
+      ? createPaletteFromHex(error, colorMatch ? undefined : primaryChroma)
       : undefined; // Will use default if not specified
 
     // Create schemes with custom palettes
