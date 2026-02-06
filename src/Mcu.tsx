@@ -273,18 +273,6 @@ function toRecord<T, K extends string, V>(
 // essentially predefined custom colors with specific names and chroma requirements.
 //
 
-// Define core color names and their chroma source
-const CORE_COLOR_DEFINITIONS = {
-  primary: { chromaSource: "primary" as const },
-  secondary: { chromaSource: "primary" as const },
-  tertiary: { chromaSource: "primary" as const },
-  error: { chromaSource: "primary" as const },
-  neutral: { chromaSource: "neutral" as const },
-  neutralVariant: { chromaSource: "neutralVariant" as const },
-} as const;
-
-type CoreColorName = keyof typeof CORE_COLOR_DEFINITIONS;
-
 // Extended color definition that includes both core and custom colors
 type ColorDefinition = {
   name: string;
@@ -484,7 +472,6 @@ const generateTonalPaletteVars = (
 function createColorPalette(
   colorDef: ColorDefinition,
   baseScheme: DynamicScheme,
-  sourceArgb: number,
   effectiveSourceForHarmonization: number,
 ): TonalPalette {
   // Get the color value, applying harmonization if needed
@@ -622,7 +609,6 @@ export function generateCss({
     const palette = createColorPalette(
       colorDef,
       baseScheme,
-      sourceArgb,
       effectiveSourceForHarmonization,
     );
     colorPalettes.set(colorDef.name, palette);
