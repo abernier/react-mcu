@@ -1,10 +1,11 @@
 :root {
-  --sb-background: white;
+  --sb-background: #eee;
   --sb-foreground: black;
-}
-.dark {
-  --sb-background: black;
-  --sb-foreground: white;
+
+  @media (prefers-color-scheme: dark) {
+    --sb-background: #252525;
+    --sb-foreground: white;
+  }
 }
 
 body:not(:has(.sbdocs)),

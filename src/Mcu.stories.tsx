@@ -18,14 +18,14 @@ const meta = {
   parameters: {
     // layout: "centered",
     chromatic: {
-      modes: {
-        light: allModes["light"],
-        dark: allModes["dark"],
-      },
+      // modes: {
+      //   light: allModes["light"],
+      //   dark: allModes["dark"],
+      // },
     },
   },
   globals: {
-    backgrounds: { grid: true },
+    // backgrounds: { grid: true },
   },
   // args: {
   //   source: "#769CDF",
@@ -90,7 +90,7 @@ function Foo({ children, ...props }: ComponentProps<"div">) {
           & {
             display:grid;
             grid-template-columns: 1fr;
-            gap: 0px;
+            gap: 0;
           }
         }
       `}</style>
@@ -105,28 +105,58 @@ function FooBottom({ children, ...props }: ComponentProps<"div">) {
   return <div {...props}>{children || "FooBottom"}</div>;
 }
 
-function Bar({
+function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+      <style>{`
+        @scope {
+          & {
+            max-width: 54rem; margin-inline:auto;
+            p {all:unset; font-family: sans-serif; font-size: 0.75rem; color:white;mix-blend-mode:difference;}
+          }
+        }
+      `}</style>
+      {children}
+    </div>
+  );
+}
+
+function Scheme({
+  theme,
   customColors,
 }: {
+  theme: "light" | "dark";
   customColors?: ComponentProps<typeof Mcu>["customColors"];
 }) {
+  const isDark = theme === "dark";
   return (
-    <div>
+    <div className={isDark ? "dark" : ""}>
       <style>{`
       @scope {
         & {
-          [style*="background-color"] {padding:.5rem;}
-          p {all:unset; font-family: sans-serif; font-size: 0.875rem; color:white;mix-blend-mode:difference;}
+          padding: 1rem;
+          background-color: ${isDark ? "#1c1b1f" : "#ffffff"};border-radius: .5rem;
+          color: ${isDark ? "var(--sb-foreground)" : "var(--sb-background)"};
+          [style*="background-color"] {padding:.35rem;}
         }
       }
       `}</style>
+      <h3
+        style={{
+          fontWeight: "bold",
+          marginBottom: "0.5rem",
+          textTransform: "capitalize",
+        }}
+      >
+        {isDark ? "Dark Scheme" : "Light Scheme"}
+      </h3>
       <div>
         <style>{`
         @scope {
           & {
             display:grid;
             grid-template-columns: 3fr 1fr;
-            gap: 24px;
+            gap: .75rem;
           }
         }
       `}</style>
@@ -148,7 +178,7 @@ function Bar({
                 display:grid;
                 grid-template-columns: repeat(3, 1fr);
                 grid-template-rows: 1fr 1fr;
-                gap: 8px;
+                gap: 0.25rem;
               }
             }
           `}</style>
@@ -275,7 +305,7 @@ function Bar({
                 display:grid;
                 grid-template-columns: repeat(1, 1fr);
                 grid-template-rows: 1fr 1fr;
-                gap: 8px;
+                gap: 0.25rem;
               }
             }
           `}</style>
@@ -333,7 +363,7 @@ function Bar({
                 display:grid;
                 grid-template-columns: repeat(3, 1fr);
                 grid-template-rows: 1fr;
-                gap: 8px;
+                gap: 0.25rem;
               }
             }
           `}</style>
@@ -535,7 +565,7 @@ function Bar({
               & {
                 display:grid;
                 grid-template-columns: repeat(1, 1fr);
-                gap: 8px;
+                gap: 0.25rem;
               }
             }
           `}</style>
@@ -680,7 +710,9 @@ function Bar({
           //
         }
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
+        >
           <Foo>
             <FooTop
               style={{
@@ -714,7 +746,7 @@ function Bar({
                 & {
                   display:grid;
                   grid-template-columns: repeat(2, 1fr);
-                  gap: 8px;
+                  gap: 0.25rem;
                 }
               }
             `}</style>
@@ -750,7 +782,7 @@ function Bar({
         <style>{`
           @scope {
             & {
-              display:flex; flex-direction:column; gap:16px; margin-top:24px;
+              display:flex; flex-direction:column; gap:1rem;
             }
           }
         `}</style>
@@ -809,70 +841,64 @@ function Bar({
           </div>
         ))}
       </div>
+    </div>
+  );
+}
 
-      {
-        // ███████ ██   ██  █████  ███████  ███████ ███████
-        // ██      ██   ██ ██   ██ ██   ██  ██      ██
-        // ███████ ███████ ███████ ██   ██  █████   ███████
-        //      ██ ██   ██ ██   ██ ██   ██  ██           ██
-        // ███████ ██   ██ ██   ██ ███████  ███████ ███████
-      }
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "16px",
-          marginTop: "24px",
-        }}
-      >
-        {[
-          ...[
-            "primary",
-            "secondary",
-            "tertiary",
-            "error",
-            "neutral",
-            "neutral-variant",
-          ].map((name) => ({ name, isCustom: false })),
-          ...(customColors?.map((cc) => ({ name: cc.name, isCustom: true })) ||
-            []),
-        ].map(({ name, isCustom }) => (
-          <div key={name}>
-            <h3
-              style={{
-                fontWeight: "bold",
-                marginBottom: "8px",
-                textTransform: "capitalize",
-              }}
-            >
-              {isCustom ? upperFirst(name) : name.replace("-", " ")}
-            </h3>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
-              }}
-            >
-              {STANDARD_TONES.slice()
-                .reverse()
-                .map((tone) => (
-                  <div
-                    key={tone}
-                    style={{
-                      backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
-                      height: "4rem",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <p style={{ fontSize: "0.75rem" }}>{tone}</p>
-                  </div>
-                ))}
-            </div>
+function Shades({
+  customColors,
+}: {
+  customColors?: ComponentProps<typeof Mcu>["customColors"];
+}) {
+  return (
+    <div>
+      {[
+        ...[
+          "primary",
+          "secondary",
+          "tertiary",
+          "error",
+          "neutral",
+          "neutral-variant",
+        ].map((name) => ({ name, isCustom: false })),
+        ...(customColors?.map((cc) => ({ name: cc.name, isCustom: true })) ||
+          []),
+      ].map(({ name, isCustom }) => (
+        <div key={name}>
+          <h3
+            style={{
+              fontWeight: "bold",
+              marginBottom: "0.5rem",
+              textTransform: "capitalize",
+            }}
+          >
+            {isCustom ? upperFirst(name) : name.replace("-", " ")}
+          </h3>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
+            }}
+          >
+            {STANDARD_TONES.slice()
+              .reverse()
+              .map((tone) => (
+                <div
+                  key={tone}
+                  style={{
+                    backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
+                    height: "4rem",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <p style={{ fontSize: "0.75rem" }}>{tone}</p>
+                </div>
+              ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -884,7 +910,11 @@ export const St1: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -901,7 +931,11 @@ export const MonochromeSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -914,7 +948,11 @@ export const NeutralSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -927,7 +965,11 @@ export const VibrantSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -940,7 +982,11 @@ export const ExpressiveSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -953,7 +999,11 @@ export const FidelitySt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -966,7 +1016,11 @@ export const ContentSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -983,7 +1037,11 @@ export const PrimarySt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -999,7 +1057,11 @@ export const PrimarySecondarySt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -1016,7 +1078,11 @@ export const PrimarySecondaryTertiarySt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -1034,7 +1100,11 @@ export const PrimarySecondaryTertiaryErrorSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -1053,7 +1123,11 @@ export const PrimarySecondaryTertiaryErrorNeutralSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
@@ -1073,7 +1147,11 @@ export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <Bar customColors={args.customColors} />
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
     </Mcu>
   ),
 };
