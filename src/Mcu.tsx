@@ -276,7 +276,7 @@ function toRecord<T, K extends string, V>(
 // Extended color definition that includes both core and custom colors
 type ColorDefinition = {
   name: string;
-  hex: string;
+  hex?: string;
   blend?: boolean;
   isCoreColor?: boolean;
   chromaSource?: "primary" | "neutral" | "neutralVariant";
@@ -292,10 +292,7 @@ type ColorDefinition = {
 type CustomColorPalettes = Map<string, TonalPalette>;
 
 // Helper to safely get a palette from the map
-function getPalette(
-  palettes: CustomColorPalettes,
-  colorName: string,
-): TonalPalette {
+function getPalette(palettes: CustomColorPalettes, colorName: string) {
   const palette = palettes.get(colorName);
   if (!palette) {
     throw new Error(
@@ -303,70 +300,6 @@ function getPalette(
     );
   }
   return palette;
-}
-
-function createCustomColorDynamicColor(
-  colorName: string,
-  palettes: CustomColorPalettes,
-): DynamicColor {
-  return new DynamicColor(
-    colorName,
-    (s) => getPalette(palettes, colorName),
-    (s) => (s.isDark ? 80 : 40), // Same as primary
-    false,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-  );
-}
-
-function createOnCustomColorDynamicColor(
-  colorName: string,
-  palettes: CustomColorPalettes,
-): DynamicColor {
-  return new DynamicColor(
-    `on${upperFirst(colorName)}`,
-    (s) => getPalette(palettes, colorName),
-    (s) => (s.isDark ? 20 : 100), // Same as onPrimary
-    false,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-  );
-}
-
-function createCustomColorContainerDynamicColor(
-  colorName: string,
-  palettes: CustomColorPalettes,
-): DynamicColor {
-  return new DynamicColor(
-    `${colorName}Container`,
-    (s) => getPalette(palettes, colorName),
-    (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
-    false,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-  );
-}
-
-function createOnCustomColorContainerDynamicColor(
-  colorName: string,
-  palettes: CustomColorPalettes,
-): DynamicColor {
-  return new DynamicColor(
-    `on${upperFirst(colorName)}Container`,
-    (s) => getPalette(palettes, colorName),
-    (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
-    false,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-  );
 }
 
 //
@@ -378,7 +311,6 @@ function createOnCustomColorContainerDynamicColor(
 function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
-  sourceArgb: number,
   customColorPalettes: CustomColorPalettes,
 ) {
   //
@@ -409,21 +341,29 @@ function mergeBaseAndCustomColors(
     const colorname = color.name;
 
     // Create DynamicColor objects that respect the scheme
-    const colorDynamicColor = createCustomColorDynamicColor(
+    const colorDynamicColor = new DynamicColor(
       colorname,
-      customColorPalettes,
+      (s) => getPalette(customColorPalettes, colorname),
+      (s) => (s.isDark ? 80 : 40), // Same as primary
+      false,
     );
-    const onColorDynamicColor = createOnCustomColorDynamicColor(
-      colorname,
-      customColorPalettes,
+    const onColorDynamicColor = new DynamicColor(
+      `on${upperFirst(colorname)}`,
+      (s) => getPalette(customColorPalettes, colorname),
+      (s) => (s.isDark ? 20 : 100), // Same as onPrimary
+      false,
     );
-    const containerDynamicColor = createCustomColorContainerDynamicColor(
-      colorname,
-      customColorPalettes,
+    const containerDynamicColor = new DynamicColor(
+      `${colorname}Container`,
+      (s) => getPalette(customColorPalettes, colorname),
+      (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
+      false,
     );
-    const onContainerDynamicColor = createOnCustomColorContainerDynamicColor(
-      colorname,
-      customColorPalettes,
+    const onContainerDynamicColor = new DynamicColor(
+      `on${upperFirst(colorname)}Container`,
+      (s) => getPalette(customColorPalettes, colorname),
+      (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
+      false,
     );
 
     // Get the ARGB values using the scheme
@@ -470,10 +410,10 @@ const generateTonalPaletteVars = (
 // This unifies the logic between core colors and custom colors
 //
 function createColorPalette(
-  colorDef: ColorDefinition,
+  colorDef: ColorDefinition & { hex: string },
   baseScheme: DynamicScheme,
   effectiveSourceForHarmonization: number,
-): TonalPalette {
+) {
   // Get the color value, applying harmonization if needed
   const colorArgb = argbFromHex(colorDef.hex);
   const harmonizedArgb = colorDef.blend
@@ -541,71 +481,56 @@ export function generateCss({
   const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
   // Unified color processing: Combine core colors and custom colors
-  const allColors: ColorDefinition[] = [];
-
-  // Add core colors if defined
-  if (primary) {
-    allColors.push({
+  const allColors: ColorDefinition[] = [
+    // Core colors (hex may be undefined)
+    {
       name: "primary",
       hex: primary,
       isCoreColor: true,
       chromaSource: "primary",
-    });
-  }
-  if (secondary) {
-    allColors.push({
+    },
+    {
       name: "secondary",
       hex: secondary,
       isCoreColor: true,
       chromaSource: "primary",
-    });
-  }
-  if (tertiary) {
-    allColors.push({
+    },
+    {
       name: "tertiary",
       hex: tertiary,
       isCoreColor: true,
       chromaSource: "primary",
-    });
-  }
-  if (neutral) {
-    allColors.push({
+    },
+    {
       name: "neutral",
       hex: neutral,
       isCoreColor: true,
       chromaSource: "neutral",
-    });
-  }
-  if (neutralVariant) {
-    allColors.push({
+    },
+    {
       name: "neutralVariant",
       hex: neutralVariant,
       isCoreColor: true,
       chromaSource: "neutralVariant",
-    });
-  }
-  if (error) {
-    allColors.push({
-      name: "error",
-      hex: error,
-      isCoreColor: true,
-      chromaSource: "primary",
-    });
-  }
-
-  // Add custom colors
-  hexCustomColors.forEach((customColor) => {
-    allColors.push({
-      name: customColor.name,
-      hex: customColor.hex,
-      blend: customColor.blend,
+    },
+    { name: "error", hex: error, isCoreColor: true, chromaSource: "primary" },
+    // Custom colors
+    ...hexCustomColors.map((c) => ({
+      name: c.name,
+      hex: c.hex,
+      blend: c.blend,
       isCoreColor: false,
-    });
-  });
+    })),
+  ];
+
+  // Filter to only colors with hex defined
+  const definedColors = allColors.filter(
+    (c): c is ColorDefinition & { hex: string } => c.hex !== undefined,
+  );
 
   // Create palettes for all colors using unified logic
   const colorPalettes = new Map<string, TonalPalette>();
-  allColors.forEach((colorDef) => {
+  definedColors.forEach((colorDef) => {
     const palette = createColorPalette(
       colorDef,
       baseScheme,
@@ -617,10 +542,11 @@ export function generateCss({
   // Helper to create both light and dark schemes
   const createSchemes = (
     baseConfig: Omit<ConstructorParameters<typeof DynamicScheme>[0], "isDark">,
-  ): [DynamicScheme, DynamicScheme] => [
-    new DynamicScheme({ ...baseConfig, isDark: false }),
-    new DynamicScheme({ ...baseConfig, isDark: true }),
-  ];
+  ) =>
+    [
+      new DynamicScheme({ ...baseConfig, isDark: false }),
+      new DynamicScheme({ ...baseConfig, isDark: true }),
+    ] as const;
 
   // Create schemes with core color palettes (or defaults from baseScheme)
   // Since source is always required, we always have a base to work from
@@ -656,13 +582,11 @@ export function generateCss({
   const mergedColorsLight = mergeBaseAndCustomColors(
     lightScheme,
     customColors,
-    sourceArgb,
     colorPalettes,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
-    sourceArgb,
     colorPalettes,
   );
 
