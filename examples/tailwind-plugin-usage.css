@@ -1,0 +1,39 @@
+/**
+ * Example usage of the react-mcu Tailwind plugin
+ * 
+ * This file demonstrates how to use the plugin with custom colors.
+ */
+
+@import "tailwindcss";
+
+/* Use the plugin without custom colors */
+@plugin "react-mcu/tailwind-plugin";
+
+/* OR with custom colors: */
+/*
+@plugin "react-mcu/tailwind-plugin" {
+  customColors: ["myCustomColor1", "myCustomColor2", "myCustomColor3"];
+}
+*/
+
+/**
+ * Available color classes:
+ * 
+ * - bg-primary, text-on-primary, bg-primary-container, text-on-primary-container
+ * - bg-secondary, text-on-secondary, bg-secondary-container, text-on-secondary-container
+ * - bg-tertiary, text-on-tertiary, bg-tertiary-container, text-on-tertiary-container
+ * - bg-error, text-on-error, bg-error-container, text-on-error-container
+ * - bg-surface, text-on-surface, bg-surface-dim, bg-surface-bright
+ * - bg-surface-container-lowest, bg-surface-container-low, bg-surface-container
+ * - bg-surface-container-high, bg-surface-container-highest
+ * - bg-background, text-on-background
+ * - bg-outline, bg-outline-variant
+ * 
+ * Shades (50-950):
+ * - bg-primary-500, bg-secondary-200, bg-tertiary-700
+ * - bg-error-100, bg-neutral-600, bg-neutral-variant-400
+ * 
+ * Custom colors (when configured):
+ * - bg-myCustomColor1, text-on-myCustomColor1, bg-myCustomColor1-container
+ * - bg-myCustomColor1-500, bg-myCustomColor1-300, etc.
+ */
