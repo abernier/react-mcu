@@ -614,13 +614,6 @@ export function generateCss({
     colorPalettes.set(colorDef.name, palette);
   });
 
-  // Create schemes with custom core color palettes or defaults
-  const hasCoreColors =
-    primary ?? secondary ?? tertiary ?? neutral ?? neutralVariant ?? error;
-
-  let lightScheme: DynamicScheme;
-  let darkScheme: DynamicScheme;
-
   // Helper to create both light and dark schemes
   const createSchemes = (
     baseConfig: Omit<ConstructorParameters<typeof DynamicScheme>[0], "isDark">,
@@ -629,34 +622,29 @@ export function generateCss({
     new DynamicScheme({ ...baseConfig, isDark: true }),
   ];
 
-  if (hasCoreColors) {
-    // Use custom core color palettes
-    const variant = schemeToVariant[scheme];
-    [lightScheme, darkScheme] = createSchemes({
-      sourceColorArgb: effectiveSourceArgb,
-      variant,
-      contrastLevel: contrast,
-      primaryPalette: colorPalettes.get("primary") || baseScheme.primaryPalette,
-      secondaryPalette:
-        colorPalettes.get("secondary") || baseScheme.secondaryPalette,
-      tertiaryPalette:
-        colorPalettes.get("tertiary") || baseScheme.tertiaryPalette,
-      neutralPalette: colorPalettes.get("neutral") || baseScheme.neutralPalette,
-      neutralVariantPalette:
-        colorPalettes.get("neutralVariant") || baseScheme.neutralVariantPalette,
-    });
+  // Create schemes with core color palettes (or defaults from baseScheme)
+  // Since source is always required, we always have a base to work from
+  const variant = schemeToVariant[scheme];
+  const [lightScheme, darkScheme] = createSchemes({
+    sourceColorArgb: effectiveSourceArgb,
+    variant,
+    contrastLevel: contrast,
+    primaryPalette: colorPalettes.get("primary") || baseScheme.primaryPalette,
+    secondaryPalette:
+      colorPalettes.get("secondary") || baseScheme.secondaryPalette,
+    tertiaryPalette:
+      colorPalettes.get("tertiary") || baseScheme.tertiaryPalette,
+    neutralPalette: colorPalettes.get("neutral") || baseScheme.neutralPalette,
+    neutralVariantPalette:
+      colorPalettes.get("neutralVariant") || baseScheme.neutralVariantPalette,
+  });
 
-    // Note: DynamicScheme constructor doesn't accept errorPalette as parameter
-    // We need to set it after creation
-    const errorPalette = colorPalettes.get("error");
-    if (errorPalette) {
-      lightScheme.errorPalette = errorPalette;
-      darkScheme.errorPalette = errorPalette;
-    }
-  } else {
-    // Use default scheme generation
-    lightScheme = new SchemeClass(primaryHct, false, contrast);
-    darkScheme = new SchemeClass(primaryHct, true, contrast);
+  // Note: DynamicScheme constructor doesn't accept errorPalette as parameter
+  // We need to set it after creation
+  const errorPalette = colorPalettes.get("error");
+  if (errorPalette) {
+    lightScheme.errorPalette = errorPalette;
+    darkScheme.errorPalette = errorPalette;
   }
 
   // Prepare custom colors for merging (non-core colors only)
