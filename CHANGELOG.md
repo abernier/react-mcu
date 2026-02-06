@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.1.1
+
+### Patch Changes
+
+- 9f1fd78: different fixes
+
 ## 1.1.0
 
 ### Minor Changes
