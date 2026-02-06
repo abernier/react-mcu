@@ -125,4 +125,40 @@ describe("Mcu", () => {
     // Dark mode should be lighter than light mode (higher tone)
     expect(darkLum).toBeGreaterThan(lightLum);
   });
+
+  it("should support blend property for custom colors", () => {
+    // Test with blend = true (harmonized)
+    const withBlend = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: true }],
+    });
+
+    // Test with blend = false (not harmonized)
+    const withoutBlend = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [{ name: "brand", hex: "#FF0000", blend: false }],
+    });
+
+    // The colors should be different because blend harmonizes the hue
+    const blendedColor = (
+      withBlend.mergedColorsLight as Record<string, number>
+    )["brand"]!;
+    const nonBlendedColor = (
+      withoutBlend.mergedColorsLight as Record<string, number>
+    )["brand"]!;
+
+    expect(blendedColor).not.toBe(nonBlendedColor);
+
+    // Extract hues to verify harmonization changed the hue
+    // The blended color should have a different hue due to harmonization
+    const blendedHex = hexFromArgb(blendedColor);
+    const nonBlendedHex = hexFromArgb(nonBlendedColor);
+
+    // Both should be valid colors but different
+    expect(blendedHex).not.toBe(nonBlendedHex);
+  });
 });

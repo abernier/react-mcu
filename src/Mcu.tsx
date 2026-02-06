@@ -2,6 +2,7 @@
 
 import {
   argbFromHex,
+  Blend,
   CorePalette,
   type CustomColor,
   customColor,
@@ -583,7 +584,12 @@ export function generateCss({
   const primaryChroma = lightScheme.primaryPalette.chroma;
 
   customColors.forEach((customColorObj) => {
-    const hct = Hct.fromInt(customColorObj.value);
+    // Handle blend property: harmonize with source if blend is true
+    const colorValue = customColorObj.blend
+      ? Blend.harmonize(customColorObj.value, sourceArgb)
+      : customColorObj.value;
+
+    const hct = Hct.fromInt(colorValue);
     // Use the scheme's primary chroma for custom colors (like core colors do)
     // This ensures custom colors respect the scheme (e.g., monochrome will have chroma 0)
     const palette = TonalPalette.fromHueAndChroma(hct.hue, primaryChroma);
