@@ -274,13 +274,27 @@ function toRecord<T, K extends string, V>(
 
 type CustomColorPalettes = Map<string, TonalPalette>;
 
+// Helper to safely get a palette from the map
+function getPalette(
+  palettes: CustomColorPalettes,
+  colorName: string,
+): TonalPalette {
+  const palette = palettes.get(colorName);
+  if (!palette) {
+    throw new Error(
+      `Custom color palette not found for '${colorName}'. This is likely a bug in the implementation.`,
+    );
+  }
+  return palette;
+}
+
 function createCustomColorDynamicColor(
   colorName: string,
   palettes: CustomColorPalettes,
 ): DynamicColor {
   return new DynamicColor(
     colorName,
-    (s) => palettes.get(colorName)!,
+    (s) => getPalette(palettes, colorName),
     (s) => (s.isDark ? 80 : 40), // Same as primary
     false,
     undefined,
@@ -296,7 +310,7 @@ function createOnCustomColorDynamicColor(
 ): DynamicColor {
   return new DynamicColor(
     `on${upperFirst(colorName)}`,
-    (s) => palettes.get(colorName)!,
+    (s) => getPalette(palettes, colorName),
     (s) => (s.isDark ? 20 : 100), // Same as onPrimary
     false,
     undefined,
@@ -312,7 +326,7 @@ function createCustomColorContainerDynamicColor(
 ): DynamicColor {
   return new DynamicColor(
     `${colorName}Container`,
-    (s) => palettes.get(colorName)!,
+    (s) => getPalette(palettes, colorName),
     (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
     false,
     undefined,
@@ -328,7 +342,7 @@ function createOnCustomColorContainerDynamicColor(
 ): DynamicColor {
   return new DynamicColor(
     `on${upperFirst(colorName)}Container`,
-    (s) => palettes.get(colorName)!,
+    (s) => getPalette(palettes, colorName),
     (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
     false,
     undefined,
@@ -611,7 +625,7 @@ export function generateCss({
   const customColorTonalVars = customColors
     .map((customColorObj) => {
       // Use the palette from customColorPalettes which respects the scheme
-      const palette = customColorPalettes.get(customColorObj.name)!;
+      const palette = getPalette(customColorPalettes, customColorObj.name);
       return generateTonalPaletteVars(kebabCase(customColorObj.name), palette);
     })
     .join(" ");
