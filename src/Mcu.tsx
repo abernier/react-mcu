@@ -267,6 +267,34 @@ function toRecord<T, K extends string, V>(
 }
 
 //
+// Unified color handling: Core colors and custom colors use the same logic
+//
+// Core colors (primary, secondary, tertiary, neutral, neutralVariant, error) are
+// essentially predefined custom colors with specific names and chroma requirements.
+//
+
+// Define core color names and their chroma source
+const CORE_COLOR_DEFINITIONS = {
+  primary: { chromaSource: "primary" as const },
+  secondary: { chromaSource: "primary" as const },
+  tertiary: { chromaSource: "primary" as const },
+  error: { chromaSource: "primary" as const },
+  neutral: { chromaSource: "neutral" as const },
+  neutralVariant: { chromaSource: "neutralVariant" as const },
+} as const;
+
+type CoreColorName = keyof typeof CORE_COLOR_DEFINITIONS;
+
+// Extended color definition that includes both core and custom colors
+type ColorDefinition = {
+  name: string;
+  hex: string;
+  blend?: boolean;
+  isCoreColor?: boolean;
+  chromaSource?: "primary" | "neutral" | "neutralVariant";
+};
+
+//
 // Create DynamicColor objects for custom colors that respect the scheme
 //
 // These functions create DynamicColor objects similar to MaterialDynamicColors
@@ -450,6 +478,44 @@ const generateTonalPaletteVars = (
 };
 
 //
+// Helper function to create a palette for any color (core or custom)
+// This unifies the logic between core colors and custom colors
+//
+function createColorPalette(
+  colorDef: ColorDefinition,
+  baseScheme: DynamicScheme,
+  sourceArgb: number,
+  effectiveSourceForHarmonization: number,
+): TonalPalette {
+  // Get the color value, applying harmonization if needed
+  const colorArgb = argbFromHex(colorDef.hex);
+  const harmonizedArgb = colorDef.blend
+    ? Blend.harmonize(colorArgb, effectiveSourceForHarmonization)
+    : colorArgb;
+
+  const hct = Hct.fromInt(harmonizedArgb);
+
+  // Determine which chroma to use based on color type
+  let targetChroma: number;
+  if (colorDef.isCoreColor && colorDef.chromaSource) {
+    // Core colors use specific chroma values from the base scheme
+    if (colorDef.chromaSource === "neutral") {
+      targetChroma = baseScheme.neutralPalette.chroma;
+    } else if (colorDef.chromaSource === "neutralVariant") {
+      targetChroma = baseScheme.neutralVariantPalette.chroma;
+    } else {
+      // primary chroma for primary, secondary, tertiary, error
+      targetChroma = baseScheme.primaryPalette.chroma;
+    }
+  } else {
+    // Custom colors use primary chroma (same as before)
+    targetChroma = baseScheme.primaryPalette.chroma;
+  }
+
+  return TonalPalette.fromHueAndChroma(hct.hue, targetChroma);
+}
+
+//
 // Generate full CSS styles string (for insertion into a <style> tag)
 //
 
@@ -472,11 +538,102 @@ export function generateCss({
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
 }: McuConfig) {
+  const sourceArgb = argbFromHex(hexSource);
+
+  // Determine the effective source for harmonization
+  // When primary is defined, it becomes the effective source
+  const effectiveSource = primary || hexSource;
+  const effectiveSourceArgb = argbFromHex(effectiveSource);
+  const effectiveSourceForHarmonization = primary
+    ? argbFromHex(primary)
+    : sourceArgb;
+
+  // Create a base scheme to get the standard chroma values
+  const SchemeClass = schemesMap[scheme];
+  const primaryHct = Hct.fromInt(effectiveSourceArgb);
+  const baseScheme = new SchemeClass(primaryHct, false, contrast);
+
+  // Unified color processing: Combine core colors and custom colors
+  const allColors: ColorDefinition[] = [];
+
+  // Add core colors if defined
+  if (primary) {
+    allColors.push({
+      name: "primary",
+      hex: primary,
+      isCoreColor: true,
+      chromaSource: "primary",
+    });
+  }
+  if (secondary) {
+    allColors.push({
+      name: "secondary",
+      hex: secondary,
+      isCoreColor: true,
+      chromaSource: "primary",
+    });
+  }
+  if (tertiary) {
+    allColors.push({
+      name: "tertiary",
+      hex: tertiary,
+      isCoreColor: true,
+      chromaSource: "primary",
+    });
+  }
+  if (neutral) {
+    allColors.push({
+      name: "neutral",
+      hex: neutral,
+      isCoreColor: true,
+      chromaSource: "neutral",
+    });
+  }
+  if (neutralVariant) {
+    allColors.push({
+      name: "neutralVariant",
+      hex: neutralVariant,
+      isCoreColor: true,
+      chromaSource: "neutralVariant",
+    });
+  }
+  if (error) {
+    allColors.push({
+      name: "error",
+      hex: error,
+      isCoreColor: true,
+      chromaSource: "primary",
+    });
+  }
+
+  // Add custom colors
+  hexCustomColors.forEach((customColor) => {
+    allColors.push({
+      name: customColor.name,
+      hex: customColor.hex,
+      blend: customColor.blend,
+      isCoreColor: false,
+    });
+  });
+
+  // Create palettes for all colors using unified logic
+  const colorPalettes = new Map<string, TonalPalette>();
+  allColors.forEach((colorDef) => {
+    const palette = createColorPalette(
+      colorDef,
+      baseScheme,
+      sourceArgb,
+      effectiveSourceForHarmonization,
+    );
+    colorPalettes.set(colorDef.name, palette);
+  });
+
+  // Create schemes with custom core color palettes or defaults
   const hasCoreColors =
     primary ?? secondary ?? tertiary ?? neutral ?? neutralVariant ?? error;
-  // console.log("MCU generateCss", { hasCoreColors });
 
-  const sourceArgb = argbFromHex(hexSource);
+  let lightScheme: DynamicScheme;
+  let darkScheme: DynamicScheme;
 
   // Helper to create both light and dark schemes
   const createSchemes = (
@@ -486,141 +643,62 @@ export function generateCss({
     new DynamicScheme({ ...baseConfig, isDark: true }),
   ];
 
-  let lightScheme: DynamicScheme;
-  let darkScheme: DynamicScheme;
-
   if (hasCoreColors) {
-    // According to Material Theme Builder:
-    // "The primary key color will be used for the source color"
-    // When core colors are defined, primary becomes the source
-    const effectiveSource = primary || hexSource;
-    const effectiveSourceArgb = argbFromHex(effectiveSource);
-
-    // First, create a base scheme to get the standard chroma values
-    const SchemeClass = schemesMap[scheme];
-    const primaryHct = Hct.fromInt(effectiveSourceArgb);
-    const baseScheme = new SchemeClass(primaryHct, false, contrast);
-
-    const primaryChroma = baseScheme.primaryPalette.chroma;
-
-    // Create custom palettes for each defined core color
-    const customPrimaryPalette = TonalPalette.fromHueAndChroma(
-      primaryHct.hue,
-      primaryChroma,
-    );
-
-    const customSecondaryPalette = secondary
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(secondary)).hue,
-          primaryChroma,
-        )
-      : baseScheme.secondaryPalette;
-
-    const customTertiaryPalette = tertiary
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(tertiary)).hue,
-          primaryChroma,
-        )
-      : baseScheme.tertiaryPalette;
-
-    const customNeutralPalette = neutral
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(neutral)).hue,
-          baseScheme.neutralPalette.chroma,
-        )
-      : baseScheme.neutralPalette;
-
-    const customNeutralVariantPalette = neutralVariant
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(neutralVariant)).hue,
-          baseScheme.neutralVariantPalette.chroma,
-        )
-      : baseScheme.neutralVariantPalette;
-
-    const customErrorPalette = error
-      ? TonalPalette.fromHueAndChroma(
-          Hct.fromInt(argbFromHex(error)).hue,
-          primaryChroma,
-        )
-      : undefined;
-
-    // Create schemes with custom palettes
+    // Use custom core color palettes
     const variant = schemeToVariant[scheme];
     [lightScheme, darkScheme] = createSchemes({
       sourceColorArgb: effectiveSourceArgb,
       variant,
       contrastLevel: contrast,
-      primaryPalette: customPrimaryPalette,
-      secondaryPalette: customSecondaryPalette,
-      tertiaryPalette: customTertiaryPalette,
-      neutralPalette: customNeutralPalette,
-      neutralVariantPalette: customNeutralVariantPalette,
+      primaryPalette: colorPalettes.get("primary") || baseScheme.primaryPalette,
+      secondaryPalette:
+        colorPalettes.get("secondary") || baseScheme.secondaryPalette,
+      tertiaryPalette:
+        colorPalettes.get("tertiary") || baseScheme.tertiaryPalette,
+      neutralPalette: colorPalettes.get("neutral") || baseScheme.neutralPalette,
+      neutralVariantPalette:
+        colorPalettes.get("neutralVariant") || baseScheme.neutralVariantPalette,
     });
 
     // Note: DynamicScheme constructor doesn't accept errorPalette as parameter
     // We need to set it after creation
-    if (customErrorPalette) {
-      lightScheme.errorPalette = customErrorPalette;
-      darkScheme.errorPalette = customErrorPalette;
+    const errorPalette = colorPalettes.get("error");
+    if (errorPalette) {
+      lightScheme.errorPalette = errorPalette;
+      darkScheme.errorPalette = errorPalette;
     }
   } else {
     // Use default scheme generation
-    const SchemeClass = schemesMap[scheme];
-    const hct = Hct.fromInt(sourceArgb);
-
-    lightScheme = new SchemeClass(hct, false, contrast);
-    darkScheme = new SchemeClass(hct, true, contrast);
+    lightScheme = new SchemeClass(primaryHct, false, contrast);
+    darkScheme = new SchemeClass(primaryHct, true, contrast);
   }
 
-  // Prepare custom colors (keep ARGB so generateCssVars can use them)
+  // Prepare custom colors for merging (non-core colors only)
   const customColors = hexCustomColors.map(({ hex, ...rest }) => ({
     ...rest,
     value: argbFromHex(hex),
   }));
 
-  // Determine the effective source for harmonization (same logic as core colors)
-  // When primary is defined, it becomes the effective source
-  const effectiveSourceForHarmonization = primary
-    ? argbFromHex(primary)
-    : sourceArgb;
-
-  // Create custom color palettes that respect the scheme
-  // Use the scheme's primary chroma (similar to core colors)
-  const customColorPalettes: CustomColorPalettes = new Map();
-  const primaryChroma = lightScheme.primaryPalette.chroma;
-
-  customColors.forEach((customColorObj) => {
-    // Handle blend property: harmonize with effective source if blend is true
-    const colorValue = customColorObj.blend
-      ? Blend.harmonize(customColorObj.value, effectiveSourceForHarmonization)
-      : customColorObj.value;
-
-    const hct = Hct.fromInt(colorValue);
-    // Use the scheme's primary chroma for custom colors (like core colors do)
-    // This ensures custom colors respect the scheme (e.g., monochrome will have chroma 0)
-    const palette = TonalPalette.fromHueAndChroma(hct.hue, primaryChroma);
-    customColorPalettes.set(customColorObj.name, palette);
-  });
-
   const mergedColorsLight = mergeBaseAndCustomColors(
     lightScheme,
     customColors,
     sourceArgb,
-    customColorPalettes,
+    colorPalettes,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
     sourceArgb,
-    customColorPalettes,
+    colorPalettes,
   );
 
   const lightVars = toCssVars(mergedColorsLight);
   const darkVars = toCssVars(mergedColorsDark);
 
-  // Generate core colors tonal palette CSS variables
-  // Use the palettes from the light scheme to ensure consistency with Material Theme Builder
-  const coreColorsTonalVars = [
+  // Generate tonal palette CSS variables for all colors (core + custom)
+  // Use the palettes from the light scheme and our unified colorPalettes map
+  const allTonalVars = [
+    // Core colors from the scheme
     generateTonalPaletteVars("primary", lightScheme.primaryPalette),
     generateTonalPaletteVars("secondary", lightScheme.secondaryPalette),
     generateTonalPaletteVars("tertiary", lightScheme.tertiaryPalette),
@@ -630,21 +708,16 @@ export function generateCss({
       "neutral-variant",
       lightScheme.neutralVariantPalette,
     ),
-  ].join(" ");
-
-  // Generate custom color tonal palette CSS variables
-  // Use the scheme-aware palettes created earlier
-  const customColorTonalVars = customColors
-    .map((customColorObj) => {
-      // Use the palette from customColorPalettes which respects the scheme
-      const palette = getPalette(customColorPalettes, customColorObj.name);
+    // Custom colors from our unified palette map
+    ...customColors.map((customColorObj) => {
+      const palette = getPalette(colorPalettes, customColorObj.name);
       return generateTonalPaletteVars(kebabCase(customColorObj.name), palette);
-    })
-    .join(" ");
+    }),
+  ].join(" ");
 
   return {
     css: `
-:root { ${lightVars} ${coreColorsTonalVars} ${customColorTonalVars} }
+:root { ${lightVars} ${allTonalVars} }
 .dark { ${darkVars} }
 `,
     mergedColorsLight,

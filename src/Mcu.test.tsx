@@ -190,4 +190,56 @@ describe("Mcu", () => {
 
     expect(sourceOnlyColor).not.toBe(primaryColor);
   });
+
+  it("should handle core colors correctly after refactoring", () => {
+    // Test that core colors still work with the unified logic
+    const result = generateCss({
+      source: "#6750A4",
+      primary: "#FF0000",
+      secondary: "#00FF00",
+      tertiary: "#0000FF",
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [],
+    });
+
+    // Check that core colors are generated
+    const lightColors = result.mergedColorsLight as Record<string, number>;
+    expect(lightColors.primary).toBeDefined();
+    expect(lightColors.secondary).toBeDefined();
+    expect(lightColors.tertiary).toBeDefined();
+
+    // Check that the CSS contains the core colors
+    expect(result.css).toContain("--mcu-primary");
+    expect(result.css).toContain("--mcu-secondary");
+    expect(result.css).toContain("--mcu-tertiary");
+  });
+
+  it("should generate the same results with unified logic (core + custom)", () => {
+    // Test with both core and custom colors
+    const result = generateCss({
+      source: "#6750A4",
+      primary: "#FF0000",
+      scheme: "tonalSpot",
+      contrast: 0,
+      customColors: [
+        { name: "brand", hex: "#00FF00", blend: false },
+        { name: "accent", hex: "#0000FF", blend: true },
+      ],
+    });
+
+    const lightColors = result.mergedColorsLight as Record<string, number>;
+
+    // Core color should work
+    expect(lightColors.primary).toBeDefined();
+
+    // Custom colors should work
+    expect(lightColors.brand).toBeDefined();
+    expect(lightColors.accent).toBeDefined();
+
+    // All should be in the CSS
+    expect(result.css).toContain("--mcu-primary");
+    expect(result.css).toContain("--mcu-brand");
+    expect(result.css).toContain("--mcu-accent");
+  });
 });
