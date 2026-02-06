@@ -26,4 +26,29 @@ describe("Mcu", () => {
     expect(styleContent).toContain("--mcu-surface");
     expect(styleContent).toContain("--mcu-background");
   });
+
+  it("should support custom core colors", () => {
+    render(
+      <Mcu
+        source="#6750A4"
+        scheme="tonalSpot"
+        contrast={0}
+        primary="#FF0000"
+        secondary="#00FF00"
+        tertiary="#0000FF"
+        customColors={[]}
+      >
+        <div>Test content</div>
+      </Mcu>,
+    );
+
+    const styleTag = document.querySelector("#mcu-styles");
+    expect(styleTag).toBeTruthy();
+
+    // Verify that custom colors are applied
+    const styleContent = styleTag?.textContent || "";
+    expect(styleContent).toContain("--mcu-primary");
+    expect(styleContent).toContain("--mcu-secondary");
+    expect(styleContent).toContain("--mcu-tertiary");
+  });
 });
