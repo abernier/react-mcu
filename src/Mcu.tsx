@@ -5,6 +5,7 @@ import {
   CorePalette,
   type CustomColor,
   customColor,
+  DynamicColor,
   DynamicScheme,
   Hct,
   hexFromArgb,
@@ -265,6 +266,79 @@ function toRecord<T, K extends string, V>(
 }
 
 //
+// Create DynamicColor objects for custom colors that respect the scheme
+//
+// These functions create DynamicColor objects similar to MaterialDynamicColors
+// but for custom colors, following the same tone mapping patterns
+//
+
+type CustomColorPalettes = Map<string, TonalPalette>;
+
+function createCustomColorDynamicColor(
+  colorName: string,
+  palettes: CustomColorPalettes,
+): DynamicColor {
+  return new DynamicColor(
+    colorName,
+    (s) => palettes.get(colorName)!,
+    (s) => (s.isDark ? 80 : 40), // Same as primary
+    false,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+  );
+}
+
+function createOnCustomColorDynamicColor(
+  colorName: string,
+  palettes: CustomColorPalettes,
+): DynamicColor {
+  return new DynamicColor(
+    `on${upperFirst(colorName)}`,
+    (s) => palettes.get(colorName)!,
+    (s) => (s.isDark ? 20 : 100), // Same as onPrimary
+    false,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+  );
+}
+
+function createCustomColorContainerDynamicColor(
+  colorName: string,
+  palettes: CustomColorPalettes,
+): DynamicColor {
+  return new DynamicColor(
+    `${colorName}Container`,
+    (s) => palettes.get(colorName)!,
+    (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
+    false,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+  );
+}
+
+function createOnCustomColorContainerDynamicColor(
+  colorName: string,
+  palettes: CustomColorPalettes,
+): DynamicColor {
+  return new DynamicColor(
+    `on${upperFirst(colorName)}Container`,
+    (s) => palettes.get(colorName)!,
+    (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
+    false,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+  );
+}
+
+//
 // Merge the base Material Dynamic Colors with custom colors
 //
 // returns: { primary: 0xFF6200EE, onPrimary: 0xFFFFFFFF, ..., customColor1: 0xFF6200EF, customColor2: 0x00FF00, ... }
@@ -274,6 +348,7 @@ function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
   sourceArgb: number,
+  customColorPalettes: CustomColorPalettes,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -287,7 +362,7 @@ function mergeBaseAndCustomColors(
   });
 
   //
-  // Custom colors - using the library's built-in customColor function
+  // Custom colors - now using DynamicColor objects that respect the scheme
   //
   // For each custom color, generate:
   // 1. <colorname>
@@ -298,21 +373,35 @@ function mergeBaseAndCustomColors(
   // Based on Material Design 3 spec: https://m3.material.io/styles/color/the-color-system/color-roles
   //
   const customVars: Record<string, number> = {};
-  const isDark = scheme.isDark;
 
   customColors.forEach((color) => {
-    // Use the library's built-in customColor function
-    // This follows the Material Design 3 spec for custom colors
-    const customColorGroup = customColor(sourceArgb, color);
-    const colorGroup = isDark ? customColorGroup.dark : customColorGroup.light;
     const colorname = color.name;
 
-    // Map the color group to our variable names
-    customVars[colorname] = colorGroup.color;
-    customVars[`on${upperFirst(colorname)}`] = colorGroup.onColor;
-    customVars[`${colorname}Container`] = colorGroup.colorContainer;
+    // Create DynamicColor objects that respect the scheme
+    const colorDynamicColor = createCustomColorDynamicColor(
+      colorname,
+      customColorPalettes,
+    );
+    const onColorDynamicColor = createOnCustomColorDynamicColor(
+      colorname,
+      customColorPalettes,
+    );
+    const containerDynamicColor = createCustomColorContainerDynamicColor(
+      colorname,
+      customColorPalettes,
+    );
+    const onContainerDynamicColor = createOnCustomColorContainerDynamicColor(
+      colorname,
+      customColorPalettes,
+    );
+
+    // Get the ARGB values using the scheme
+    customVars[colorname] = colorDynamicColor.getArgb(scheme);
+    customVars[`on${upperFirst(colorname)}`] =
+      onColorDynamicColor.getArgb(scheme);
+    customVars[`${colorname}Container`] = containerDynamicColor.getArgb(scheme);
     customVars[`on${upperFirst(colorname)}Container`] =
-      colorGroup.onColorContainer;
+      onContainerDynamicColor.getArgb(scheme);
   });
 
   // Merge both
@@ -474,15 +563,30 @@ export function generateCss({
     value: argbFromHex(hex),
   }));
 
+  // Create custom color palettes that respect the scheme
+  // Use the scheme's primary chroma (similar to core colors)
+  const customColorPalettes: CustomColorPalettes = new Map();
+  const primaryChroma = lightScheme.primaryPalette.chroma;
+
+  customColors.forEach((customColorObj) => {
+    const hct = Hct.fromInt(customColorObj.value);
+    // Use the scheme's primary chroma for custom colors (like core colors do)
+    // This ensures custom colors respect the scheme (e.g., monochrome will have chroma 0)
+    const palette = TonalPalette.fromHueAndChroma(hct.hue, primaryChroma);
+    customColorPalettes.set(customColorObj.name, palette);
+  });
+
   const mergedColorsLight = mergeBaseAndCustomColors(
     lightScheme,
     customColors,
     sourceArgb,
+    customColorPalettes,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
     sourceArgb,
+    customColorPalettes,
   );
 
   const lightVars = toCssVars(mergedColorsLight);
@@ -503,11 +607,11 @@ export function generateCss({
   ].join(" ");
 
   // Generate custom color tonal palette CSS variables
+  // Use the scheme-aware palettes created earlier
   const customColorTonalVars = customColors
     .map((customColorObj) => {
-      // Custom colors have their own TonalPalette
-      // The palette can be accessed from the customColor result
-      const palette = TonalPalette.fromInt(customColorObj.value);
+      // Use the palette from customColorPalettes which respects the scheme
+      const palette = customColorPalettes.get(customColorObj.name)!;
       return generateTonalPaletteVars(kebabCase(customColorObj.name), palette);
     })
     .join(" ");
