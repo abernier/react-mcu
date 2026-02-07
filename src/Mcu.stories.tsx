@@ -59,6 +59,9 @@ const meta = {
     contrastAllColors: {
       control: "boolean",
     },
+    contrastAdjustmentFactor: {
+      control: { type: "range", min: 0, max: 2, step: 0.1 },
+    },
     primary: {
       control: "color",
     },
@@ -1076,6 +1079,30 @@ export const ContrastAllColorsSt: Story = {
       { name: "myCustomColor1", hex: customColor1, blend: true },
       { name: "myCustomColor2", hex: customColor2, blend: true },
     ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
+    </Mcu>
+  ),
+};
+
+export const ContrastAdjustmentFactorSt: Story = {
+  name: "[contrast][contrastAllColors][contrastAdjustmentFactor]",
+  args: {
+    source: "#769CDF",
+    contrast: -1,
+    contrastAllColors: true,
+    // contrastAllColors should impact custom-colors too (as well as shades)
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+    contrastAdjustmentFactor: 0.4, // double the default value
   },
   render: (args) => (
     <Mcu {...args}>
