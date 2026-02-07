@@ -24,32 +24,23 @@ import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
 import { McuProvider } from "./Mcu.context";
 
-// ContrastCurve class for defining contrast behavior at different contrast levels
-// This is a local implementation since it's not exported from @material/material-color-utilities
-class ContrastCurve {
-  constructor(
-    readonly low: number,
-    readonly normal: number,
-    readonly medium: number,
-    readonly high: number,
-  ) {}
+// Helper function to adjust tone based on contrast level
+// This provides a simple linear adjustment similar to Material Design's approach
+function adjustToneForContrast(
+  baseTone: number,
+  contrastLevel: number,
+  isDark: boolean,
+): number {
+  if (contrastLevel === 0) return baseTone;
 
-  get(contrastLevel: number): number {
-    if (contrastLevel <= -1.0) {
-      return this.low;
-    } else if (contrastLevel < 0.0) {
-      return this.lerp(this.low, this.normal, (contrastLevel - -1) / 1);
-    } else if (contrastLevel < 0.5) {
-      return this.lerp(this.normal, this.medium, (contrastLevel - 0) / 0.5);
-    } else if (contrastLevel < 1.0) {
-      return this.lerp(this.medium, this.high, (contrastLevel - 0.5) / 0.5);
-    } else {
-      return this.high;
-    }
-  }
-
-  private lerp(a: number, b: number, t: number): number {
-    return a + (b - a) * t;
+  // For high contrast (positive values), make colors more extreme
+  // For low contrast (negative values), make colors closer to middle
+  if (isDark) {
+    // In dark mode, lighter tones get lighter with more contrast
+    return baseTone + contrastLevel * (100 - baseTone) * 0.2;
+  } else {
+    // In light mode, darker tones get darker with more contrast
+    return baseTone - contrastLevel * baseTone * 0.2;
   }
 }
 
@@ -381,78 +372,54 @@ function mergeBaseAndCustomColors(
   customColors.forEach((color) => {
     const colorname = color.name;
 
-    // Create DynamicColor objects with or without contrast curves based on contrastAllColors flag
-    const colorDynamicColor = contrastAllColors
-      ? DynamicColor.fromPalette({
-          name: colorname,
-          palette: (s) => getPalette(colorPalettes, colorname),
-          tone: (s) => (s.isDark ? 80 : 40),
-          background: (s) => MaterialDynamicColors.highestSurface(s),
-          contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-        })
-      : new DynamicColor(
-          colorname,
-          (s) => getPalette(colorPalettes, colorname),
-          (s) => (s.isDark ? 80 : 40),
-          false,
-        );
+    // Create DynamicColor objects with or without contrast-aware tones
+    const colorDynamicColor = new DynamicColor(
+      colorname,
+      (s) => getPalette(colorPalettes, colorname),
+      (s) => {
+        const baseTone = s.isDark ? 80 : 40;
+        return contrastAllColors
+          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
+          : baseTone;
+      },
+      false,
+    );
 
-    const onColorDynamicColor = contrastAllColors
-      ? DynamicColor.fromPalette({
-          name: `on${upperFirst(colorname)}`,
-          palette: (s) => getPalette(colorPalettes, colorname),
-          tone: (s) => (s.isDark ? 20 : 100),
-          background: (s) =>
-            new DynamicColor(
-              colorname,
-              (s) => getPalette(colorPalettes, colorname),
-              (s) => (s.isDark ? 80 : 40),
-              false,
-            ),
-          contrastCurve: new ContrastCurve(4.5, 7, 11, 21),
-        })
-      : new DynamicColor(
-          `on${upperFirst(colorname)}`,
-          (s) => getPalette(colorPalettes, colorname),
-          (s) => (s.isDark ? 20 : 100),
-          false,
-        );
+    const onColorDynamicColor = new DynamicColor(
+      `on${upperFirst(colorname)}`,
+      (s) => getPalette(colorPalettes, colorname),
+      (s) => {
+        const baseTone = s.isDark ? 20 : 100;
+        return contrastAllColors
+          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
+          : baseTone;
+      },
+      false,
+    );
 
-    const containerDynamicColor = contrastAllColors
-      ? DynamicColor.fromPalette({
-          name: `${colorname}Container`,
-          palette: (s) => getPalette(colorPalettes, colorname),
-          tone: (s) => (s.isDark ? 30 : 90),
-          background: (s) => MaterialDynamicColors.highestSurface(s),
-          contrastCurve: new ContrastCurve(1, 1, 3, 4.5),
-        })
-      : new DynamicColor(
-          `${colorname}Container`,
-          (s) => getPalette(colorPalettes, colorname),
-          (s) => (s.isDark ? 30 : 90),
-          false,
-        );
+    const containerDynamicColor = new DynamicColor(
+      `${colorname}Container`,
+      (s) => getPalette(colorPalettes, colorname),
+      (s) => {
+        const baseTone = s.isDark ? 30 : 90;
+        return contrastAllColors
+          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
+          : baseTone;
+      },
+      false,
+    );
 
-    const onContainerDynamicColor = contrastAllColors
-      ? DynamicColor.fromPalette({
-          name: `on${upperFirst(colorname)}Container`,
-          palette: (s) => getPalette(colorPalettes, colorname),
-          tone: (s) => (s.isDark ? 90 : 30),
-          background: (s) =>
-            new DynamicColor(
-              `${colorname}Container`,
-              (s) => getPalette(colorPalettes, colorname),
-              (s) => (s.isDark ? 30 : 90),
-              false,
-            ),
-          contrastCurve: new ContrastCurve(3, 4.5, 7, 7),
-        })
-      : new DynamicColor(
-          `on${upperFirst(colorname)}Container`,
-          (s) => getPalette(colorPalettes, colorname),
-          (s) => (s.isDark ? 90 : 30),
-          false,
-        );
+    const onContainerDynamicColor = new DynamicColor(
+      `on${upperFirst(colorname)}Container`,
+      (s) => getPalette(colorPalettes, colorname),
+      (s) => {
+        const baseTone = s.isDark ? 90 : 30;
+        return contrastAllColors
+          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
+          : baseTone;
+      },
+      false,
+    );
 
     // Get the ARGB values using the scheme
     customVars[colorname] = colorDynamicColor.getArgb(scheme);
