@@ -119,7 +119,52 @@ describe("Mcu", () => {
     expect(cssWithoutContrastAll.css).toContain("--mcu-primary-40");
     expect(cssWithContrastAll.css).toContain("--mcu-primary-40");
 
-    // The actual color values should be different
-    expect(cssWithoutContrastAll.css).not.toBe(cssWithContrastAll.css);
+    // Extract the actual color values for primary-40
+    const extractPrimary40 = (css: string) => {
+      const match = css.match(/--mcu-primary-40:(#[0-9a-f]{6})/i);
+      return match ? match[1] : null;
+    };
+
+    const primary40Without = extractPrimary40(cssWithoutContrastAll.css);
+    const primary40With = extractPrimary40(cssWithContrastAll.css);
+
+    expect(primary40Without).toBeTruthy();
+    expect(primary40With).toBeTruthy();
+    expect(primary40Without).not.toBe(primary40With);
+  });
+
+  it("should apply contrast to custom color tonal shades when contrastAllColors is true", () => {
+    const customColors = [{ name: "brand", hex: "#FF5733", blend: false }];
+
+    // Generate CSS with contrastAllColors disabled
+    const cssWithoutContrastAll = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 1.0,
+      customColors,
+      contrastAllColors: false,
+    });
+
+    // Generate CSS with contrastAllColors enabled
+    const cssWithContrastAll = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 1.0,
+      customColors,
+      contrastAllColors: true,
+    });
+
+    // Extract the actual color values for brand-40
+    const extractBrand40 = (css: string) => {
+      const match = css.match(/--mcu-brand-40:(#[0-9a-f]{6})/i);
+      return match ? match[1] : null;
+    };
+
+    const brand40Without = extractBrand40(cssWithoutContrastAll.css);
+    const brand40With = extractBrand40(cssWithContrastAll.css);
+
+    expect(brand40Without).toBeTruthy();
+    expect(brand40With).toBeTruthy();
+    expect(brand40Without).not.toBe(brand40With);
   });
 });

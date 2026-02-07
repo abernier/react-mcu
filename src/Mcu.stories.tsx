@@ -6,6 +6,7 @@ import {
   DEFAULT_SCHEME,
   DEFAULT_CONTRAST,
   DEFAULT_COLOR_MATCH,
+  DEFAULT_CONTRAST_ALL_COLORS,
   STANDARD_TONES,
 } from "./Mcu";
 import type { ComponentProps } from "react";
@@ -54,6 +55,11 @@ const meta = {
     },
     contrast: {
       control: { type: "range", min: -1, max: 1, step: 0.1 },
+    },
+    contrastAllColors: {
+      control: "boolean",
+      description:
+        "Apply contrast adjustments to custom colors and tonal shades",
     },
     primary: {
       control: "color",
