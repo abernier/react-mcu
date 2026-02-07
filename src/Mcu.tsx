@@ -404,15 +404,6 @@ function mergeBaseAndCustomColors(
   });
 
   //
-  // Custom colors - now using DynamicColor objects that respect the scheme
-  //
-  // For each custom color, generate:
-  // 1. <colorname>
-  // 2. on-<colorname>
-  // 3. <colorname>-container
-  // 4. on-<colorname>-container
-  //
-  //
   // Custom colors - using MaterialDynamicColors-like approach
   //
   // For each custom color, generate DynamicColor objects exactly like core colors:
