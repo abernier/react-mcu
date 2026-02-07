@@ -23,7 +23,9 @@ Base (like in the Builder):
 - [x] source color
 - [x] scheme
 - [x] contrast
-- [x] custom colors (aka. "Extended colors")
+- [x] core-colors overrides: primary, secondary, tertiary, error, neutral,
+      neutralVariant
+- [x] custom-colors (aka. "Extended colors")
   - [x] Harmonization (aka. `blend`)
 - [x] Shades (aka. "tonals")
 - [ ] colorMatch
