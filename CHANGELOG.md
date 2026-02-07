@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.2.0
+
+### Minor Changes
+
+- 70156a3: contrastAllColors
+
 ## 1.1.1
 
 ### Patch Changes
