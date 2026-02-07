@@ -44,6 +44,53 @@ function adjustToneForContrast(
   }
 }
 
+// Helper function to create MaterialDynamicColors-like objects for custom colors
+// This makes custom colors work exactly like core colors
+function createCustomColorDynamicColors(
+  colorName: string,
+  colorPalettes: ColorPalettes,
+  contrastAllColors: boolean,
+) {
+  const getPaletteForColor = (s: DynamicScheme) =>
+    getPalette(colorPalettes, colorName);
+
+  const getTone = (baseTone: number) => (s: DynamicScheme) => {
+    if (!contrastAllColors) return baseTone;
+    return adjustToneForContrast(baseTone, s.contrastLevel, s.isDark);
+  };
+
+  return {
+    // Main color (e.g., "brand")
+    color: new DynamicColor(
+      colorName,
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 80 : 40)(s),
+      false,
+    ),
+    // On-color (e.g., "onBrand")
+    onColor: new DynamicColor(
+      `on${upperFirst(colorName)}`,
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 20 : 100)(s),
+      false,
+    ),
+    // Container (e.g., "brandContainer")
+    container: new DynamicColor(
+      `${colorName}Container`,
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 30 : 90)(s),
+      false,
+    ),
+    // On-container (e.g., "onBrandContainer")
+    onContainer: new DynamicColor(
+      `on${upperFirst(colorName)}Container`,
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 90 : 30)(s),
+      false,
+    ),
+  };
+}
+
 type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
@@ -365,6 +412,15 @@ function mergeBaseAndCustomColors(
   // 3. <colorname>-container
   // 4. on-<colorname>-container
   //
+  //
+  // Custom colors - using MaterialDynamicColors-like approach
+  //
+  // For each custom color, generate DynamicColor objects exactly like core colors:
+  // 1. <colorname>
+  // 2. on-<colorname>
+  // 3. <colorname>-container
+  // 4. on-<colorname>-container
+  //
   // Based on Material Design 3 spec: https://m3.material.io/styles/color/the-color-system/color-roles
   //
   const customVars: Record<string, number> = {};
@@ -372,62 +428,21 @@ function mergeBaseAndCustomColors(
   customColors.forEach((color) => {
     const colorname = color.name;
 
-    // Create DynamicColor objects with or without contrast-aware tones
-    const colorDynamicColor = new DynamicColor(
+    // Create MaterialDynamicColors-like objects for this custom color
+    const customColorDynamicColors = createCustomColorDynamicColors(
       colorname,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => {
-        const baseTone = s.isDark ? 80 : 40;
-        return contrastAllColors
-          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
-          : baseTone;
-      },
-      false,
+      colorPalettes,
+      contrastAllColors,
     );
 
-    const onColorDynamicColor = new DynamicColor(
-      `on${upperFirst(colorname)}`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => {
-        const baseTone = s.isDark ? 20 : 100;
-        return contrastAllColors
-          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
-          : baseTone;
-      },
-      false,
-    );
-
-    const containerDynamicColor = new DynamicColor(
-      `${colorname}Container`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => {
-        const baseTone = s.isDark ? 30 : 90;
-        return contrastAllColors
-          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
-          : baseTone;
-      },
-      false,
-    );
-
-    const onContainerDynamicColor = new DynamicColor(
-      `on${upperFirst(colorname)}Container`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => {
-        const baseTone = s.isDark ? 90 : 30;
-        return contrastAllColors
-          ? adjustToneForContrast(baseTone, s.contrastLevel, s.isDark)
-          : baseTone;
-      },
-      false,
-    );
-
-    // Get the ARGB values using the scheme
-    customVars[colorname] = colorDynamicColor.getArgb(scheme);
+    // Get the ARGB values using the scheme - exactly like core colors do
+    customVars[colorname] = customColorDynamicColors.color.getArgb(scheme);
     customVars[`on${upperFirst(colorname)}`] =
-      onColorDynamicColor.getArgb(scheme);
-    customVars[`${colorname}Container`] = containerDynamicColor.getArgb(scheme);
+      customColorDynamicColors.onColor.getArgb(scheme);
+    customVars[`${colorname}Container`] =
+      customColorDynamicColors.container.getArgb(scheme);
     customVars[`on${upperFirst(colorname)}Container`] =
-      onContainerDynamicColor.getArgb(scheme);
+      customColorDynamicColors.onContainer.getArgb(scheme);
   });
 
   // Merge both
