@@ -96,4 +96,30 @@ describe("Mcu", () => {
       .myCustomColor;
     expect(customColor0).toBe(customColor1);
   });
+
+  it("should apply contrast to tonal shades when contrastAllColors is true", () => {
+    // Generate CSS with contrastAllColors disabled
+    const cssWithoutContrastAll = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 1.0,
+      contrastAllColors: false,
+    });
+
+    // Generate CSS with contrastAllColors enabled
+    const cssWithContrastAll = generateCss({
+      source: "#6750A4",
+      scheme: "tonalSpot",
+      contrast: 1.0,
+      contrastAllColors: true,
+    });
+
+    // Check that tonal shades are affected when contrastAllColors is enabled
+    // The CSS should contain different values for the same tonal shade
+    expect(cssWithoutContrastAll.css).toContain("--mcu-primary-40");
+    expect(cssWithContrastAll.css).toContain("--mcu-primary-40");
+
+    // The actual color values should be different
+    expect(cssWithoutContrastAll.css).not.toBe(cssWithContrastAll.css);
+  });
 });
