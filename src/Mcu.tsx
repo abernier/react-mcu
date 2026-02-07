@@ -34,11 +34,9 @@ function adjustToneForContrast(
   baseTone: number,
   contrastLevel: number,
   isDark: boolean,
+  adjustmentFactor: number,
 ) {
   if (contrastLevel === 0) return baseTone;
-
-  // Adjustment factor: how aggressively tones shift with contrast changes
-  const adjustmentFactor = 0.2;
 
   let adjustedTone: number;
   // For high contrast (positive values), make colors more extreme
@@ -108,6 +106,13 @@ export type McuConfig = {
    * @default false
    */
   contrastAllColors?: boolean;
+  /**
+   * Adjustment factor controlling how aggressively tones shift with contrast changes.
+   * Higher values create more dramatic contrast adjustments.
+   *
+   * @default 0.2
+   */
+  contrastAdjustmentFactor?: number;
 };
 
 const schemesMap = {
@@ -129,6 +134,7 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 export const DEFAULT_CONTRAST_ALL_COLORS = false;
+export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
 
 // Standard Material Design 3 tones (as shown in Material Theme Builder)
 export const STANDARD_TONES = [
@@ -174,6 +180,7 @@ export function Mcu({
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
   contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
+  contrastAdjustmentFactor = DEFAULT_CONTRAST_ADJUSTMENT_FACTOR,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
@@ -189,7 +196,9 @@ export function Mcu({
       error,
       colorMatch,
       customColors,
+      // extras features
       contrastAllColors,
+      contrastAdjustmentFactor,
     }),
     [
       contrast,
@@ -204,6 +213,7 @@ export function Mcu({
       error,
       colorMatch,
       contrastAllColors,
+      contrastAdjustmentFactor,
     ],
   );
 
@@ -356,6 +366,7 @@ function mergeBaseAndCustomColors(
   customColors: CustomColor[],
   colorPalettes: ColorPalettes,
   contrastAllColors: boolean,
+  contrastAdjustmentFactor: number,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -391,7 +402,12 @@ function mergeBaseAndCustomColors(
     // Helper to get tone with optional contrast adjustment
     const getTone = (baseTone: number) => (s: DynamicScheme) => {
       if (!contrastAllColors) return baseTone;
-      return adjustToneForContrast(baseTone, s.contrastLevel, s.isDark);
+      return adjustToneForContrast(
+        baseTone,
+        s.contrastLevel,
+        s.isDark,
+        contrastAdjustmentFactor,
+      );
     };
 
     // Create DynamicColor objects for all 4 color roles
@@ -454,6 +470,7 @@ const generateTonalPaletteVars = (
   palette: TonalPalette,
   scheme?: DynamicScheme,
   applyContrast: boolean = false,
+  contrastAdjustmentFactor: number = DEFAULT_CONTRAST_ADJUSTMENT_FACTOR,
 ) => {
   return STANDARD_TONES.map((tone) => {
     let toneToUse: number = tone;
@@ -464,6 +481,7 @@ const generateTonalPaletteVars = (
         tone,
         scheme.contrastLevel,
         scheme.isDark,
+        contrastAdjustmentFactor,
       );
     }
 
@@ -532,6 +550,7 @@ export function generateCss({
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
   contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
+  contrastAdjustmentFactor = DEFAULT_CONTRAST_ADJUSTMENT_FACTOR,
 }: McuConfig) {
   const sourceArgb = argbFromHex(hexSource);
 
@@ -651,12 +670,14 @@ export function generateCss({
     customColors,
     colorPalettes,
     contrastAllColors,
+    contrastAdjustmentFactor,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
     colorPalettes,
     contrastAllColors,
+    contrastAdjustmentFactor,
   );
 
   const lightVars = toCssVars(mergedColorsLight);
@@ -672,36 +693,42 @@ export function generateCss({
       lightScheme.primaryPalette,
       lightScheme,
       contrastAllColors,
+      contrastAdjustmentFactor,
     ),
     generateTonalPaletteVars(
       "secondary",
       lightScheme.secondaryPalette,
       lightScheme,
       contrastAllColors,
+      contrastAdjustmentFactor,
     ),
     generateTonalPaletteVars(
       "tertiary",
       lightScheme.tertiaryPalette,
       lightScheme,
       contrastAllColors,
+      contrastAdjustmentFactor,
     ),
     generateTonalPaletteVars(
       "error",
       lightScheme.errorPalette,
       lightScheme,
       contrastAllColors,
+      contrastAdjustmentFactor,
     ),
     generateTonalPaletteVars(
       "neutral",
       lightScheme.neutralPalette,
       lightScheme,
       contrastAllColors,
+      contrastAdjustmentFactor,
     ),
     generateTonalPaletteVars(
       "neutral-variant",
       lightScheme.neutralVariantPalette,
       lightScheme,
       contrastAllColors,
+      contrastAdjustmentFactor,
     ),
     // Custom colors from our unified palette map
     ...customColors.map((customColorObj) => {
@@ -711,6 +738,7 @@ export function generateCss({
         palette,
         lightScheme,
         contrastAllColors,
+        contrastAdjustmentFactor,
       );
     }),
   ].join(" ");
