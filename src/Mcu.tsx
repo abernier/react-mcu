@@ -127,6 +127,7 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 export const DEFAULT_CONTRAST_ALL_COLORS = false;
+export const DEFAULT_BLEND = true;
 export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
 
 // Standard Material Design 3 tones (as shown in Material Theme Builder)
@@ -642,7 +643,7 @@ export function generateCss({
     .filter((c) => !c.core)
     .map((c) => ({
       name: c.name,
-      blend: c.blend ?? false,
+      blend: c.blend ?? DEFAULT_BLEND,
       value: argbFromHex(c.hex),
     }));
 
