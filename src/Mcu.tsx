@@ -414,25 +414,25 @@ function mergeBaseAndCustomColors(
     const colorDynamicColor = new DynamicColor(
       colorname,
       getPaletteForColor,
-      (s) => getTone(s.isDark ? 80 : 40)(s),
-      false,
+      (s) => getTone(s.isDark ? 80 : 40)(s), // Main color: lighter in dark mode, darker in light mode
+      true, // background
     );
     const onColorDynamicColor = new DynamicColor(
       `on${upperFirst(colorname)}`,
       getPaletteForColor,
-      (s) => getTone(s.isDark ? 20 : 100)(s),
+      (s) => getTone(s.isDark ? 20 : 100)(s), // Text on main color: high contrast (dark on light, light on dark)
       false,
     );
     const containerDynamicColor = new DynamicColor(
       `${colorname}Container`,
       getPaletteForColor,
-      (s) => getTone(s.isDark ? 30 : 90)(s),
-      false,
+      (s) => getTone(s.isDark ? 30 : 90)(s), // Container: subtle variant (darker in dark mode, lighter in light mode)
+      true, // background
     );
     const onContainerDynamicColor = new DynamicColor(
       `on${upperFirst(colorname)}Container`,
       getPaletteForColor,
-      (s) => getTone(s.isDark ? 90 : 30)(s),
+      (s) => getTone(s.isDark ? 90 : 30)(s), // Text on container: high contrast against container background
       false,
     );
 
