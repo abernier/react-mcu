@@ -6,6 +6,7 @@ import {
   DEFAULT_SCHEME,
   DEFAULT_CONTRAST,
   DEFAULT_COLOR_MATCH,
+  DEFAULT_CONTRAST_ALL_COLORS,
   STANDARD_TONES,
 } from "./Mcu";
 import type { ComponentProps } from "react";
@@ -55,6 +56,9 @@ const meta = {
     contrast: {
       control: { type: "range", min: -1, max: 1, step: 0.1 },
     },
+    contrastAllColors: {
+      control: "boolean",
+    },
     primary: {
       control: "color",
     },
@@ -81,6 +85,9 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const customColor1 = "#00D68A";
+const customColor2 = "#FFE16B";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (
@@ -924,7 +931,11 @@ export const St1: Story = {
 };
 
 //
-// [scheme]
+// ███████  ██████ ██   ██ ███████ ███    ███ ███████
+// ██      ██      ██   ██ ██      ████  ████ ██
+// ███████ ██      ███████ █████   ██ ████ ██ █████
+//      ██ ██      ██   ██ ██      ██  ██  ██ ██
+// ███████  ██████ ██   ██ ███████ ██      ██ ███████
 //
 
 export const MonochromeSt: Story = {
@@ -1030,7 +1041,59 @@ export const ContentSt: Story = {
 };
 
 //
-// core colors
+//  ██████  ██████  ███    ██ ████████ ██████   █████  ███████ ████████
+// ██      ██    ██ ████   ██    ██    ██   ██ ██   ██ ██         ██
+// ██      ██    ██ ██ ██  ██    ██    ██████  ███████ ███████    ██
+// ██      ██    ██ ██  ██ ██    ██    ██   ██ ██   ██      ██    ██
+//  ██████  ██████  ██   ████    ██    ██   ██ ██   ██ ███████    ██
+//
+
+export const ContrastSt: Story = {
+  name: "[contrast]",
+  args: {
+    source: "#769CDF",
+    contrast: 0.5,
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
+    </Mcu>
+  ),
+};
+
+export const ContrastAllColorsSt: Story = {
+  name: "[contrast][contrastAllColors]",
+  args: {
+    source: "#769CDF",
+    contrast: -1,
+    contrastAllColors: true,
+    // contrastAllColors should impact custom-colors too (as well as shades)
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
+    </Mcu>
+  ),
+};
+
+//
+//  ██████  ██████  ██████  ███████
+// ██      ██    ██ ██   ██ ██
+// ██      ██    ██ ██████  █████
+// ██      ██    ██ ██   ██ ██
+//  ██████  ██████  ██   ██ ███████
 //
 
 export const PrimarySt: Story = {
@@ -1183,17 +1246,20 @@ export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantSt: Story = {
 //   };
 
 //
-
-const hex1 = "#00D68A";
-const hex2 = "#FFE16B";
+//  ██████ ██    ██ ███████ ████████  ██████  ███    ███
+// ██      ██    ██ ██         ██    ██    ██ ████  ████
+// ██      ██    ██ ███████    ██    ██    ██ ██ ████ ██
+// ██      ██    ██      ██    ██    ██    ██ ██  ██  ██
+//  ██████  ██████  ███████    ██     ██████  ██      ██
+//
 
 export const CustomColorsSt: Story = {
   name: "Custom colors",
   args: {
     source: "#769CDF",
     customColors: [
-      { name: "myCustomColor1", hex: hex1, blend: true },
-      { name: "myCustomColor2", hex: hex2, blend: true },
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
     ],
   },
   render: St1.render,
@@ -1204,13 +1270,19 @@ export const CustomColorsHarmonizedSt: Story = {
   args: {
     source: "#769CDF",
     customColors: [
-      { name: "myCustomColor1", hex: hex1, blend: false },
-      { name: "myCustomColor2", hex: hex2, blend: false },
+      { name: "myCustomColor1", hex: customColor1, blend: false },
+      { name: "myCustomColor2", hex: customColor2, blend: false },
     ],
   },
   render: St1.render,
 };
 
+//
+// ████████  █████  ██ ██      ██     ██ ██ ███    ██ ██████
+//    ██    ██   ██ ██ ██      ██     ██ ██ ████   ██ ██   ██
+//    ██    ███████ ██ ██      ██  █  ██ ██ ██ ██  ██ ██   ██
+//    ██    ██   ██ ██ ██      ██ ███ ██ ██ ██  ██ ██ ██   ██
+//    ██    ██   ██ ██ ███████  ███ ███  ██ ██   ████ ██████
 //
 
 export const TailwindSt: Story = {

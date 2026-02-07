@@ -23,6 +23,7 @@ export const McuProvider = ({
   scheme: initialScheme,
   contrast: initialContrast,
   customColors: initialCustomColors,
+  contrastAllColors: initialContrastAllColors,
   styleId,
   children,
 }: McuConfig & {
@@ -34,6 +35,7 @@ export const McuProvider = ({
     scheme: initialScheme,
     contrast: initialContrast,
     customColors: initialCustomColors,
+    contrastAllColors: initialContrastAllColors,
   }));
   // console.log("McuProvider initials", initials);
   const [mcuConfig, setMcuConfig] = useState(initials);
