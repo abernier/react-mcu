@@ -7,6 +7,7 @@ import {
   DEFAULT_CONTRAST,
   DEFAULT_COLOR_MATCH,
   DEFAULT_CONTRAST_ALL_COLORS,
+  DEFAULT_ADAPTIVE_SHADES,
   STANDARD_TONES,
 } from "./Mcu";
 import type { ComponentProps } from "react";
@@ -57,6 +58,9 @@ const meta = {
       control: { type: "range", min: -1, max: 1, step: 0.1 },
     },
     contrastAllColors: {
+      control: "boolean",
+    },
+    adaptiveShades: {
       control: "boolean",
     },
     primary: {
@@ -1072,6 +1076,27 @@ export const ContrastAllColorsSt: Story = {
     contrast: -1,
     contrastAllColors: true,
     // contrastAllColors should impact custom-colors too (as well as shades)
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <Scheme theme="light" customColors={args.customColors} />
+        <Scheme theme="dark" customColors={args.customColors} />
+        <Shades customColors={args.customColors} />
+      </Layout>
+    </Mcu>
+  ),
+};
+
+export const AdaptiveShadesSt: Story = {
+  name: "[adaptiveShades]",
+  args: {
+    source: "#769CDF",
+    adaptiveShades: true,
     customColors: [
       { name: "myCustomColor1", hex: customColor1, blend: true },
       { name: "myCustomColor2", hex: customColor2, blend: true },
