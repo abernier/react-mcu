@@ -459,10 +459,17 @@ const generateTonalPaletteVars = (
   return STANDARD_TONES.map((tone) => {
     let toneToUse: number = tone;
 
+    // In dark mode, invert the tone values so that high tone numbers
+    // (which represent light colors) map to low tone values (dark colors)
+    // This makes shades adapt naturally to the theme like core colors do
+    if (scheme?.isDark) {
+      toneToUse = 100 - tone;
+    }
+
     // Apply contrast adjustment to tonal shades when requested
     if (applyContrast && scheme) {
       toneToUse = adjustToneForContrast(
-        tone,
+        toneToUse,
         scheme.contrastLevel,
         scheme.isDark,
       );
@@ -664,9 +671,9 @@ export function generateCss({
   const darkVars = toCssVars(mergedColorsDark);
 
   // Generate tonal palette CSS variables for all colors (core + custom)
-  // Use the palettes from the light scheme and our unified colorPalettes map
+  // Use the palettes from both light and dark schemes
   // When contrastAllColors is enabled, tonal shades adjust based on contrast level
-  const allTonalVars = [
+  const lightTonalVars = [
     // Core colors from the scheme
     generateTonalPaletteVars(
       "primary",
@@ -716,10 +723,60 @@ export function generateCss({
     }),
   ].join(" ");
 
+  const darkTonalVars = [
+    // Core colors from the scheme
+    generateTonalPaletteVars(
+      "primary",
+      darkScheme.primaryPalette,
+      darkScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "secondary",
+      darkScheme.secondaryPalette,
+      darkScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "tertiary",
+      darkScheme.tertiaryPalette,
+      darkScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "error",
+      darkScheme.errorPalette,
+      darkScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "neutral",
+      darkScheme.neutralPalette,
+      darkScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "neutral-variant",
+      darkScheme.neutralVariantPalette,
+      darkScheme,
+      contrastAllColors,
+    ),
+    // Custom colors from our unified palette map
+    ...customColors.map((customColorObj) => {
+      const palette = getPalette(colorPalettes, customColorObj.name);
+      return generateTonalPaletteVars(
+        kebabCase(customColorObj.name),
+        palette,
+        darkScheme,
+        contrastAllColors,
+      );
+    }),
+  ].join(" ");
+
   return {
     css: `
-:root { ${lightVars} ${allTonalVars} }
-.dark { ${darkVars} }
+:root { ${lightVars} ${lightTonalVars} }
+.dark { ${darkVars} ${darkTonalVars} }
 `,
     mergedColorsLight,
     mergedColorsDark,
