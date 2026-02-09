@@ -24,6 +24,36 @@ import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
 import { McuProvider } from "./Mcu.context";
 
+// Helper function to adjust tone based on contrast level
+// This provides a simple linear adjustment similar to Material Design's approach
+// The adjustment factor controls how much the tone shifts per contrast level
+// - At contrast=1.0: tones shift by 20% of their range toward extremes
+// - At contrast=-1.0: tones shift by 20% toward the middle (50)
+// Returns a clamped value between 0 and 100
+function adjustToneForContrast(
+  baseTone: number,
+  contrastLevel: number,
+  isDark: boolean,
+  adjustmentFactor: number = DEFAULT_CONTRAST_ADJUSTMENT_FACTOR,
+) {
+  if (contrastLevel === 0) return baseTone;
+
+  let adjustedTone: number;
+  // For high contrast (positive values), make colors more extreme
+  // For low contrast (negative values), make colors closer to middle
+  if (isDark) {
+    // In dark mode, lighter tones get lighter with more contrast
+    adjustedTone =
+      baseTone + contrastLevel * (100 - baseTone) * adjustmentFactor;
+  } else {
+    // In light mode, darker tones get darker with more contrast
+    adjustedTone = baseTone - contrastLevel * baseTone * adjustmentFactor;
+  }
+
+  // Clamp to valid tone range [0, 100]
+  return Math.max(0, Math.min(100, adjustedTone));
+}
+
 type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
@@ -69,6 +99,13 @@ export type McuConfig = {
    * ```
    */
   customColors?: HexCustomColor[];
+  /**
+   * When true, applies the contrast level to all colors including custom colors and tonal palette shades.
+   * When false (default), only core colors are affected by the contrast level.
+   *
+   * @default false
+   */
+  contrastAllColors?: boolean;
 };
 
 const schemesMap = {
@@ -89,6 +126,9 @@ export const DEFAULT_SCHEME: SchemeName = "tonalSpot";
 export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
+export const DEFAULT_CONTRAST_ALL_COLORS = false;
+export const DEFAULT_BLEND = true;
+export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
 
 // Standard Material Design 3 tones (as shown in Material Theme Builder)
 export const STANDARD_TONES = [
@@ -133,6 +173,7 @@ export function Mcu({
   error,
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
+  contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
@@ -148,6 +189,8 @@ export function Mcu({
       error,
       colorMatch,
       customColors,
+      // extras features
+      contrastAllColors,
     }),
     [
       contrast,
@@ -161,6 +204,7 @@ export function Mcu({
       neutralVariant,
       error,
       colorMatch,
+      contrastAllColors,
     ],
   );
 
@@ -312,6 +356,7 @@ function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
   colorPalettes: ColorPalettes,
+  contrastAllColors: boolean,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -325,9 +370,9 @@ function mergeBaseAndCustomColors(
   });
 
   //
-  // Custom colors - now using DynamicColor objects that respect the scheme
+  // Custom colors - using MaterialDynamicColors-like approach
   //
-  // For each custom color, generate:
+  // For each custom color, generate DynamicColor objects exactly like core colors:
   // 1. <colorname>
   // 2. on-<colorname>
   // 3. <colorname>-container
@@ -340,33 +385,43 @@ function mergeBaseAndCustomColors(
   customColors.forEach((color) => {
     const colorname = color.name;
 
-    // Create DynamicColor objects that respect the scheme
+    // Helper to get palette for this color
+    const getPaletteForColor = (s: DynamicScheme) =>
+      getPalette(colorPalettes, colorname);
+
+    // Helper to get tone with optional contrast adjustment
+    const getTone = (baseTone: number) => (s: DynamicScheme) => {
+      if (!contrastAllColors) return baseTone;
+      return adjustToneForContrast(baseTone, s.contrastLevel, s.isDark);
+    };
+
+    // Create DynamicColor objects for all 4 color roles
     const colorDynamicColor = new DynamicColor(
       colorname,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 80 : 40), // Same as primary
-      false,
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 80 : 40)(s), // Main color: lighter in dark mode, darker in light mode
+      true, // background
     );
     const onColorDynamicColor = new DynamicColor(
       `on${upperFirst(colorname)}`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 20 : 100), // Same as onPrimary
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 20 : 100)(s), // Text on main color: high contrast (dark on light, light on dark)
       false,
     );
     const containerDynamicColor = new DynamicColor(
       `${colorname}Container`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 30 : 90), // Same as primaryContainer
-      false,
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 30 : 90)(s), // Container: subtle variant (darker in dark mode, lighter in light mode)
+      true, // background
     );
     const onContainerDynamicColor = new DynamicColor(
       `on${upperFirst(colorname)}Container`,
-      (s) => getPalette(colorPalettes, colorname),
-      (s) => (s.isDark ? 90 : 30), // Same as onPrimaryContainer
+      getPaletteForColor,
+      (s) => getTone(s.isDark ? 90 : 30)(s), // Text on container: high contrast against container background
       false,
     );
 
-    // Get the ARGB values using the scheme
+    // Get the ARGB values using the scheme - exactly like core colors do
     customVars[colorname] = colorDynamicColor.getArgb(scheme);
     customVars[`on${upperFirst(colorname)}`] =
       onColorDynamicColor.getArgb(scheme);
@@ -398,9 +453,22 @@ const cssVar = (colorName: string, colorValue: number) => {
 const generateTonalPaletteVars = (
   paletteName: string,
   palette: TonalPalette,
+  scheme?: DynamicScheme,
+  applyContrast: boolean = false,
 ) => {
   return STANDARD_TONES.map((tone) => {
-    const color = palette.tone(tone);
+    let toneToUse: number = tone;
+
+    // Apply contrast adjustment to tonal shades when requested
+    if (applyContrast && scheme) {
+      toneToUse = adjustToneForContrast(
+        tone,
+        scheme.contrastLevel,
+        scheme.isDark,
+      );
+    }
+
+    const color = palette.tone(toneToUse);
     return cssVar(`${paletteName}-${tone}`, color);
   }).join(" ");
 };
@@ -464,6 +532,7 @@ export function generateCss({
   error,
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
+  contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
 }: McuConfig) {
   const sourceArgb = argbFromHex(hexSource);
 
@@ -574,7 +643,7 @@ export function generateCss({
     .filter((c) => !c.core)
     .map((c) => ({
       name: c.name,
-      blend: c.blend ?? false,
+      blend: c.blend ?? DEFAULT_BLEND,
       value: argbFromHex(c.hex),
     }));
 
@@ -582,11 +651,13 @@ export function generateCss({
     lightScheme,
     customColors,
     colorPalettes,
+    contrastAllColors,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
     colorPalettes,
+    contrastAllColors,
   );
 
   const lightVars = toCssVars(mergedColorsLight);
@@ -594,21 +665,54 @@ export function generateCss({
 
   // Generate tonal palette CSS variables for all colors (core + custom)
   // Use the palettes from the light scheme and our unified colorPalettes map
+  // When contrastAllColors is enabled, tonal shades adjust based on contrast level
   const allTonalVars = [
     // Core colors from the scheme
-    generateTonalPaletteVars("primary", lightScheme.primaryPalette),
-    generateTonalPaletteVars("secondary", lightScheme.secondaryPalette),
-    generateTonalPaletteVars("tertiary", lightScheme.tertiaryPalette),
-    generateTonalPaletteVars("error", lightScheme.errorPalette),
-    generateTonalPaletteVars("neutral", lightScheme.neutralPalette),
+    generateTonalPaletteVars(
+      "primary",
+      lightScheme.primaryPalette,
+      lightScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "secondary",
+      lightScheme.secondaryPalette,
+      lightScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "tertiary",
+      lightScheme.tertiaryPalette,
+      lightScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "error",
+      lightScheme.errorPalette,
+      lightScheme,
+      contrastAllColors,
+    ),
+    generateTonalPaletteVars(
+      "neutral",
+      lightScheme.neutralPalette,
+      lightScheme,
+      contrastAllColors,
+    ),
     generateTonalPaletteVars(
       "neutral-variant",
       lightScheme.neutralVariantPalette,
+      lightScheme,
+      contrastAllColors,
     ),
     // Custom colors from our unified palette map
     ...customColors.map((customColorObj) => {
       const palette = getPalette(colorPalettes, customColorObj.name);
-      return generateTonalPaletteVars(kebabCase(customColorObj.name), palette);
+      return generateTonalPaletteVars(
+        kebabCase(customColorObj.name),
+        palette,
+        lightScheme,
+        contrastAllColors,
+      );
     }),
   ].join(" ");
 
