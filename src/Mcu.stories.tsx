@@ -1,18 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import {
-  Mcu,
-  schemeNames,
-  DEFAULT_SCHEME,
-  DEFAULT_CONTRAST,
-  DEFAULT_COLOR_MATCH,
-  DEFAULT_CONTRAST_ALL_COLORS,
-  DEFAULT_ADAPTIVE_SHADES,
-  STANDARD_TONES,
-} from "./Mcu";
+import { Mcu, schemeNames, STANDARD_TONES } from "./Mcu";
 import type { ComponentProps } from "react";
 import { kebabCase, upperFirst } from "lodash-es";
-import { allModes } from "../.storybook/modes";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {

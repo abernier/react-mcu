@@ -460,9 +460,9 @@ const cssVar = (colorName: string, colorValue: number) => {
 const generateTonalPaletteVars = (
   paletteName: string,
   palette: TonalPalette,
-  scheme?: DynamicScheme,
-  applyContrast: boolean = DEFAULT_CONTRAST_ALL_COLORS,
-  adaptiveShades: boolean = DEFAULT_ADAPTIVE_SHADES,
+  scheme: DynamicScheme,
+  applyContrast: boolean,
+  adaptiveShades: boolean,
 ) => {
   return STANDARD_TONES.map((tone) => {
     let toneToUse: number = tone;
@@ -471,12 +471,12 @@ const generateTonalPaletteVars = (
     // (which represent light colors) map to low tone values (dark colors)
     // This makes shades adapt naturally to the theme like core colors do
     // Only applies when adaptiveShades is enabled
-    if (adaptiveShades && scheme?.isDark) {
+    if (adaptiveShades && scheme.isDark) {
       toneToUse = 100 - tone;
     }
 
     // Apply contrast adjustment to tonal shades when requested
-    if (applyContrast && scheme) {
+    if (applyContrast) {
       toneToUse = adjustToneForContrast(
         toneToUse,
         scheme.contrastLevel,
@@ -684,119 +684,66 @@ export function generateCss({
   // Use the palettes from both light and dark schemes
   // When contrastAllColors is enabled, tonal shades adjust based on contrast level
   // When adaptiveShades is enabled, shades invert in dark mode
-  const lightTonalVars = [
-    // Core colors from the scheme
-    generateTonalPaletteVars(
-      "primary",
-      lightScheme.primaryPalette,
-      lightScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "secondary",
-      lightScheme.secondaryPalette,
-      lightScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "tertiary",
-      lightScheme.tertiaryPalette,
-      lightScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "error",
-      lightScheme.errorPalette,
-      lightScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "neutral",
-      lightScheme.neutralPalette,
-      lightScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "neutral-variant",
-      lightScheme.neutralVariantPalette,
-      lightScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    // Custom colors from our unified palette map
-    ...customColors.map((customColorObj) => {
-      const palette = getPalette(colorPalettes, customColorObj.name);
-      return generateTonalPaletteVars(
-        kebabCase(customColorObj.name),
-        palette,
-        lightScheme,
+  const generateTonalVars = (scheme: DynamicScheme) =>
+    [
+      // Core colors from the scheme
+      generateTonalPaletteVars(
+        "primary",
+        scheme.primaryPalette,
+        scheme,
         contrastAllColors,
         adaptiveShades,
-      );
-    }),
-  ].join(" ");
+      ),
+      generateTonalPaletteVars(
+        "secondary",
+        scheme.secondaryPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "tertiary",
+        scheme.tertiaryPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "error",
+        scheme.errorPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "neutral",
+        scheme.neutralPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "neutral-variant",
+        scheme.neutralVariantPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      // Custom colors from our unified palette map
+      ...customColors.map((customColorObj) => {
+        const palette = getPalette(colorPalettes, customColorObj.name);
+        return generateTonalPaletteVars(
+          kebabCase(customColorObj.name),
+          palette,
+          scheme,
+          contrastAllColors,
+          adaptiveShades,
+        );
+      }),
+    ].join(" ");
 
-  const darkTonalVars = [
-    // Core colors from the scheme
-    generateTonalPaletteVars(
-      "primary",
-      darkScheme.primaryPalette,
-      darkScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "secondary",
-      darkScheme.secondaryPalette,
-      darkScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "tertiary",
-      darkScheme.tertiaryPalette,
-      darkScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "error",
-      darkScheme.errorPalette,
-      darkScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "neutral",
-      darkScheme.neutralPalette,
-      darkScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    generateTonalPaletteVars(
-      "neutral-variant",
-      darkScheme.neutralVariantPalette,
-      darkScheme,
-      contrastAllColors,
-      adaptiveShades,
-    ),
-    // Custom colors from our unified palette map
-    ...customColors.map((customColorObj) => {
-      const palette = getPalette(colorPalettes, customColorObj.name);
-      return generateTonalPaletteVars(
-        kebabCase(customColorObj.name),
-        palette,
-        darkScheme,
-        contrastAllColors,
-        adaptiveShades,
-      );
-    }),
-  ].join(" ");
+  const lightTonalVars = generateTonalVars(lightScheme);
+  const darkTonalVars = generateTonalVars(darkScheme);
 
   return {
     css: `
