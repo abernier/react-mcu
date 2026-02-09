@@ -224,9 +224,26 @@ export const QuantSt: Story = {
 </svg>`,
           }}
         />
-        <Scheme theme="light" customColors={args.customColors} />
-        <Scheme theme="dark" customColors={args.customColors} />
-        <Shades customColors={args.customColors} />
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            color: "var(--sb-background)",
+          }}
+        >
+          <Scheme title="Light scheme" customColors={args.customColors}>
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+        </div>
+
+        <div
+          className="dark"
+          style={{ backgroundColor: "#1c1b1f", color: "var(--sb-foreground)" }}
+        >
+          <Scheme title="Dark scheme" customColors={args.customColors}>
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+        </div>
+        {!args.adaptiveShades && <Shades customColors={args.customColors} />}
       </Layout>
     </Mcu>
   ),

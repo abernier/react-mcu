@@ -83,7 +83,6 @@ export type McuConfig = {
    * When false (default), colors may be adjusted for better harmonization.
    * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
    *
-   * @default false
    * @deprecated Not yet implemented. This prop is currently ignored.
    */
   colorMatch?: boolean;
@@ -102,10 +101,14 @@ export type McuConfig = {
   /**
    * When true, applies the contrast level to all colors including custom colors and tonal palette shades.
    * When false (default), only core colors are affected by the contrast level.
-   *
-   * @default false
    */
   contrastAllColors?: boolean;
+  /**
+   * When true (default), tonal palette shades adapt to the theme (light/dark) with inverted tone values.
+   * In dark mode, high tones (light colors) map to low tones (dark colors) and vice versa.
+   * When false, shades remain the same across themes.
+   */
+  adaptiveShades?: boolean;
 };
 
 const schemesMap = {
@@ -127,6 +130,7 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 export const DEFAULT_CONTRAST_ALL_COLORS = false;
+export const DEFAULT_ADAPTIVE_SHADES = false;
 export const DEFAULT_BLEND = true;
 export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
 
@@ -174,6 +178,7 @@ export function Mcu({
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
   contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
+  adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
@@ -191,6 +196,7 @@ export function Mcu({
       customColors,
       // extras features
       contrastAllColors,
+      adaptiveShades,
     }),
     [
       contrast,
@@ -205,6 +211,7 @@ export function Mcu({
       error,
       colorMatch,
       contrastAllColors,
+      adaptiveShades,
     ],
   );
 
@@ -453,16 +460,25 @@ const cssVar = (colorName: string, colorValue: number) => {
 const generateTonalPaletteVars = (
   paletteName: string,
   palette: TonalPalette,
-  scheme?: DynamicScheme,
-  applyContrast: boolean = false,
+  scheme: DynamicScheme,
+  applyContrast: boolean,
+  adaptiveShades: boolean,
 ) => {
   return STANDARD_TONES.map((tone) => {
     let toneToUse: number = tone;
 
+    // In dark mode, invert the tone values so that high tone numbers
+    // (which represent light colors) map to low tone values (dark colors)
+    // This makes shades adapt naturally to the theme like core colors do
+    // Only applies when adaptiveShades is enabled
+    if (adaptiveShades && scheme.isDark) {
+      toneToUse = 100 - tone;
+    }
+
     // Apply contrast adjustment to tonal shades when requested
-    if (applyContrast && scheme) {
+    if (applyContrast) {
       toneToUse = adjustToneForContrast(
-        tone,
+        toneToUse,
         scheme.contrastLevel,
         scheme.isDark,
       );
@@ -533,6 +549,7 @@ export function generateCss({
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
   contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
+  adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
 }: McuConfig) {
   const sourceArgb = argbFromHex(hexSource);
 
@@ -664,62 +681,74 @@ export function generateCss({
   const darkVars = toCssVars(mergedColorsDark);
 
   // Generate tonal palette CSS variables for all colors (core + custom)
-  // Use the palettes from the light scheme and our unified colorPalettes map
+  // Use the palettes from both light and dark schemes
   // When contrastAllColors is enabled, tonal shades adjust based on contrast level
-  const allTonalVars = [
-    // Core colors from the scheme
-    generateTonalPaletteVars(
-      "primary",
-      lightScheme.primaryPalette,
-      lightScheme,
-      contrastAllColors,
-    ),
-    generateTonalPaletteVars(
-      "secondary",
-      lightScheme.secondaryPalette,
-      lightScheme,
-      contrastAllColors,
-    ),
-    generateTonalPaletteVars(
-      "tertiary",
-      lightScheme.tertiaryPalette,
-      lightScheme,
-      contrastAllColors,
-    ),
-    generateTonalPaletteVars(
-      "error",
-      lightScheme.errorPalette,
-      lightScheme,
-      contrastAllColors,
-    ),
-    generateTonalPaletteVars(
-      "neutral",
-      lightScheme.neutralPalette,
-      lightScheme,
-      contrastAllColors,
-    ),
-    generateTonalPaletteVars(
-      "neutral-variant",
-      lightScheme.neutralVariantPalette,
-      lightScheme,
-      contrastAllColors,
-    ),
-    // Custom colors from our unified palette map
-    ...customColors.map((customColorObj) => {
-      const palette = getPalette(colorPalettes, customColorObj.name);
-      return generateTonalPaletteVars(
-        kebabCase(customColorObj.name),
-        palette,
-        lightScheme,
+  // When adaptiveShades is enabled, shades invert in dark mode
+  const generateTonalVars = (scheme: DynamicScheme) =>
+    [
+      // Core colors from the scheme
+      generateTonalPaletteVars(
+        "primary",
+        scheme.primaryPalette,
+        scheme,
         contrastAllColors,
-      );
-    }),
-  ].join(" ");
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "secondary",
+        scheme.secondaryPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "tertiary",
+        scheme.tertiaryPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "error",
+        scheme.errorPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "neutral",
+        scheme.neutralPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "neutral-variant",
+        scheme.neutralVariantPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      // Custom colors from our unified palette map
+      ...customColors.map((customColorObj) => {
+        const palette = getPalette(colorPalettes, customColorObj.name);
+        return generateTonalPaletteVars(
+          kebabCase(customColorObj.name),
+          palette,
+          scheme,
+          contrastAllColors,
+          adaptiveShades,
+        );
+      }),
+    ].join(" ");
+
+  const lightTonalVars = generateTonalVars(lightScheme);
+  const darkTonalVars = generateTonalVars(darkScheme);
 
   return {
     css: `
-:root { ${lightVars} ${allTonalVars} }
-.dark { ${darkVars} }
+:root { ${lightVars} ${lightTonalVars} }
+.dark { ${darkVars} ${adaptiveShades ? darkTonalVars : lightTonalVars} }
 `,
     mergedColorsLight,
     mergedColorsDark,

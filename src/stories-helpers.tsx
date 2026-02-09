@@ -45,35 +45,37 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function Scheme({
-  theme,
+  title = "",
   customColors,
+  children,
 }: {
-  theme: "light" | "dark";
+  title?: string;
   customColors?: ComponentProps<typeof Mcu>["customColors"];
-}) {
-  const isDark = theme === "dark";
+} & Omit<ComponentProps<"div">, "title">) {
   return (
-    <div className={isDark ? "dark" : ""}>
+    <div>
       <style>{`
       @scope {
         & {
           padding: 1rem;
-          background-color: ${isDark ? "#1c1b1f" : "#ffffff"}; border-radius:4px;
-          color: ${isDark ? "var(--sb-foreground)" : "var(--sb-background)"};
+          border-radius:4px;
           [style*="background-color"] {padding:.35rem;}
+
+          display:flex; flex-direction:column; gap:1rem;
         }
       }
       `}</style>
-      <h3
-        style={{
-          fontWeight: "bold",
-          marginBottom: "0.5rem",
-          textTransform: "capitalize",
-        }}
-      >
-        {isDark ? "Dark Scheme" : "Light Scheme"}
-      </h3>
-
+      {title && (
+        <h3
+          style={{
+            fontWeight: "bold",
+            marginBottom: "0rem",
+            textTransform: "capitalize",
+          }}
+        >
+          {title}
+        </h3>
+      )}
       <div>
         <style>{`
         @scope {
@@ -691,7 +693,6 @@ export function Scheme({
           </div>
         </div>
       </div>
-
       {
         //
         //  ██████ ██    ██ ███████ ████████  ██████  ███    ███      ██████  ██████  ██       ██████  ██████  ███████
@@ -701,9 +702,9 @@ export function Scheme({
         //  ██████  ██████  ███████    ██     ██████  ██      ██      ██████  ██████  ███████  ██████  ██   ██ ███████
         //
       }
-
-      <div style={{ marginTop: "var(--gap1)" }}>
-        <style>{`
+      {customColors?.length && (
+        <div>
+          <style>{`
           @scope {
             & {
               display:flex; flex-direction:column; gap:var(--gap2);
@@ -711,9 +712,9 @@ export function Scheme({
           }
         `}</style>
 
-        {customColors?.map((customColor) => (
-          <div key={customColor.name}>
-            <style>{`
+          {customColors?.map((customColor) => (
+            <div key={customColor.name}>
+              <style>{`
             @scope {
               & {
                 display:grid;
@@ -722,49 +723,52 @@ export function Scheme({
               }
             }
           `}</style>
-            <Foo>
-              <FooTop
-                style={{
-                  height: "4rem",
-                  backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
-                }}
-              >
-                <p>{upperFirst(customColor.name)}</p>
-              </FooTop>
-            </Foo>
-            <Foo>
-              <FooTop
-                style={{
-                  height: "4rem",
-                  backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
-                }}
-              >
-                <p>On {upperFirst(customColor.name)}</p>
-              </FooTop>
-            </Foo>
-            <Foo>
-              <FooTop
-                style={{
-                  height: "4rem",
-                  backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
-                }}
-              >
-                <p>{upperFirst(customColor.name)} Container</p>
-              </FooTop>
-            </Foo>
-            <Foo>
-              <FooTop
-                style={{
-                  height: "4rem",
-                  backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
-                }}
-              >
-                <p>On {upperFirst(customColor.name)} Container</p>
-              </FooTop>
-            </Foo>
-          </div>
-        ))}
-      </div>
+              <Foo>
+                <FooTop
+                  style={{
+                    height: "4rem",
+                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
+                  }}
+                >
+                  <p>{upperFirst(customColor.name)}</p>
+                </FooTop>
+              </Foo>
+              <Foo>
+                <FooTop
+                  style={{
+                    height: "4rem",
+                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
+                  }}
+                >
+                  <p>On {upperFirst(customColor.name)}</p>
+                </FooTop>
+              </Foo>
+              <Foo>
+                <FooTop
+                  style={{
+                    height: "4rem",
+                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
+                  }}
+                >
+                  <p>{upperFirst(customColor.name)} Container</p>
+                </FooTop>
+              </Foo>
+              <Foo>
+                <FooTop
+                  style={{
+                    height: "4rem",
+                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
+                  }}
+                >
+                  <p>On {upperFirst(customColor.name)} Container</p>
+                </FooTop>
+              </Foo>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {children}
     </div>
   );
 }
@@ -792,7 +796,7 @@ export function Shades({
           <h3
             style={{
               fontWeight: "bold",
-              marginBottom: "0.5rem",
+              marginBottom: "0rem",
               textTransform: "capitalize",
             }}
           >
