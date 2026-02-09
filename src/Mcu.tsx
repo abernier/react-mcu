@@ -107,11 +107,11 @@ export type McuConfig = {
    */
   contrastAllColors?: boolean;
   /**
-   * When true, tonal palette shades adapt to the theme (light/dark) with inverted tone values.
+   * When true (default), tonal palette shades adapt to the theme (light/dark) with inverted tone values.
    * In dark mode, high tones (light colors) map to low tones (dark colors) and vice versa.
-   * When false (default), shades remain the same across themes.
+   * When false, shades remain the same across themes.
    *
-   * @default false
+   * @default true
    */
   adaptiveShades?: boolean;
 };
@@ -135,7 +135,7 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 export const DEFAULT_CONTRAST_ALL_COLORS = false;
-export const DEFAULT_ADAPTIVE_SHADES = false;
+export const DEFAULT_ADAPTIVE_SHADES = true;
 export const DEFAULT_BLEND = true;
 export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
 
