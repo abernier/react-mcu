@@ -192,6 +192,7 @@ export const QuantSt: Story = {
   args: {
     source: "#769CDF",
     contrastAllColors: true,
+    adaptiveShades: true,
     customColors: families.flatMap((family, index) => [
       {
         name: `mother${index}`,
@@ -212,38 +213,21 @@ export const QuantSt: Story = {
     width="100"
     height="100"
     fill="#769CDF"
-    style="fill: var(--mcu-surface);"
+    style="fill: var(--mcu-mother-0-90);"
   />
   <circle
     cx="50"
     cy="50"
     r="10"
     fill="#ffaf1e"
-    style="fill: var(--mcu-primary);"
+    style="fill: var(--mcu-mother-0-10);"
   />
 </svg>`,
           }}
         />
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            color: "var(--sb-background)",
-          }}
-        >
-          <Scheme title="Light scheme" customColors={args.customColors}>
-            {args.adaptiveShades && <Shades customColors={args.customColors} />}
-          </Scheme>
-        </div>
-
-        <div
-          className="dark"
-          style={{ backgroundColor: "#1c1b1f", color: "var(--sb-foreground)" }}
-        >
-          <Scheme title="Dark scheme" customColors={args.customColors}>
-            {args.adaptiveShades && <Shades customColors={args.customColors} />}
-          </Scheme>
-        </div>
-        {!args.adaptiveShades && <Shades customColors={args.customColors} />}
+        <Scheme title="Scheme" customColors={args.customColors}>
+          <Shades customColors={args.customColors} />
+        </Scheme>
       </Layout>
     </Mcu>
   ),
