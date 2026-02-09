@@ -1,4 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import {
+  argbFromHex,
+  Hct,
+  hexFromArgb,
+  Score,
+} from "@material/material-color-utilities";
+import { Mcu, schemeNames } from "./Mcu";
+import { Layout, Scheme, Shades } from "./stories-helpers";
 
 const meta = {
   component: Mcu,
@@ -78,15 +86,6 @@ type Story = StoryObj<typeof meta>;
 // ██   ██ ██      ██      ██    ██ ██      ██    ██ ██   ██
 // ██   ██ ███████  ██████  ██████  ███████  ██████  ██   ██
 //
-
-import {
-  argbFromHex,
-  Hct,
-  hexFromArgb,
-  Score,
-} from "@material/material-color-utilities";
-import { Mcu, schemeNames } from "./Mcu";
-import { Layout, Scheme, Shades } from "./stories-helpers";
 
 export type WeightedColor = {
   hex: string;
