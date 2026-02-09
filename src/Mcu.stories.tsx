@@ -1834,7 +1834,7 @@ const families = organizePalette(
 console.log("Familles de couleurs organisées :", families);
 
 export const QuantSt: Story = {
-  name: "Quant",
+  name: "Recolor",
   args: {
     source: "#769CDF",
     contrastAllColors: true,
@@ -1848,9 +1848,10 @@ export const QuantSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <div
-        dangerouslySetInnerHTML={{
-          __html: `<svg viewBox="0 0 100 100" className="outline text-red-500">
+      <Layout>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `<svg viewBox="0 0 100 100" className="outline text-red-500">
   <rect
     x="0"
     y="0"
@@ -1867,10 +1868,8 @@ export const QuantSt: Story = {
     style="fill: var(--mcu-primary);"
   />
 </svg>`,
-        }}
-      />
-
-      <Layout>
+          }}
+        />
         <Scheme theme="light" customColors={args.customColors} />
         <Scheme theme="dark" customColors={args.customColors} />
         <Shades customColors={args.customColors} />
