@@ -12,6 +12,12 @@ import {
 import type { ComponentProps } from "react";
 import { kebabCase, upperFirst } from "lodash-es";
 import { allModes } from "../.storybook/modes";
+import {
+  argbFromHex,
+  Hct,
+  hexFromArgb,
+  Score,
+} from "@material/material-color-utilities";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -1717,4 +1723,128 @@ export const TailwindSt: Story = {
       </div>
     </Mcu>
   ),
+};
+
+//
+// ██████  ███████  ██████  ██████  ██       ██████  ██████
+// ██   ██ ██      ██      ██    ██ ██      ██    ██ ██   ██
+// ██████  █████   ██      ██    ██ ██      ██    ██ ██████
+// ██   ██ ██      ██      ██    ██ ██      ██    ██ ██   ██
+// ██   ██ ███████  ██████  ██████  ███████  ██████  ██   ██
+//
+
+export type WeightedColor = {
+  hex: string;
+  weight: number; // Ex: nombre de pixels, pourcentage, score de fréquence...
+};
+
+type ColorFamily = {
+  mother: string;
+  shades: string[];
+};
+
+/**
+ * Fonction principale avec POIDS
+ * @param inputs Liste des objets { hex, weight }
+ * @param maxMothers Le nombre max de familles souhaitées (si undefined, pas de limite imposée, c'est la fonction qui détermine en fonction de la proximité des couleurs)
+ */
+function organizePalette(
+  inputs: WeightedColor[],
+  maxMothers?: number,
+): ColorFamily[] {
+  // 1. PRÉPARATION : Compter les fréquences pondérées
+  // La clé est la couleur (int), la valeur est le POIDS CUMULÉ.
+  const colorToWeight = new Map<number, number>();
+
+  // On sert aussi de cette liste pour ne traiter chaque couleur unique qu'une seule fois plus tard
+  const uniqueHexSet = new Set<string>();
+
+  inputs.forEach((item) => {
+    const argb = argbFromHex(item.hex);
+    uniqueHexSet.add(item.hex);
+
+    // C'est ici que ça change : on ajoute le poids fourni au lieu de juste incrémenter
+    const currentWeight = colorToWeight.get(argb) || 0;
+    colorToWeight.set(argb, currentWeight + item.weight);
+  });
+
+  // 2. IDENTIFIER LES MÈRES (Score prend en compte le poids !)
+  // L'algo de Google va maintenant favoriser les couleurs avec un gros 'weight' cumulé
+  const scoredMothers = Score.score(colorToWeight);
+
+  const topMothersInt =
+    maxMothers !== undefined
+      ? scoredMothers.slice(0, maxMothers)
+      : scoredMothers;
+
+  // Préparer la structure de résultat
+  const families: ColorFamily[] = topMothersInt.map((motherInt) => ({
+    mother: hexFromArgb(motherInt),
+    shades: [],
+  }));
+
+  // 3. RATTACHER LES SHADES
+  // On itère sur les couleurs UNIQUES trouvées en entrée
+  for (const hex of Array.from(uniqueHexSet)) {
+    const colorInt = argbFromHex(hex);
+
+    // Si c'est une mère, on passe
+    if (families.some((f) => f.mother === hex)) {
+      continue;
+    }
+
+    // Sinon, recherche de la mère la plus proche (Distance visuelle HCT)
+    let minDistance = Infinity;
+    let closestFamilyIndex = -1;
+    const colorHct = Hct.fromInt(colorInt);
+
+    families.forEach((family, index) => {
+      const motherHct = Hct.fromInt(argbFromHex(family.mother));
+
+      const hueDiff = Math.abs(colorHct.hue - motherHct.hue);
+      const normalizedHueDiff = Math.min(hueDiff, 360 - hueDiff);
+
+      // On compare principalement la teinte
+      if (normalizedHueDiff < minDistance) {
+        minDistance = normalizedHueDiff;
+        closestFamilyIndex = index;
+      }
+    });
+
+    if (closestFamilyIndex !== -1) {
+      families[closestFamilyIndex]?.shades.push(hex);
+    }
+  }
+
+  return families;
+}
+const families = organizePalette(
+  [
+    { hex: "#ffaf1e", weight: 50 },
+    { hex: "#fbc775", weight: 2 },
+    { hex: "#faa11c", weight: 7 },
+    { hex: "#ec801a", weight: 7 },
+    { hex: "#d46c1a", weight: 7 },
+    { hex: "#97381c", weight: 7 },
+    { hex: "#7b2719", weight: 7 },
+    { hex: "#591716", weight: 7 },
+  ],
+  // 2,
+);
+console.log("Familles de couleurs organisées :", families);
+
+export const QuantSt: Story = {
+  name: "Quant",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    customColors: families.flatMap((family, index) => [
+      {
+        name: `mother${index}`,
+        hex: family.mother,
+        blend: false,
+      },
+    ]),
+  },
+  render: St1.render,
 };
