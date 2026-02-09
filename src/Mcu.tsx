@@ -83,7 +83,6 @@ export type McuConfig = {
    * When false (default), colors may be adjusted for better harmonization.
    * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
    *
-   * @default false
    * @deprecated Not yet implemented. This prop is currently ignored.
    */
   colorMatch?: boolean;
@@ -102,16 +101,12 @@ export type McuConfig = {
   /**
    * When true, applies the contrast level to all colors including custom colors and tonal palette shades.
    * When false (default), only core colors are affected by the contrast level.
-   *
-   * @default false
    */
   contrastAllColors?: boolean;
   /**
    * When true (default), tonal palette shades adapt to the theme (light/dark) with inverted tone values.
    * In dark mode, high tones (light colors) map to low tones (dark colors) and vice versa.
    * When false, shades remain the same across themes.
-   *
-   * @default true
    */
   adaptiveShades?: boolean;
 };
@@ -135,7 +130,7 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_COLOR_MATCH = false;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 export const DEFAULT_CONTRAST_ALL_COLORS = false;
-export const DEFAULT_ADAPTIVE_SHADES = true;
+export const DEFAULT_ADAPTIVE_SHADES = false;
 export const DEFAULT_BLEND = true;
 export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
 
@@ -183,6 +178,7 @@ export function Mcu({
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
   contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
+  adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
@@ -200,6 +196,7 @@ export function Mcu({
       customColors,
       // extras features
       contrastAllColors,
+      adaptiveShades,
     }),
     [
       contrast,
@@ -214,6 +211,7 @@ export function Mcu({
       error,
       colorMatch,
       contrastAllColors,
+      adaptiveShades,
     ],
   );
 
@@ -463,8 +461,8 @@ const generateTonalPaletteVars = (
   paletteName: string,
   palette: TonalPalette,
   scheme?: DynamicScheme,
-  applyContrast: boolean = false,
-  adaptiveShades: boolean = false,
+  applyContrast: boolean = DEFAULT_CONTRAST_ALL_COLORS,
+  adaptiveShades: boolean = DEFAULT_ADAPTIVE_SHADES,
 ) => {
   return STANDARD_TONES.map((tone) => {
     let toneToUse: number = tone;
