@@ -19,27 +19,16 @@ type Api = {
 const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
 
 export const McuProvider = ({
-  source: initialSource,
-  scheme: initialScheme,
-  contrast: initialContrast,
-  customColors: initialCustomColors,
-  contrastAllColors: initialContrastAllColors,
-  adaptiveShades: initialAdaptiveShades,
   styleId,
   children,
+  ...props
 }: McuConfig & {
   styleId: string;
   children?: React.ReactNode;
 }) => {
-  const [initials] = useState<McuConfig>(() => ({
-    source: initialSource,
-    scheme: initialScheme,
-    contrast: initialContrast,
-    customColors: initialCustomColors,
-    contrastAllColors: initialContrastAllColors,
-    adaptiveShades: initialAdaptiveShades,
-  }));
+  const [initials] = useState<McuConfig>(() => props);
   // console.log("McuProvider initials", initials);
+
   const [mcuConfig, setMcuConfig] = useState(initials);
 
   const { css, mergedColorsLight, mergedColorsDark } = useMemo(
