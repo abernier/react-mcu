@@ -27,30 +27,41 @@ import { McuProvider } from "./Mcu.context";
 // Helper function to adjust tone based on contrast level
 // This provides a simple linear adjustment similar to Material Design's approach
 // The adjustment factor controls how much the tone shifts per contrast level
-// - At contrast=1.0: tones shift by 20% of their range toward extremes
+// - At contrast=1.0: tones shift by 20% of their distance from center (50) toward extremes
 // - At contrast=-1.0: tones shift by 20% toward the middle (50)
+// The logic is universal: it moves away from the gray middle (50)
+// - If tone > 50, it pushes toward 100 (lighter)
+// - If tone < 50, it pushes toward 0 (darker)
 // Returns a clamped value between 0 and 100
 function adjustToneForContrast(
   baseTone: number,
   contrastLevel: number,
-  isDark: boolean,
+  // isDark is kept in the signature for backward compatibility but is no longer used
+  isDark?: boolean,
   adjustmentFactor: number = DEFAULT_CONTRAST_ADJUSTMENT_FACTOR,
 ) {
   if (contrastLevel === 0) return baseTone;
 
-  let adjustedTone: number;
-  // For high contrast (positive values), make colors more extreme
-  // For low contrast (negative values), make colors closer to middle
-  if (isDark) {
-    // In dark mode, lighter tones get lighter with more contrast
-    adjustedTone =
-      baseTone + contrastLevel * (100 - baseTone) * adjustmentFactor;
-  } else {
-    // In light mode, darker tones get darker with more contrast
-    adjustedTone = baseTone - contrastLevel * baseTone * adjustmentFactor;
-  }
+  // Calculate the distance from the center (50)
+  // Ex: Tone 90 -> distance +40
+  // Ex: Tone 10 -> distance -40
+  const distanceToCenter = baseTone - 50;
 
-  // Clamp to valid tone range [0, 100]
+  // If contrastLevel is positive (ex: 1.0), amplify this distance
+  // If contrastLevel is negative (ex: -1.0), reduce this distance
+  // The change is proportional to the current distance from center
+  const delta = distanceToCenter * contrastLevel * adjustmentFactor;
+
+  // Example: Tone 90 (Light), Contrast 1.0
+  // delta = 40 * 1 * 0.2 = 8
+  // Result = 90 + 8 = 98 (Lighter -> Correct)
+
+  // Example: Tone 10 (Dark), Contrast 1.0
+  // delta = -40 * 1 * 0.2 = -8
+  // Result = 10 + (-8) = 2 (Darker -> Correct)
+
+  const adjustedTone = baseTone + delta;
+
   return Math.max(0, Math.min(100, adjustedTone));
 }
 
