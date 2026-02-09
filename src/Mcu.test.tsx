@@ -2,6 +2,13 @@ import { render, cleanup } from "@testing-library/react";
 import { describe, it, expect, afterEach } from "vitest";
 import { Mcu } from "./Mcu.js";
 
+// Helper function to extract a CSS variable value from a CSS string
+const extractVarValue = (content: string, varName: string): string | null => {
+  const regex = new RegExp(`${varName}:\\s*([^;]+)`);
+  const match = content.match(regex);
+  return match?.[1]?.trim() ?? null;
+};
+
 describe("Mcu", () => {
   afterEach(() => {
     cleanup();
@@ -56,15 +63,6 @@ describe("Mcu", () => {
     expect(darkVars).toContain("--mcu-primary-10");
 
     // Extract specific shade values for comparison
-    const extractVarValue = (
-      content: string,
-      varName: string,
-    ): string | null => {
-      const regex = new RegExp(`${varName}:\\s*([^;]+)`);
-      const match = content.match(regex);
-      return match?.[1]?.trim() ?? null;
-    };
-
     const lightPrimary90 = extractVarValue(rootVars, "--mcu-primary-90");
     const darkPrimary90 = extractVarValue(darkVars, "--mcu-primary-90");
 
@@ -106,15 +104,6 @@ describe("Mcu", () => {
     expect(darkVars).toContain("--mcu-my-custom-1-50");
 
     // Extract specific shade values for comparison
-    const extractVarValue = (
-      content: string,
-      varName: string,
-    ): string | null => {
-      const regex = new RegExp(`${varName}:\\s*([^;]+)`);
-      const match = content.match(regex);
-      return match?.[1]?.trim() ?? null;
-    };
-
     const lightCustom90 = extractVarValue(rootVars, "--mcu-my-custom-1-90");
     const darkCustom90 = extractVarValue(darkVars, "--mcu-my-custom-1-90");
 
