@@ -1848,24 +1848,27 @@ export const QuantSt: Story = {
   },
   render: (args) => (
     <Mcu {...args}>
-      <svg viewBox="0 0 100 100" className="outline text-red-500">
-        <rect
-          x="0"
-          y="0"
-          width="100"
-          height="100"
-          fill="#769CDF"
-          // style={{ fill: "var(--mcu-surface)" }}
-          className="fill-surface-dim"
-        />
-        <circle
-          cx="50"
-          cy="50"
-          r="10"
-          fill="#ffaf1e"
-          style={{ fill: "var(--mcu-primary)" }}
-        />
-      </svg>
+      <div
+        dangerouslySetInnerHTML={{
+          __html: `<svg viewBox="0 0 100 100" className="outline text-red-500">
+  <rect
+    x="0"
+    y="0"
+    width="100"
+    height="100"
+    fill="#769CDF"
+    style="fill: var(--mcu-surface);"
+  />
+  <circle
+    cx="50"
+    cy="50"
+    r="10"
+    fill="#ffaf1e"
+    style="fill: var(--mcu-primary);"
+  />
+</svg>`,
+        }}
+      />
 
       <Layout>
         <Scheme theme="light" customColors={args.customColors} />
