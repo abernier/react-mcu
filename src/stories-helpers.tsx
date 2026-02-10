@@ -49,7 +49,7 @@ export function Scheme({
         }
       }
       `}</style>
-      {title && <h3 className="font-bold mb-0 capitalize">{title}</h3>}
+      {title && <h3 className="font-bold capitalize">{title}</h3>}
       <div className="grid grid-cols-[3fr_1fr] gap-(--gap1)">
         {
           //
@@ -392,7 +392,7 @@ export function Shades({
           []),
       ].map(({ name, isCustom }) => (
         <div key={name}>
-          <h3 className="font-bold mb-0 capitalize">
+          <h3 className="font-bold capitalize">
             {isCustom ? upperFirst(name) : name.replace("-", " ")}
           </h3>
           <div
