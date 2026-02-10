@@ -5,7 +5,10 @@ import {
   hexFromArgb,
   Score,
 } from "@material/material-color-utilities";
+import { useMemo } from "react";
 import { Mcu, schemeNames } from "./Mcu";
+import { useMcu } from "./Mcu.context";
+import { recolorizeSvgDirect } from "./lib/recolorizeSvg";
 import { Layout, Scheme, Shades } from "./stories-helpers";
 
 const meta = {
@@ -226,6 +229,83 @@ export const QuantSt: Story = {
           }}
         />
         <Scheme title="Scheme" customColors={args.customColors}>
+          <Shades customColors={args.customColors} />
+        </Scheme>
+      </Layout>
+    </Mcu>
+  ),
+};
+
+// Component that demonstrates the recolorizeSvgDirect function
+const RecolorizedIllustration = ({ svgContent }: { svgContent: string }) => {
+  const { allPalettes } = useMcu();
+
+  const recoloredSvg = useMemo(() => {
+    if (!allPalettes) return svgContent;
+    return recolorizeSvgDirect(svgContent, allPalettes);
+  }, [svgContent, allPalettes]);
+
+  return (
+    <div
+      className="w-64 h-64"
+      dangerouslySetInnerHTML={{ __html: recoloredSvg }}
+    />
+  );
+};
+
+// Example SVG with various colors that will be recolorized
+const exampleSvg = `
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#F5F5F5"/>
+  
+  <!-- Orange shapes (will map to primary palette) -->
+  <circle cx="50" cy="50" r="30" fill="#ffaf1e"/>
+  <circle cx="150" cy="50" r="20" fill="#faa11c"/>
+  <rect x="20" y="100" width="40" height="40" fill="#ec801a"/>
+  
+  <!-- Darker orange/red shapes -->
+  <circle cx="100" cy="100" r="25" fill="#d46c1a"/>
+  <rect x="120" y="100" width="30" height="30" fill="#97381c"/>
+  <circle cx="50" cy="150" r="15" fill="#7b2719"/>
+  <rect x="80" y="140" width="25" height="25" fill="#591716"/>
+  
+  <!-- Light accent -->
+  <circle cx="150" cy="150" r="20" fill="#fbc775"/>
+</svg>
+`;
+
+export const RecolorizeSvg: Story = {
+  name: "Recolorize SVG (Direct)",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+    customColors: families.flatMap((family, index) => [
+      {
+        name: `mother${index}`,
+        hex: family.mother,
+        blend: false,
+      },
+    ]),
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-bold mb-2">Original SVG</h3>
+            <div
+              className="w-64 h-64 border border-gray-300"
+              dangerouslySetInnerHTML={{ __html: exampleSvg }}
+            />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold mb-2">Recolorized SVG</h3>
+            <RecolorizedIllustration svgContent={exampleSvg} />
+          </div>
+        </div>
+        <Scheme title="Color Scheme" customColors={args.customColors}>
           <Shades customColors={args.customColors} />
         </Scheme>
       </Layout>
