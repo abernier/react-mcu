@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo } from "react";
 import { useMcu } from "./Mcu.context";
-import { recolorizeSvgDirect } from "./lib/recolorizeSvg";
+import { recolorizeSvg } from "./lib/recolorizeSvg";
 import type { TonalPalette } from "@material/material-color-utilities";
 import { Mcu, schemeNames, type McuConfig } from "./Mcu";
 import { Layout, Scheme, Shades, TailwindScheme } from "./stories-helpers";
@@ -917,10 +917,10 @@ const RecolorizedIllustration = ({
   palettes,
 }: {
   svgContent: string;
-  palettes: Record<string, TonalPalette>;
+  palettes: ReturnType<typeof useMcu>["allPalettes"];
 }) => {
   const recoloredSvg = useMemo(() => {
-    return recolorizeSvgDirect(svgContent, palettes);
+    return recolorizeSvg(svgContent, palettes);
   }, [svgContent, palettes]);
 
   return (
@@ -964,7 +964,7 @@ function Scene({
 }) {
   const { allPalettes } = useMcu();
 
-  let palettes: Record<string, TonalPalette> = allPalettes;
+  let palettes = allPalettes;
 
   // Only include specified palettes / otherwise use all
   if (includedPalettesNames.length > 0) {

@@ -5,9 +5,10 @@ import {
 } from "@material/material-color-utilities";
 import { kebabCase } from "lodash-es";
 import { STANDARD_TONES } from "../Mcu";
+import type { useMcu } from "../Mcu.context";
 
 /**
- * Options for recolorizeSvgDirect
+ * Options for recolorizeSvg
  */
 export type RecolorizeSvgOptions = {
   /**
@@ -40,20 +41,20 @@ export type RecolorizeSvgOptions = {
  *
  * @example
  * // Use all palettes
- * recolorizeSvgDirect(svg, allPalettes)
+ * recolorizeSvg(svg, allPalettes)
  *
  * @example
  * // Filter palettes externally
  * const filteredPalettes = { primary: allPalettes.primary, secondary: allPalettes.secondary };
- * recolorizeSvgDirect(svg, filteredPalettes)
+ * recolorizeSvg(svg, filteredPalettes)
  *
  * @example
  * // Use custom tolerance
- * recolorizeSvgDirect(svg, allPalettes, { tolerance: 20 })
+ * recolorizeSvg(svg, allPalettes, { tolerance: 20 })
  */
-export function recolorizeSvgDirect(
+export function recolorizeSvg(
   svgString: string,
-  palettes: Record<string, TonalPalette>,
+  palettes: ReturnType<typeof useMcu>["allPalettes"],
   options: RecolorizeSvgOptions = {},
 ): string {
   const { tolerance = 15.0 } = options;

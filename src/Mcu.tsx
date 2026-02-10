@@ -22,7 +22,7 @@ import {
 } from "@material/material-color-utilities";
 import { kebabCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
-import { McuProvider } from "./Mcu.context";
+import { McuProvider, useMcu } from "./Mcu.context";
 
 // Helper function to adjust tone based on contrast level
 // This provides a simple linear adjustment similar to Material Design's approach
@@ -340,7 +340,7 @@ type ColorDefinition = {
 // but for custom colors, following the same tone mapping patterns
 //
 
-type ColorPalettes = Record<string, TonalPalette>;
+type ColorPalettes = ReturnType<typeof useMcu>["allPalettes"];
 
 // Helper to safely get a palette from the record
 function getPalette(palettes: ColorPalettes, colorName: string) {
@@ -746,7 +746,7 @@ export function generateCss({
   const darkTonalVars = generateTonalVars(darkScheme);
 
   // Create allPalettes: merge core palettes (from scheme) and custom palettes
-  const allPalettes: Record<string, TonalPalette> = {
+  const allPalettes = {
     primary: lightScheme.primaryPalette,
     secondary: lightScheme.secondaryPalette,
     tertiary: lightScheme.tertiaryPalette,
