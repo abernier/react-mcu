@@ -33,12 +33,9 @@ import { McuProvider } from "./Mcu.context";
 // - If tone > 50, it pushes toward 100 (lighter)
 // - If tone < 50, it pushes toward 0 (darker)
 // Returns a clamped value between 0 and 100
-// Exported for testing purposes
-export function adjustToneForContrast(
+function adjustToneForContrast(
   baseTone: number,
   contrastLevel: number,
-  // isDark is kept in the signature for backward compatibility but is no longer used
-  isDark?: boolean,
   adjustmentFactor: number = DEFAULT_CONTRAST_ADJUSTMENT_FACTOR,
 ) {
   if (contrastLevel === 0) return baseTone;
@@ -411,7 +408,7 @@ function mergeBaseAndCustomColors(
     // Helper to get tone with optional contrast adjustment
     const getTone = (baseTone: number) => (s: DynamicScheme) => {
       if (!contrastAllColors) return baseTone;
-      return adjustToneForContrast(baseTone, s.contrastLevel, s.isDark);
+      return adjustToneForContrast(baseTone, s.contrastLevel);
     };
 
     // Create DynamicColor objects for all 4 color roles
@@ -489,11 +486,7 @@ const generateTonalPaletteVars = (
 
     // Apply contrast adjustment to tonal shades when requested
     if (applyContrast) {
-      toneToUse = adjustToneForContrast(
-        toneToUse,
-        scheme.contrastLevel,
-        scheme.isDark,
-      );
+      toneToUse = adjustToneForContrast(toneToUse, scheme.contrastLevel);
     }
 
     const color = palette.tone(toneToUse);
