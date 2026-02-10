@@ -3,11 +3,10 @@ import {
   Hct,
   type TonalPalette,
 } from "@material/material-color-utilities";
-import { getDeltaE00 } from "delta-e";
+import { converter, differenceCiede2000 } from "culori";
 import { kebabCase } from "lodash-es";
 import { STANDARD_TONES } from "../Mcu";
 import type { useMcu } from "../Mcu.context";
-import { hctToLab } from "./hctToLab";
 
 /**
  * Options for recolorizeSvg
@@ -24,9 +23,9 @@ export type RecolorizeSvgOptions = {
  * This version reuses pre-computed palettes for maximum performance and perfect synchronization.
  *
  * **Matching Algorithm:**
- * Uses CIEDE2000 (delta-e) for perceptually accurate color matching.
+ * Uses CIEDE2000 (delta-e) for perceptually accurate color matching via the culori library.
  * The algorithm:
- * 1. Converts HCT colors to LAB color space
+ * 1. Converts HCT colors to LAB color space using culori
  * 2. Calculates CIEDE2000 distance (scientifically validated for human perception)
  * 3. Applies bonus/penalty for matching neutral/colored nature
  *
@@ -98,8 +97,19 @@ export function recolorizeSvg(
     let bestToken = null;
     let bestScore = Infinity;
 
-    // Convert target color to LAB once
-    const targetLab = hctToLab(targetHct);
+    // Create CIEDE2000 difference function and RGB to LAB converter
+    const deltaE = differenceCiede2000();
+    const rgbToLab = converter("lab65");
+
+    // Convert target HCT to RGB color object for culori
+    const targetArgb = targetHct.toInt();
+    const targetRgb = {
+      r: ((targetArgb >> 16) & 0xff) / 255,
+      g: ((targetArgb >> 8) & 0xff) / 255,
+      b: (targetArgb & 0xff) / 255,
+      mode: "rgb" as const,
+    };
+    const targetLab = rgbToLab(targetRgb);
 
     for (const c of candidates) {
       // Determine if we should prefer this palette based on chroma similarity
@@ -114,12 +124,19 @@ export function recolorizeSvg(
         const toneDist = Math.abs(targetHct.tone - toneHct.tone);
         if (toneDist > tolerance) continue;
 
-        // Convert palette color to LAB and calculate CIEDE2000 distance
-        const toneLab = hctToLab(toneHct);
-        const deltaE = getDeltaE00(targetLab, toneLab);
+        // Convert palette color to RGB and LAB, then calculate CIEDE2000 distance
+        const toneArgb = toneHct.toInt();
+        const toneRgb = {
+          r: ((toneArgb >> 16) & 0xff) / 255,
+          g: ((toneArgb >> 8) & 0xff) / 255,
+          b: (toneArgb & 0xff) / 255,
+          mode: "rgb" as const,
+        };
+        const toneLab = rgbToLab(toneRgb);
+        const distance = deltaE(targetLab, toneLab);
 
         // Use delta-e as the base score (lower is better)
-        let score = deltaE;
+        let score = distance;
 
         // Bonus for matching neutral/colored nature
         if (targetIsNeutral === paletteIsNeutral) {
