@@ -39,6 +39,7 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.1",
+    "@types/delta-e": "^0.0.2",
     "@types/lodash-es": "^4.17.12",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
@@ -82,6 +83,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
+    "delta-e": "^0.0.8",
     "lodash-es": "^4.17.22"
   }
 }

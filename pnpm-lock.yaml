@@ -11,6 +11,9 @@ importers:
       '@material/material-color-utilities':
         specifier: ^0.3.0
         version: 0.3.0
+      delta-e:
+        specifier: ^0.0.8
+        version: 0.0.8
       lodash-es:
         specifier: ^4.17.22
         version: 4.17.22
@@ -39,6 +42,9 @@ importers:
       '@testing-library/react':
         specifier: ^16.3.1
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@types/delta-e':
+        specifier: ^0.0.2
+        version: 0.0.2
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -910,6 +916,9 @@ packages:
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
+  '@types/delta-e@0.0.2':
+    resolution: {integrity: sha512-DLvqCZ+ce6qVLp8HIxx8rrLjog1t0NlSLXOzz2FbYC31xHMSADMEz+MrJTvYTeuHez6Wtm0dDYgGtBY+7Dgf4Q==}
+
   '@types/doctrine@0.0.9':
     resolution: {integrity: sha512-eOIHzCUSH7SMfonMG1LsC2f8vxBFtho6NGBznK41R84YzPuvSBzrhEps33IsQiOW9+VL6NQ9DbjQJznk/S4uRA==}
 
@@ -1256,6 +1265,9 @@ packages:
   define-lazy-prop@3.0.0:
     resolution: {integrity: sha512-N+MeXYoqr3pOgn8xfyRPREN7gHakLYjhsHhWGT3fWAiL4IkAt0iDw14QiiEm2bE30c5XX5q0FtAA3CK5f9/BUg==}
     engines: {node: '>=12'}
+
+  delta-e@0.0.8:
+    resolution: {integrity: sha512-xIggbz7AoZLjwyV+BatfsKhWB1ejeh6vabM4KTJ2e7/d+TS0f7s87aUfkJ7B+MfniM6DD5VOWWlqcKXksp5mIg==}
 
   dequal@2.0.3:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
@@ -3270,6 +3282,8 @@ snapshots:
 
   '@types/deep-eql@4.0.2': {}
 
+  '@types/delta-e@0.0.2': {}
+
   '@types/doctrine@0.0.9': {}
 
   '@types/estree@1.0.8': {}
@@ -3589,6 +3603,8 @@ snapshots:
       default-browser-id: 5.0.1
 
   define-lazy-prop@3.0.0: {}
+
+  delta-e@0.0.8: {}
 
   dequal@2.0.3: {}
 
