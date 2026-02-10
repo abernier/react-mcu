@@ -14,21 +14,80 @@ type Candidate = {
 };
 
 /**
+ * Options for filtering palettes in recolorizeSvgDirect
+ */
+export type RecolorizeSvgOptions = {
+  /**
+   * Tone matching tolerance (default: 15.0)
+   */
+  tolerance?: number;
+  /**
+   * List of palette names to include. If specified, only these palettes will be used.
+   * Cannot be used together with `exclude`.
+   */
+  include?: string[];
+  /**
+   * List of palette names to exclude. If specified, all palettes except these will be used.
+   * Cannot be used together with `include`.
+   */
+  exclude?: string[];
+};
+
+/**
  * Ultra-optimized SVG recoloring that consumes directly the palettes from the MCU Context.
  * This version reuses pre-computed palettes for maximum performance and perfect synchronization.
  *
  * @param svgString - The SVG content as a string
  * @param palettes - The allPalettes object from useMcu() hook
- * @param tolerance - Tone matching tolerance (default: 15.0)
+ * @param options - Optional configuration for tolerance and palette filtering
  * @returns Recolorized SVG string with MCU CSS variables
+ *
+ * @example
+ * // Use all palettes (default)
+ * recolorizeSvgDirect(svg, allPalettes)
+ *
+ * @example
+ * // Use only specific palettes
+ * recolorizeSvgDirect(svg, allPalettes, { include: ['primary', 'secondary'] })
+ *
+ * @example
+ * // Use all palettes except specific ones
+ * recolorizeSvgDirect(svg, allPalettes, { exclude: ['error', 'neutral'] })
+ *
+ * @example
+ * // Use all palettes with custom tolerance
+ * recolorizeSvgDirect(svg, allPalettes, { tolerance: 20 })
  */
 export function recolorizeSvgDirect(
   svgString: string,
   palettes: Record<string, TonalPalette>,
-  tolerance: number = 15.0,
+  options: RecolorizeSvgOptions = {},
 ): string {
+  const { tolerance = 15.0, include, exclude } = options;
+
+  // Validate that include and exclude are not both specified
+  if (include && exclude) {
+    throw new Error(
+      "Cannot specify both 'include' and 'exclude' options. Use one or the other.",
+    );
+  }
+
+  // Filter palettes based on include/exclude options
+  let filteredPalettes: Record<string, TonalPalette>;
+  if (include) {
+    filteredPalettes = Object.fromEntries(
+      Object.entries(palettes).filter(([name]) => include.includes(name)),
+    );
+  } else if (exclude) {
+    filteredPalettes = Object.fromEntries(
+      Object.entries(palettes).filter(([name]) => !exclude.includes(name)),
+    );
+  } else {
+    // Use all palettes by default
+    filteredPalettes = palettes;
+  }
   // 1. PREPARE CANDIDATES (Super fast as palettes are already ready)
-  const candidates: Candidate[] = Object.entries(palettes).map(
+  const candidates: Candidate[] = Object.entries(filteredPalettes).map(
     ([name, palette]) => {
       // Sample a representative color (tone 50) to get the palette's hue
       const midHct = Hct.fromInt(palette.tone(50));

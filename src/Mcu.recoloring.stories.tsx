@@ -253,6 +253,56 @@ const RecolorizedIllustration = ({ svgContent }: { svgContent: string }) => {
   );
 };
 
+// Component that demonstrates palette filtering with include option
+const RecolorizedWithInclude = ({
+  svgContent,
+  includePalettes,
+}: {
+  svgContent: string;
+  includePalettes: string[];
+}) => {
+  const { allPalettes } = useMcu();
+
+  const recoloredSvg = useMemo(() => {
+    if (!allPalettes) return svgContent;
+    return recolorizeSvgDirect(svgContent, allPalettes, {
+      include: includePalettes,
+    });
+  }, [svgContent, allPalettes, includePalettes]);
+
+  return (
+    <div
+      className="w-64 h-64"
+      dangerouslySetInnerHTML={{ __html: recoloredSvg }}
+    />
+  );
+};
+
+// Component that demonstrates palette filtering with exclude option
+const RecolorizedWithExclude = ({
+  svgContent,
+  excludePalettes,
+}: {
+  svgContent: string;
+  excludePalettes: string[];
+}) => {
+  const { allPalettes } = useMcu();
+
+  const recoloredSvg = useMemo(() => {
+    if (!allPalettes) return svgContent;
+    return recolorizeSvgDirect(svgContent, allPalettes, {
+      exclude: excludePalettes,
+    });
+  }, [svgContent, allPalettes, excludePalettes]);
+
+  return (
+    <div
+      className="w-64 h-64"
+      dangerouslySetInnerHTML={{ __html: recoloredSvg }}
+    />
+  );
+};
+
 // Example SVG with various colors that will be recolorized
 const exampleSvg = `
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -303,6 +353,64 @@ export const RecolorizeSvg: Story = {
           <div>
             <h3 className="text-lg font-bold mb-2">Recolorized SVG</h3>
             <RecolorizedIllustration svgContent={exampleSvg} />
+          </div>
+        </div>
+        <Scheme title="Color Scheme" customColors={args.customColors}>
+          <Shades customColors={args.customColors} />
+        </Scheme>
+      </Layout>
+    </Mcu>
+  ),
+};
+
+export const RecolorizeSvgWithFiltering: Story = {
+  name: "Recolorize SVG (with Include/Exclude)",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+    customColors: families.flatMap((family, index) => [
+      {
+        name: `mother${index}`,
+        hex: family.mother,
+        blend: false,
+      },
+    ]),
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-lg font-bold mb-2">Original SVG</h3>
+            <div
+              className="w-64 h-64 border border-gray-300"
+              dangerouslySetInnerHTML={{ __html: exampleSvg }}
+            />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold mb-2">
+              All Palettes (default)
+            </h3>
+            <RecolorizedIllustration svgContent={exampleSvg} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold mb-2">
+              Include Only: primary, secondary
+            </h3>
+            <RecolorizedWithInclude
+              svgContent={exampleSvg}
+              includePalettes={["primary", "secondary"]}
+            />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold mb-2">
+              Exclude: neutral, neutral-variant
+            </h3>
+            <RecolorizedWithExclude
+              svgContent={exampleSvg}
+              excludePalettes={["neutral", "neutral-variant"]}
+            />
           </div>
         </div>
         <Scheme title="Color Scheme" customColors={args.customColors}>

@@ -2,6 +2,7 @@ import { render, cleanup } from "@testing-library/react";
 import { describe, it, expect, afterEach } from "vitest";
 import { Mcu } from "./Mcu.js";
 import { useMcu } from "./Mcu.context.js";
+import { recolorizeSvgDirect } from "./lib/recolorizeSvg.js";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -88,5 +89,93 @@ describe("Mcu", () => {
     // Verify that custom palettes have the expected methods
     expect(typeof palettes?.brand.tone).toBe("function");
     expect(typeof palettes?.success.tone).toBe("function");
+  });
+});
+
+describe("recolorizeSvgDirect", () => {
+  const simpleSvg = `<svg><rect fill="#FF0000"/></svg>`;
+
+  it("should use all palettes by default", () => {
+    let palettes: Record<string, any> = {};
+
+    const TestComponent = () => {
+      const { allPalettes } = useMcu();
+      palettes = allPalettes;
+      return <div>Test</div>;
+    };
+
+    render(
+      <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>
+        <TestComponent />
+      </Mcu>,
+    );
+
+    const result = recolorizeSvgDirect(simpleSvg, palettes);
+    expect(result).toContain("var(--mcu-");
+  });
+
+  it("should filter palettes with include option", () => {
+    let palettes: Record<string, any> = {};
+
+    const TestComponent = () => {
+      const { allPalettes } = useMcu();
+      palettes = allPalettes;
+      return <div>Test</div>;
+    };
+
+    render(
+      <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>
+        <TestComponent />
+      </Mcu>,
+    );
+
+    const result = recolorizeSvgDirect(simpleSvg, palettes, {
+      include: ["primary"],
+    });
+    expect(result).toContain("var(--mcu-");
+  });
+
+  it("should filter palettes with exclude option", () => {
+    let palettes: Record<string, any> = {};
+
+    const TestComponent = () => {
+      const { allPalettes } = useMcu();
+      palettes = allPalettes;
+      return <div>Test</div>;
+    };
+
+    render(
+      <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>
+        <TestComponent />
+      </Mcu>,
+    );
+
+    const result = recolorizeSvgDirect(simpleSvg, palettes, {
+      exclude: ["primary", "secondary"],
+    });
+    expect(result).toContain("var(--mcu-");
+  });
+
+  it("should throw error when both include and exclude are specified", () => {
+    let palettes: Record<string, any> = {};
+
+    const TestComponent = () => {
+      const { allPalettes } = useMcu();
+      palettes = allPalettes;
+      return <div>Test</div>;
+    };
+
+    render(
+      <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>
+        <TestComponent />
+      </Mcu>,
+    );
+
+    expect(() => {
+      recolorizeSvgDirect(simpleSvg, palettes, {
+        include: ["primary"],
+        exclude: ["secondary"],
+      });
+    }).toThrow("Cannot specify both 'include' and 'exclude' options");
   });
 });
