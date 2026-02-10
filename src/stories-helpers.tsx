@@ -19,7 +19,7 @@ function FooBottom({ children, ...props }: ComponentProps<"div">) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col gap-6 max-w-[52rem] mx-auto [--gap1:0.75rem] [--gap2:0.25rem]">
+    <div className="flex flex-col gap-6 max-w-208 mx-auto [--gap1:0.75rem] [--gap2:0.25rem]">
       <style>{`
         @scope {
           & {
@@ -41,7 +41,7 @@ export function Scheme({
   customColors?: ComponentProps<typeof Mcu>["customColors"];
 } & Omit<ComponentProps<"div">, "title">) {
   return (
-    <div className="p-4 rounded-[4px] flex flex-col gap-4">
+    <div className="p-4 rounded-sm flex flex-col gap-4">
       <style>{`
       @scope {
         & {
@@ -60,7 +60,7 @@ export function Scheme({
           {title}
         </h3>
       )}
-      <div className="grid grid-cols-[3fr_1fr] gap-[var(--gap1)]">
+      <div className="grid grid-cols-[3fr_1fr] gap-(--gap1)">
         {
           //
           //  █████
@@ -71,7 +71,7 @@ export function Scheme({
           //
         }
 
-        <div className="grid grid-cols-3 grid-rows-2 gap-[var(--gap2)]">
+        <div className="grid grid-cols-3 grid-rows-2 gap-(--gap2)">
           <Foo>
             <FooTop
               style={{
@@ -188,7 +188,7 @@ export function Scheme({
           //
         }
 
-        <div className="grid grid-cols-1 grid-rows-2 gap-[var(--gap2)]">
+        <div className="grid grid-cols-1 grid-rows-2 gap-(--gap2)">
           <Foo>
             <FooTop
               style={{
@@ -236,7 +236,7 @@ export function Scheme({
           //
         }
 
-        <div className="grid grid-cols-3 grid-rows-1 gap-[var(--gap2)]">
+        <div className="grid grid-cols-3 grid-rows-1 gap-(--gap2)">
           <Foo>
             <FooTop
               style={{ height: "5rem" }}
@@ -384,7 +384,7 @@ export function Scheme({
           //
         }
 
-        <div className="grid grid-cols-1 gap-[var(--gap2)]">
+        <div className="grid grid-cols-1 gap-(--gap2)">
           <div
             style={{ height: "5rem" }}
             className="grid grid-cols-3 grid-rows-1"
@@ -535,7 +535,7 @@ export function Scheme({
               <p>Inverse Primary</p>
             </FooTop>
           </Foo>
-          <div className="grid grid-cols-2 gap-[var(--gap2)]">
+          <div className="grid grid-cols-2 gap-(--gap2)">
             <div
               style={{
                 backgroundColor: "var(--mcu-scrim)",
@@ -563,7 +563,7 @@ export function Scheme({
         //
       }
       {customColors?.length && (
-        <div className="flex flex-col gap-[var(--gap2)]">
+        <div className="flex flex-col gap-(--gap2)">
           {customColors?.map((customColor) => (
             <div key={customColor.name} className="grid grid-cols-4">
               <Foo>
