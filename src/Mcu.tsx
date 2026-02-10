@@ -33,7 +33,8 @@ import { McuProvider } from "./Mcu.context";
 // - If tone > 50, it pushes toward 100 (lighter)
 // - If tone < 50, it pushes toward 0 (darker)
 // Returns a clamped value between 0 and 100
-function adjustToneForContrast(
+// Exported for testing purposes
+export function adjustToneForContrast(
   baseTone: number,
   contrastLevel: number,
   // isDark is kept in the signature for backward compatibility but is no longer used
