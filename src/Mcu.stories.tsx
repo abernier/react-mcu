@@ -868,11 +868,119 @@ const exampleSvg = `
 </svg>
 `;
 
+// Landscape SVG with nature elements
+const landscapeSvg = `
+<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sky -->
+  <rect width="200" height="150" fill="#87CEEB"/>
+  
+  <!-- Sun -->
+  <circle cx="180" cy="30" r="15" fill="#FFD700"/>
+  
+  <!-- Mountains -->
+  <polygon points="0,150 40,80 80,150" fill="#8B7355"/>
+  <polygon points="50,150 100,60 150,150" fill="#A0826D"/>
+  <polygon points="120,150 160,70 200,150" fill="#8B7355"/>
+  
+  <!-- Trees -->
+  <rect x="20" y="110" width="8" height="40" fill="#8B4513"/>
+  <circle cx="24" cy="110" r="12" fill="#228B22"/>
+  <rect x="60" y="120" width="8" height="30" fill="#8B4513"/>
+  <circle cx="64" cy="120" r="10" fill="#2E8B57"/>
+  <rect x="140" y="115" width="8" height="35" fill="#8B4513"/>
+  <circle cx="144" cy="115" r="11" fill="#228B22"/>
+</svg>
+`;
+
+// Abstract geometric SVG
+const geometricSvg = `
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#FFFFFF"/>
+  
+  <!-- Large blue circle -->
+  <circle cx="100" cy="100" r="70" fill="#4169E1"/>
+  
+  <!-- Red triangle -->
+  <polygon points="100,40 60,120 140,120" fill="#DC143C"/>
+  
+  <!-- Yellow square -->
+  <rect x="70" y="70" width="60" height="60" fill="#FFD700"/>
+  
+  <!-- Green circle -->
+  <circle cx="100" cy="100" r="30" fill="#32CD32"/>
+  
+  <!-- Purple small circle -->
+  <circle cx="100" cy="50" r="15" fill="#9370DB"/>
+</svg>
+`;
+
+// Icon set SVG
+const iconSetSvg = `
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#F0F0F0"/>
+  
+  <!-- Heart icon -->
+  <path d="M50,60 C50,50 40,40 30,40 C20,40 10,50 10,60 C10,80 30,100 50,120 C70,100 90,80 90,60 C90,50 80,40 70,40 C60,40 50,50 50,60 Z" fill="#E74C3C"/>
+  
+  <!-- Star icon -->
+  <polygon points="150,30 160,60 190,60 165,80 175,110 150,90 125,110 135,80 110,60 140,60" fill="#F39C12"/>
+  
+  <!-- Home icon -->
+  <path d="M50,140 L50,190 L90,190 L90,160 L60,160 L60,190 L50,190 L50,140 M50,140 L70,120 L90,140" fill="#3498DB"/>
+  <rect x="60" y="160" width="20" height="30" fill="#2980B9"/>
+  
+  <!-- Settings icon (gear) -->
+  <circle cx="150" cy="170" r="20" fill="#95A5A6"/>
+  <circle cx="150" cy="170" r="12" fill="#7F8C8D"/>
+  <rect x="148" y="145" width="4" height="10" fill="#95A5A6"/>
+  <rect x="148" y="185" width="4" height="10" fill="#95A5A6"/>
+  <rect x="125" y="168" width="10" height="4" fill="#95A5A6"/>
+  <rect x="165" y="168" width="10" height="4" fill="#95A5A6"/>
+</svg>
+`;
+
+// UI Components SVG
+const uiComponentsSvg = `
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#FFFFFF"/>
+  
+  <!-- Button (primary) -->
+  <rect x="10" y="20" width="80" height="30" rx="5" fill="#007BFF"/>
+  <text x="50" y="40" text-anchor="middle" fill="#FFFFFF" font-size="12">Button</text>
+  
+  <!-- Button (success) -->
+  <rect x="110" y="20" width="80" height="30" rx="5" fill="#28A745"/>
+  <text x="150" y="40" text-anchor="middle" fill="#FFFFFF" font-size="12">Success</text>
+  
+  <!-- Input field -->
+  <rect x="10" y="70" width="180" height="30" rx="3" fill="#E9ECEF" stroke="#CED4DA" stroke-width="1"/>
+  
+  <!-- Card -->
+  <rect x="10" y="120" width="85" height="70" rx="5" fill="#F8F9FA" stroke="#DEE2E6" stroke-width="1"/>
+  <circle cx="30" cy="140" r="8" fill="#6C757D"/>
+  <rect x="45" y="135" width="40" height="4" fill="#6C757D"/>
+  <rect x="45" y="145" width="30" height="3" fill="#ADB5BD"/>
+  
+  <!-- Badge -->
+  <circle cx="150" cy="135" r="15" fill="#DC3545"/>
+  <text x="150" y="140" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="bold">5</text>
+  
+  <!-- Progress bar -->
+  <rect x="10" y="180" width="180" height="10" rx="5" fill="#E9ECEF"/>
+  <rect x="10" y="180" width="120" height="10" rx="5" fill="#17A2B8"/>
+</svg>
+`;
+
 function Scene({
+  svgContent = exampleSvg,
   customColors,
   includedPalettesNames = [], // if empty, use all palettes
   excludedPalettesNames = [], // palettes to exclude
 }: {
+  svgContent?: string;
   customColors?: McuConfig["customColors"];
   includedPalettesNames?: string[];
   excludedPalettesNames?: string[];
@@ -903,13 +1011,13 @@ function Scene({
       <div className="space-y-4 grid grid-cols-2 gap-2">
         <div>
           <h3 className="text-lg font-bold mb-2">Original SVG</h3>
-          <div dangerouslySetInnerHTML={{ __html: exampleSvg }} />
+          <div dangerouslySetInnerHTML={{ __html: svgContent }} />
         </div>
 
         <div>
           <h3 className="text-lg font-bold mb-2">Recolorized SVG</h3>
           <RecolorizedIllustration
-            svgContent={exampleSvg}
+            svgContent={svgContent}
             palettes={palettes}
           />
         </div>
@@ -942,6 +1050,94 @@ export const RecolorizeSvg: Story = {
         //   "secondary",
         //   "tertiary"
         // ]}
+        excludedPalettesNames={["error"]}
+      />
+    </Mcu>
+  ),
+};
+
+export const RecolorizeLandscape: Story = {
+  name: "Recolorized SVG - Landscape",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Scene
+        svgContent={landscapeSvg}
+        customColors={args.customColors}
+        excludedPalettesNames={["error"]}
+      />
+    </Mcu>
+  ),
+};
+
+export const RecolorizeGeometric: Story = {
+  name: "Recolorized SVG - Geometric",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Scene
+        svgContent={geometricSvg}
+        customColors={args.customColors}
+        excludedPalettesNames={["error"]}
+      />
+    </Mcu>
+  ),
+};
+
+export const RecolorizeIconSet: Story = {
+  name: "Recolorized SVG - Icon Set",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Scene
+        svgContent={iconSetSvg}
+        customColors={args.customColors}
+        excludedPalettesNames={["error"]}
+      />
+    </Mcu>
+  ),
+};
+
+export const RecolorizeUIComponents: Story = {
+  name: "Recolorized SVG - UI Components",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Scene
+        svgContent={uiComponentsSvg}
+        customColors={args.customColors}
         excludedPalettesNames={["error"]}
       />
     </Mcu>
