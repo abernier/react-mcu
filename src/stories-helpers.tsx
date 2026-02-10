@@ -318,7 +318,7 @@ export function Scheme({
         //  ██████  ██████  ███████    ██     ██████  ██      ██      ██████  ██████  ███████  ██████  ██   ██ ███████
         //
       }
-      {customColors?.length && (
+      {customColors && customColors.length > 0 && (
         <div className="flex flex-col gap-(--gap2)">
           {customColors?.map((customColor) => (
             <div key={customColor.name} className="grid grid-cols-4">
