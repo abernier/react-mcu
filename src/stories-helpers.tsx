@@ -49,17 +49,7 @@ export function Scheme({
         }
       }
       `}</style>
-      {title && (
-        <h3
-          style={{
-            fontWeight: "bold",
-            marginBottom: "0rem",
-            textTransform: "capitalize",
-          }}
-        >
-          {title}
-        </h3>
-      )}
+      {title && <h3 className="font-bold mb-0 capitalize">{title}</h3>}
       <div className="grid grid-cols-[3fr_1fr] gap-(--gap1)">
         {
           //
@@ -74,57 +64,48 @@ export function Scheme({
         <div className="grid grid-cols-3 grid-rows-2 gap-(--gap2)">
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-primary)",
               }}
             >
               <p>Primary</p>
             </FooTop>
-            <FooBottom
-              style={{ backgroundColor: "var(--mcu-on-primary)", color: "" }}
-            >
+            <FooBottom style={{ backgroundColor: "var(--mcu-on-primary)" }}>
               <p>On Primary</p>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-secondary)",
-                color: "",
               }}
             >
               <p>Secondary</p>
             </FooTop>
-            <FooBottom
-              style={{ backgroundColor: "var(--mcu-on-secondary)", color: "" }}
-            >
+            <FooBottom style={{ backgroundColor: "var(--mcu-on-secondary)" }}>
               <p>On Secondary</p>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-tertiary)",
-                color: "",
               }}
             >
               <p>Tertiary</p>
             </FooTop>
-            <FooBottom
-              style={{ backgroundColor: "var(--mcu-on-tertiary)", color: "" }}
-            >
+            <FooBottom style={{ backgroundColor: "var(--mcu-on-tertiary)" }}>
               <p>On Tertiary</p>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-primary-container)",
-                color: "",
               }}
             >
               <p>Primary Container</p>
@@ -132,7 +113,6 @@ export function Scheme({
             <FooBottom
               style={{
                 backgroundColor: "var(--mcu-on-primary-container)",
-                color: "",
               }}
             >
               <p>On Primary Container</p>
@@ -140,10 +120,9 @@ export function Scheme({
           </Foo>
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-secondary-container)",
-                color: "",
               }}
             >
               <p>Secondary Container</p>
@@ -151,7 +130,6 @@ export function Scheme({
             <FooBottom
               style={{
                 backgroundColor: "var(--mcu-on-secondary-container)",
-                color: "",
               }}
             >
               <p>On Secondary Container</p>
@@ -159,10 +137,9 @@ export function Scheme({
           </Foo>
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-tertiary-container)",
-                color: "",
               }}
             >
               <p>Tertiary Container</p>
@@ -170,7 +147,6 @@ export function Scheme({
             <FooBottom
               style={{
                 backgroundColor: "var(--mcu-on-tertiary-container)",
-                color: "",
               }}
             >
               <p>On Tertiary Container</p>
@@ -191,26 +167,22 @@ export function Scheme({
         <div className="grid grid-cols-1 grid-rows-2 gap-(--gap2)">
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-error)",
-                color: "",
               }}
             >
               <p>Error</p>
             </FooTop>
-            <FooBottom
-              style={{ backgroundColor: "var(--mcu-on-error)", color: "" }}
-            >
+            <FooBottom style={{ backgroundColor: "var(--mcu-on-error)" }}>
               <p>On Error</p>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-error-container)",
-                color: "",
               }}
             >
               <p>Error Container</p>
@@ -218,7 +190,6 @@ export function Scheme({
             <FooBottom
               style={{
                 backgroundColor: "var(--mcu-on-error-container)",
-                color: "",
               }}
             >
               <p>On Error Container</p>
@@ -238,14 +209,10 @@ export function Scheme({
 
         <div className="grid grid-cols-3 grid-rows-1 gap-(--gap2)">
           <Foo>
-            <FooTop
-              style={{ height: "5rem" }}
-              className="grid grid-cols-2 grid-rows-1"
-            >
+            <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
               <div
                 style={{
                   backgroundColor: "var(--mcu-primary-fixed)",
-                  color: "",
                 }}
               >
                 <p>Primary Fixed</p>
@@ -253,7 +220,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-primary-fixed-dim)",
-                  color: "",
                 }}
               >
                 <p>Primary Fixed Dim</p>
@@ -263,7 +229,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-primary-fixed)",
-                  color: "",
                 }}
               >
                 <p>On Primary Fixed</p>
@@ -271,7 +236,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-primary-fixed-variant)",
-                  color: "",
                 }}
               >
                 <p>On Primary Fixed Variant</p>
@@ -279,14 +243,10 @@ export function Scheme({
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              style={{ height: "5rem" }}
-              className="grid grid-cols-2 grid-rows-1"
-            >
+            <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
               <div
                 style={{
                   backgroundColor: "var(--mcu-secondary-fixed)",
-                  color: "",
                 }}
               >
                 <p>Secondary Fixed</p>
@@ -294,7 +254,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-secondary-fixed-dim)",
-                  color: "",
                 }}
               >
                 <p>Secondary Fixed Dim</p>
@@ -304,7 +263,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-secondary-fixed)",
-                  color: "",
                 }}
               >
                 <p>On Secondary Fixed</p>
@@ -312,7 +270,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-secondary-fixed-variant)",
-                  color: "",
                 }}
               >
                 <p>On Secondary Fixed Variant</p>
@@ -320,14 +277,10 @@ export function Scheme({
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              style={{ height: "5rem" }}
-              className="grid grid-cols-2 grid-rows-1"
-            >
+            <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
               <div
                 style={{
                   backgroundColor: "var(--mcu-tertiary-fixed)",
-                  color: "",
                 }}
               >
                 <p>Tertiary Fixed</p>
@@ -335,7 +288,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-tertiary-fixed-dim)",
-                  color: "",
                 }}
               >
                 <p>Tertiary Fixed Dim</p>
@@ -345,7 +297,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-tertiary-fixed)",
-                  color: "",
                 }}
               >
                 <p>On Tertiary Fixed</p>
@@ -353,7 +304,6 @@ export function Scheme({
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-tertiary-fixed-variant)",
-                  color: "",
                 }}
               >
                 <p>On Tertiary Fixed Variant</p>
@@ -385,14 +335,10 @@ export function Scheme({
         }
 
         <div className="grid grid-cols-1 gap-(--gap2)">
-          <div
-            style={{ height: "5rem" }}
-            className="grid grid-cols-3 grid-rows-1"
-          >
+          <div className="h-20 grid grid-cols-3 grid-rows-1">
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-dim)",
-                color: "",
               }}
             >
               <p>Surface Dim</p>
@@ -400,7 +346,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-surface)",
-                color: "",
               }}
             >
               <p>Surface</p>
@@ -408,20 +353,15 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-bright)",
-                color: "",
               }}
             >
               <p>Surface Bright</p>
             </div>
           </div>
-          <div
-            style={{ height: "5rem" }}
-            className="grid grid-cols-5 grid-rows-1"
-          >
+          <div className="h-20 grid grid-cols-5 grid-rows-1">
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-container-lowest)",
-                color: "",
               }}
             >
               <p>Surface Container Lowest</p>
@@ -429,7 +369,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-container-low)",
-                color: "",
               }}
             >
               <p>Surface Container Low</p>
@@ -437,7 +376,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-container)",
-                color: "",
               }}
             >
               <p>Surface Container</p>
@@ -445,7 +383,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-container-high)",
-                color: "",
               }}
             >
               <p>Surface Container High</p>
@@ -453,7 +390,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-container-highest)",
-                color: "",
               }}
             >
               <p>Surface Container Highest</p>
@@ -463,7 +399,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-on-surface)",
-                color: "",
               }}
             >
               <p>On Surface</p>
@@ -471,7 +406,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-on-surface-variant)",
-                color: "",
               }}
             >
               <p>On Surface Variant</p>
@@ -479,7 +413,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-outline)",
-                color: "",
               }}
             >
               <p>Outline</p>
@@ -487,7 +420,6 @@ export function Scheme({
             <div
               style={{
                 backgroundColor: "var(--mcu-outline-variant)",
-                color: "",
               }}
             >
               <p>Outline Variant</p>
@@ -505,13 +437,11 @@ export function Scheme({
           //
         }
 
-        <div
-          style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
-        >
+        <div className="flex flex-col gap-1">
           <Foo>
             <FooTop
+              className="h-20"
               style={{
-                height: "5rem",
                 backgroundColor: "var(--mcu-inverse-surface)",
               }}
             >
@@ -568,8 +498,8 @@ export function Scheme({
             <div key={customColor.name} className="grid grid-cols-4">
               <Foo>
                 <FooTop
+                  className="h-16"
                   style={{
-                    height: "4rem",
                     backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
                   }}
                 >
@@ -578,8 +508,8 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
+                  className="h-16"
                   style={{
-                    height: "4rem",
                     backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
                   }}
                 >
@@ -588,8 +518,8 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
+                  className="h-16"
                   style={{
-                    height: "4rem",
                     backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
                   }}
                 >
@@ -598,8 +528,8 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
+                  className="h-16"
                   style={{
-                    height: "4rem",
                     backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
                   }}
                 >
@@ -656,15 +586,12 @@ export function Shades({
               .map((tone) => (
                 <div
                   key={tone}
+                  className="h-16 flex items-center justify-center"
                   style={{
                     backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
-                    height: "4rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
                   }}
                 >
-                  <p style={{ fontSize: "0.75rem" }}>{tone}</p>
+                  <p className="text-xs">{tone}</p>
                 </div>
               ))}
           </div>
