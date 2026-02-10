@@ -1165,11 +1165,79 @@ export const ContentSt: Story = {
 //  ██████  ██████  ██   ████    ██    ██   ██ ██   ██ ███████    ██
 //
 
-export const ContrastSt: Story = {
-  name: "[contrast]",
+export const ContrastLowSt: Story = {
+  name: "[contrast] low",
   args: {
     source: "#769CDF",
-    contrast: 0.5,
+    contrast: -1,
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            color: "var(--sb-background)",
+          }}
+        >
+          <Scheme title="Light scheme" customColors={args.customColors}>
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+        </div>
+
+        <div
+          className="dark"
+          style={{ backgroundColor: "#1c1b1f", color: "var(--sb-foreground)" }}
+        >
+          <Scheme title="Dark scheme" customColors={args.customColors}>
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+        </div>
+        {!args.adaptiveShades && <Shades customColors={args.customColors} />}
+      </Layout>
+    </Mcu>
+  ),
+};
+
+export const ContrastMediumSt: Story = {
+  name: "[contrast] medium",
+  args: {
+    source: "#769CDF",
+    contrast: 0,
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <div
+          style={{
+            backgroundColor: "#ffffff",
+            color: "var(--sb-background)",
+          }}
+        >
+          <Scheme title="Light scheme" customColors={args.customColors}>
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+        </div>
+
+        <div
+          className="dark"
+          style={{ backgroundColor: "#1c1b1f", color: "var(--sb-foreground)" }}
+        >
+          <Scheme title="Dark scheme" customColors={args.customColors}>
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+        </div>
+        {!args.adaptiveShades && <Shades customColors={args.customColors} />}
+      </Layout>
+    </Mcu>
+  ),
+};
+
+export const ContrastHighSt: Story = {
+  name: "[contrast] high",
+  args: {
+    source: "#769CDF",
+    contrast: 1,
   },
   render: (args) => (
     <Mcu {...args}>
