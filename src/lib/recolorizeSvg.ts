@@ -131,16 +131,16 @@ export function recolorizeSvgDirect(
         const recolorizedStyle = style.replace(
           /(fill|stroke|stop-color)\s*:\s*(#[0-9a-fA-F]{3,6}|rgb\([^)]+\)|rgba\([^)]+\))/g,
           (match, prop, colorValue) => {
-            // Convert rgb/rgba to hex if needed (simple implementation)
+            // Convert rgb/rgba to hex if needed
             let hexValue = colorValue;
             if (colorValue.startsWith("rgb")) {
-              // Basic rgb to hex conversion (could be enhanced)
               const rgbMatch = colorValue.match(/\d+/g);
               if (rgbMatch && rgbMatch.length >= 3) {
                 const r = parseInt(rgbMatch[0]);
                 const g = parseInt(rgbMatch[1]);
                 const b = parseInt(rgbMatch[2]);
-                hexValue = `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+                // Ensure each channel is padded to 2 hex digits
+                hexValue = `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
               }
             }
             const token = findBestToken(hexValue);
