@@ -59,6 +59,10 @@ export function recolorizeSvg(
 ): string {
   const { tolerance = 15.0 } = options;
 
+  // Create CIEDE2000 difference function and RGB to LAB converter (reused for all colors)
+  const deltaE = differenceCiede2000();
+  const rgbToLab = converter("lab65");
+
   // 1. PREPARE CANDIDATES (Super fast as palettes are already ready)
   const candidates = Object.entries(palettes).map(([name, palette]) => {
     // Sample a representative color (tone 50) to get the palette's hue
@@ -96,10 +100,6 @@ export function recolorizeSvg(
     // We calculate delta-e (color difference) for each candidate and pick the best one
     let bestToken = null;
     let bestScore = Infinity;
-
-    // Create CIEDE2000 difference function and RGB to LAB converter
-    const deltaE = differenceCiede2000();
-    const rgbToLab = converter("lab65");
 
     // Convert target HCT to RGB color object for culori
     const targetArgb = targetHct.toInt();
