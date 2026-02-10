@@ -16,7 +16,7 @@ describe("hctToLab", () => {
     expect(lab.B).toBeGreaterThan(-128);
     expect(lab.B).toBeLessThan(128);
 
-    // Blue should have negative B value (towards blue on the yellow-blue axis)
+    // Blue should have negative B value (blue is on the negative B axis: yellow (+) to blue (-))
     expect(lab.B).toBeLessThan(0);
   });
 
