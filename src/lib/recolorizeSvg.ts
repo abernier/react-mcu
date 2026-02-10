@@ -82,19 +82,30 @@ export function recolorizeSvgDirect(
 
     let bestToken = null;
     let minDistance = Infinity;
+    let filteredCandidates = 0;
+    let consideredCandidates = 0;
 
     for (const c of candidates) {
       // FILTERING (Neutrals vs Colors)
       if (targetHct.chroma < 10) {
-        if (!c.isNeutral) continue;
+        if (!c.isNeutral) {
+          filteredCandidates++;
+          continue;
+        }
       } else if (c.isNeutral) {
+        filteredCandidates++;
         continue;
       } else {
         // HUE FILTERING (Hue)
         const hueDiff = Math.abs(targetHct.hue - c.sourceHue);
         const normalizedHueDiff = Math.min(hueDiff, 360 - hueDiff);
-        if (normalizedHueDiff > 45) continue;
+        if (normalizedHueDiff > 45) {
+          filteredCandidates++;
+          continue;
+        }
       }
+
+      consideredCandidates++;
 
       // TONE MATCHING
       for (const tone of STANDARD_TONES) {
@@ -111,6 +122,9 @@ export function recolorizeSvgDirect(
 
     // FALLBACK (If failed, default to neutral-variant)
     if (!bestToken) {
+      console.log(
+        `🔴 FALLBACK for ${hexInput}: HCT(h=${targetHct.hue.toFixed(1)}, c=${targetHct.chroma.toFixed(1)}, t=${targetHct.tone.toFixed(1)}) - Filtered ${filteredCandidates}/${candidates.length} candidates, considered ${consideredCandidates}, minDist=${minDistance.toFixed(1)} > tolerance=${tolerance}`
+      );
       let bestTone = 50;
       let minToneDist = Infinity;
       STANDARD_TONES.forEach((t) => {
