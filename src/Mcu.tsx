@@ -745,6 +745,18 @@ export function generateCss({
   const lightTonalVars = generateTonalVars(lightScheme);
   const darkTonalVars = generateTonalVars(darkScheme);
 
+  // Create allPalettes: merge core palettes (from scheme) and custom palettes
+  const allPalettes: Record<string, TonalPalette> = {
+    primary: lightScheme.primaryPalette,
+    secondary: lightScheme.secondaryPalette,
+    tertiary: lightScheme.tertiaryPalette,
+    error: lightScheme.errorPalette,
+    neutral: lightScheme.neutralPalette,
+    "neutral-variant": lightScheme.neutralVariantPalette,
+    // Add custom color palettes
+    ...colorPalettes,
+  };
+
   return {
     css: `
 :root { ${lightVars} ${lightTonalVars} }
@@ -752,5 +764,6 @@ export function generateCss({
 `,
     mergedColorsLight,
     mergedColorsDark,
+    allPalettes,
   };
 }

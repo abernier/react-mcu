@@ -1,6 +1,9 @@
 "use client";
 
-import { hexFromArgb } from "@material/material-color-utilities";
+import {
+  hexFromArgb,
+  type TonalPalette,
+} from "@material/material-color-utilities";
 import React, {
   useCallback,
   useInsertionEffect,
@@ -14,6 +17,7 @@ type Api = {
   initials: McuConfig;
   setMcuConfig: (config: McuConfig) => void;
   getMcuColor: (colorName: TokenName, theme?: string) => string;
+  allPalettes: Record<string, TonalPalette>;
 };
 
 const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
@@ -31,7 +35,7 @@ export const McuProvider = ({
 
   const [mcuConfig, setMcuConfig] = useState(initials);
 
-  const { css, mergedColorsLight, mergedColorsDark } = useMemo(
+  const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
     () => generateCss(mcuConfig),
     [mcuConfig],
   );
@@ -74,8 +78,9 @@ export const McuProvider = ({
         initials,
         setMcuConfig,
         getMcuColor,
+        allPalettes,
       }) satisfies Api,
-    [getMcuColor, initials],
+    [getMcuColor, initials, allPalettes],
   );
 
   return <Provider value={value}>{children}</Provider>;
