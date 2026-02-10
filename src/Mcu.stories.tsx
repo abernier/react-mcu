@@ -1203,7 +1203,7 @@ export const ContrastAllColorsLowSt: Story = {
   name: "[contrast][contrastAllColors] low",
   args: {
     source: "#769CDF",
-    contrast: -0.5,
+    contrast: -1,
     contrastAllColors: true,
     customColors: [
       { name: "myCustomColor1", hex: customColor1, blend: true },
