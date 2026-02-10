@@ -33,15 +33,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export function Scheme({
+  theme,
   title = "",
   customColors,
   children,
+  className,
+  ...props
 }: {
+  theme?: "light" | "dark";
   title?: string;
   customColors?: ComponentProps<typeof Mcu>["customColors"];
 } & Omit<ComponentProps<"div">, "title">) {
   return (
-    <div className="p-4 rounded-sm flex flex-col gap-4">
+    <div
+      className={cn(
+        theme === "light" && "p-4 rounded-sm bg-white text-(--sb-background)",
+        theme === "dark" &&
+          "dark p-4 rounded-sm bg-[#1c1b1f] text-(--sb-foreground)",
+        "flex flex-col gap-4",
+        className,
+      )}
+      {...props}
+    >
       <style>{`
       @scope {
         & {
