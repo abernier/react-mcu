@@ -4,9 +4,7 @@ import {
   type TonalPalette,
 } from "@material/material-color-utilities";
 import { kebabCase } from "lodash-es";
-
-// Target tones for matching
-const TARGET_TONES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100];
+import { STANDARD_TONES } from "../Mcu";
 
 type Candidate = {
   prefix: string;
@@ -80,7 +78,7 @@ export function recolorizeSvgDirect(
       }
 
       // TONE MATCHING
-      for (const tone of TARGET_TONES) {
+      for (const tone of STANDARD_TONES) {
         // Here, palette.tone(t) is instant (pure math), no object creation
         const toneHct = Hct.fromInt(c.palette.tone(tone));
         const dist = Math.abs(targetHct.tone - toneHct.tone);
@@ -96,7 +94,7 @@ export function recolorizeSvgDirect(
     if (!bestToken) {
       let bestTone = 50;
       let minToneDist = Infinity;
-      TARGET_TONES.forEach((t) => {
+      STANDARD_TONES.forEach((t) => {
         const dist = Math.abs(targetHct.tone - t);
         if (dist < minToneDist) {
           minToneDist = dist;
