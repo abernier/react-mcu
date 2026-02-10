@@ -885,7 +885,7 @@ export const RecolorizeSvg: Story = {
         //   "secondary",
         //   "tertiary"
         // ]}
-        // excludedPalettesNames={["error"]}
+        excludedPalettesNames={["error"]}
       />
     </Mcu>
   ),
