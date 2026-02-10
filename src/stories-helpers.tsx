@@ -1,19 +1,11 @@
 import { Mcu, STANDARD_TONES } from "./Mcu";
 import type { ComponentProps } from "react";
 import { kebabCase, upperFirst } from "lodash-es";
+import { cn } from "./lib/cn";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (
-    <div {...props}>
-      <style>{`
-        @scope {
-          & {
-            display:grid;
-            grid-template-columns: 1fr;
-            gap: 0;
-          }
-        }
-      `}</style>
+    <div {...props} className={cn("grid grid-cols-1 gap-0", props.className)}>
       {children}
     </div>
   );
@@ -27,14 +19,12 @@ function FooBottom({ children, ...props }: ComponentProps<"div">) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+    <div 
+      className="flex flex-col gap-6 max-w-[52rem] mx-auto [--gap1:0.75rem] [--gap2:0.25rem]"
+    >
       <style>{`
         @scope {
-          & {  
-            --gap1: .75rem;
-            --gap2: .25rem;
-
-            max-width: 52rem; margin-inline:auto;
+          & {
             p {all:unset; font-family: sans-serif; font-size: 0.8rem; color:white;mix-blend-mode:difference;}
           }
         }
@@ -53,15 +43,11 @@ export function Scheme({
   customColors?: ComponentProps<typeof Mcu>["customColors"];
 } & Omit<ComponentProps<"div">, "title">) {
   return (
-    <div>
+    <div className="p-4 rounded flex flex-col gap-4">
       <style>{`
       @scope {
         & {
-          padding: 1rem;
-          border-radius:4px;
           [style*="background-color"] {padding:.35rem;}
-
-          display:flex; flex-direction:column; gap:1rem;
         }
       }
       `}</style>
@@ -76,16 +62,7 @@ export function Scheme({
           {title}
         </h3>
       )}
-      <div>
-        <style>{`
-        @scope {
-          & {
-            display:grid;
-            grid-template-columns: 3fr 1fr;
-            gap: var(--gap1);
-          }
-        }
-      `}</style>
+      <div className="grid grid-cols-[3fr_1fr] gap-[var(--gap1)]">
 
         {
           //
@@ -97,17 +74,7 @@ export function Scheme({
           //
         }
 
-        <div>
-          <style>{`
-            @scope {
-              & {
-                display:grid;
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: 1fr 1fr;
-                gap: var(--gap2);
-              }
-            }
-          `}</style>
+        <div className="grid grid-cols-3 grid-rows-2 gap-[var(--gap2)]">
           <Foo>
             <FooTop
               style={{
@@ -224,17 +191,7 @@ export function Scheme({
           //
         }
 
-        <div>
-          <style>{`
-            @scope {
-              & {
-                display:grid;
-                grid-template-columns: repeat(1, 1fr);
-                grid-template-rows: 1fr 1fr;
-                gap: var(--gap2);
-              }
-            }
-          `}</style>
+        <div className="grid grid-cols-1 grid-rows-2 gap-[var(--gap2)]">
           <Foo>
             <FooTop
               style={{
@@ -282,28 +239,9 @@ export function Scheme({
           //
         }
 
-        <div>
-          <style>{`
-            @scope {
-              & {
-                display:grid;
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: 1fr;
-                gap: var(--gap2);
-              }
-            }
-          `}</style>
+        <div className="grid grid-cols-3 grid-rows-1 gap-[var(--gap2)]">
           <Foo>
-            <FooTop style={{ height: "5rem" }}>
-              <style>{`
-                @scope {
-                  & {
-                    display:grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    grid-template-rows: 1fr;
-                  }
-                }
-              `}</style>
+            <FooTop style={{ height: "5rem" }} className="grid grid-cols-2 grid-rows-1">
               <div
                 style={{
                   backgroundColor: "var(--mcu-primary-fixed)",
@@ -321,16 +259,7 @@ export function Scheme({
                 <p>Primary Fixed Dim</p>
               </div>
             </FooTop>
-            <FooBottom>
-              <style>{`
-                  @scope {
-                    & {
-                      display:grid;
-                      grid-template-columns: repeat(1, 1fr);
-                      grid-template-rows: 1fr 1fr;
-                    }
-                  }
-                `}</style>
+            <FooBottom className="grid grid-cols-1 grid-rows-2">
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-primary-fixed)",
@@ -350,16 +279,7 @@ export function Scheme({
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop style={{ height: "5rem" }}>
-              <style>{`
-                @scope {
-                  & {
-                    display:grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    grid-template-rows: 1fr;
-                  }
-                }
-              `}</style>
+            <FooTop style={{ height: "5rem" }} className="grid grid-cols-2 grid-rows-1">
               <div
                 style={{
                   backgroundColor: "var(--mcu-secondary-fixed)",
@@ -377,16 +297,7 @@ export function Scheme({
                 <p>Secondary Fixed Dim</p>
               </div>
             </FooTop>
-            <FooBottom>
-              <style>{`
-                  @scope {
-                    & {
-                      display:grid;
-                      grid-template-columns: repeat(1, 1fr);
-                      grid-template-rows: 1fr 1fr;
-                    }
-                  }
-                `}</style>
+            <FooBottom className="grid grid-cols-1 grid-rows-2">
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-secondary-fixed)",
@@ -406,16 +317,7 @@ export function Scheme({
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop style={{ height: "5rem" }}>
-              <style>{`
-                @scope {
-                  & {
-                    display:grid;
-                    grid-template-columns: repeat(2, 1fr);
-                    grid-template-rows: 1fr;
-                  }
-                }
-              `}</style>
+            <FooTop style={{ height: "5rem" }} className="grid grid-cols-2 grid-rows-1">
               <div
                 style={{
                   backgroundColor: "var(--mcu-tertiary-fixed)",
@@ -433,16 +335,7 @@ export function Scheme({
                 <p>Tertiary Fixed Dim</p>
               </div>
             </FooTop>
-            <FooBottom>
-              <style>{`
-                  @scope {
-                    & {
-                      display:grid;
-                      grid-template-columns: repeat(1, 1fr);
-                      grid-template-rows: 1fr 1fr;
-                    }
-                  }
-                `}</style>
+            <FooBottom className="grid grid-cols-1 grid-rows-2">
               <div
                 style={{
                   backgroundColor: "var(--mcu-on-tertiary-fixed)",
@@ -485,26 +378,8 @@ export function Scheme({
           //
         }
 
-        <div>
-          <style>{`
-            @scope {
-              & {
-                display:grid;
-                grid-template-columns: repeat(1, 1fr);
-                gap: var(--gap2);
-              }
-            }
-          `}</style>
-          <div style={{ height: "5rem" }}>
-            <style>{`
-              @scope {
-                & {
-                  display:grid;
-                  grid-template-columns: repeat(3, 1fr);
-                  grid-template-rows: 1fr;
-                }
-              }
-            `}</style>
+        <div className="grid grid-cols-1 gap-[var(--gap2)]">
+          <div style={{ height: "5rem" }} className="grid grid-cols-3 grid-rows-1">
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-dim)",
@@ -530,16 +405,7 @@ export function Scheme({
               <p>Surface Bright</p>
             </div>
           </div>
-          <div style={{ height: "5rem" }}>
-            <style>{`
-              @scope {
-                & {
-                  display:grid;
-                  grid-template-columns: repeat(5, 1fr);
-                  grid-template-rows: 1fr;
-                }
-              }
-            `}</style>
+          <div style={{ height: "5rem" }} className="grid grid-cols-5 grid-rows-1">
             <div
               style={{
                 backgroundColor: "var(--mcu-surface-container-lowest)",
@@ -581,16 +447,7 @@ export function Scheme({
               <p>Surface Container Highest</p>
             </div>
           </div>
-          <div>
-            <style>{`
-              @scope {
-                & {
-                  display:grid;
-                  grid-template-columns: repeat(4, 1fr);
-                  grid-template-rows: 1fr;
-                }
-              }
-            `}</style>
+          <div className="grid grid-cols-4 grid-rows-1">
             <div
               style={{
                 backgroundColor: "var(--mcu-on-surface)",
@@ -666,16 +523,7 @@ export function Scheme({
               <p>Inverse Primary</p>
             </FooTop>
           </Foo>
-          <div>
-            <style>{`
-              @scope {
-                & {
-                  display:grid;
-                  grid-template-columns: repeat(2, 1fr);
-                  gap: var(--gap2);
-                }
-              }
-            `}</style>
+          <div className="grid grid-cols-2 gap-[var(--gap2)]">
             <div
               style={{
                 backgroundColor: "var(--mcu-scrim)",
@@ -703,26 +551,10 @@ export function Scheme({
         //
       }
       {customColors?.length && (
-        <div>
-          <style>{`
-          @scope {
-            & {
-              display:flex; flex-direction:column; gap:var(--gap2);
-            }
-          }
-        `}</style>
+        <div className="flex flex-col gap-[var(--gap2)]">
 
           {customColors?.map((customColor) => (
-            <div key={customColor.name}>
-              <style>{`
-            @scope {
-              & {
-                display:grid;
-                grid-template-columns: repeat(4, 1fr);
-
-              }
-            }
-          `}</style>
+            <div key={customColor.name} className="grid grid-cols-4">
               <Foo>
                 <FooTop
                   style={{
