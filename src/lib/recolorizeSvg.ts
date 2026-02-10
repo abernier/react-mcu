@@ -20,6 +20,17 @@ export type RecolorizeSvgOptions = {
  * Ultra-optimized SVG recoloring that consumes directly the palettes from the MCU Context.
  * This version reuses pre-computed palettes for maximum performance and perfect synchronization.
  *
+ * **Matching Algorithm:**
+ * Uses a score-based approach instead of aggressive filtering to find the best palette match.
+ * The algorithm calculates a distance score based on:
+ * - Tone distance (most important)
+ * - Chroma distance (medium importance)
+ * - Hue distance for colored palettes (least important)
+ * - Bonus for matching neutral/colored nature
+ *
+ * This ensures colored SVG elements match to colored palettes (primary, secondary, tertiary, custom)
+ * rather than falling back to neutral-variant unnecessarily.
+ *
  * To filter palettes, pass a filtered subset of palettes as the second parameter.
  *
  * @param svgString - The SVG content as a string
@@ -62,7 +73,6 @@ export function recolorizeSvgDirect(
       isNeutral,
     };
   });
-  console.log("Prepared candidates for recoloring:", candidates);
 
   // 2. THE CACHE (To avoid recalculating the same pixel 50 times)
   const tokenCache = new Map<string, string>();
@@ -80,51 +90,58 @@ export function recolorizeSvgDirect(
       return null;
     }
 
+    // NEW APPROACH: Score-based matching instead of aggressive filtering
+    // We calculate a distance score for each candidate and pick the best one
     let bestToken = null;
-    let minDistance = Infinity;
-    let filteredCandidates = 0;
-    let consideredCandidates = 0;
+    let bestScore = Infinity;
 
     for (const c of candidates) {
-      // FILTERING (Neutrals vs Colors)
-      if (targetHct.chroma < 10) {
-        if (!c.isNeutral) {
-          filteredCandidates++;
-          continue;
-        }
-      } else if (c.isNeutral) {
-        filteredCandidates++;
-        continue;
-      } else {
-        // HUE FILTERING (Hue)
-        const hueDiff = Math.abs(targetHct.hue - c.sourceHue);
-        const normalizedHueDiff = Math.min(hueDiff, 360 - hueDiff);
-        if (normalizedHueDiff > 45) {
-          filteredCandidates++;
-          continue;
-        }
-      }
+      // Determine if we should prefer this palette based on chroma similarity
+      const targetIsNeutral = targetHct.chroma < 8;
+      const paletteIsNeutral = c.isNeutral;
 
-      consideredCandidates++;
+      // Calculate hue distance (0-180 degrees, accounting for circular nature)
+      const hueDiff = Math.abs(targetHct.hue - c.sourceHue);
+      const normalizedHueDiff = Math.min(hueDiff, 360 - hueDiff);
 
-      // TONE MATCHING
+      // TONE MATCHING with scoring
       for (const tone of STANDARD_TONES) {
-        // Here, palette.tone(t) is instant (pure math), no object creation
         const toneHct = Hct.fromInt(c.palette.tone(tone));
-        const dist = Math.abs(targetHct.tone - toneHct.tone);
 
-        if (dist < minDistance && dist <= tolerance) {
-          minDistance = dist;
+        // Calculate component distances
+        const toneDist = Math.abs(targetHct.tone - toneHct.tone);
+        const chromaDist = Math.abs(targetHct.chroma - toneHct.chroma);
+
+        // Skip if tone is too far (still apply tolerance)
+        if (toneDist > tolerance) continue;
+
+        // Calculate overall score (lower is better)
+        let score = toneDist; // Tone distance is most important
+
+        // Add chroma penalty (less important than tone)
+        score += chromaDist * 0.3;
+
+        // Add hue penalty for colored palettes (even less important)
+        if (!targetIsNeutral && !paletteIsNeutral) {
+          score += normalizedHueDiff * 0.2;
+        }
+
+        // Bonus for matching neutral/colored nature
+        if (targetIsNeutral === paletteIsNeutral) {
+          score *= 0.8; // 20% bonus
+        } else {
+          score *= 1.5; // 50% penalty for mismatched nature
+        }
+
+        if (score < bestScore) {
+          bestScore = score;
           bestToken = `var(--mcu-${c.prefix}-${tone})`;
         }
       }
     }
 
-    // FALLBACK (If failed, default to neutral-variant)
+    // FALLBACK (If no match found at all, default to neutral-variant)
     if (!bestToken) {
-      console.log(
-        `🔴 FALLBACK for ${hexInput}: HCT(h=${targetHct.hue.toFixed(1)}, c=${targetHct.chroma.toFixed(1)}, t=${targetHct.tone.toFixed(1)}) - Filtered ${filteredCandidates}/${candidates.length} candidates, considered ${consideredCandidates}, minDist=${minDistance.toFixed(1)} > tolerance=${tolerance}`
-      );
       let bestTone = 50;
       let minToneDist = Infinity;
       STANDARD_TONES.forEach((t) => {
