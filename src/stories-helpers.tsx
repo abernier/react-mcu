@@ -63,92 +63,50 @@ export function Scheme({
 
         <div className="grid grid-cols-3 grid-rows-2 gap-(--gap2)">
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-primary)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-primary)]">
               <p>Primary</p>
             </FooTop>
-            <FooBottom style={{ backgroundColor: "var(--mcu-on-primary)" }}>
+            <FooBottom className="bg-[var(--mcu-on-primary)]">
               <p>On Primary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-secondary)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-secondary)]">
               <p>Secondary</p>
             </FooTop>
-            <FooBottom style={{ backgroundColor: "var(--mcu-on-secondary)" }}>
+            <FooBottom className="bg-[var(--mcu-on-secondary)]">
               <p>On Secondary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-tertiary)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-tertiary)]">
               <p>Tertiary</p>
             </FooTop>
-            <FooBottom style={{ backgroundColor: "var(--mcu-on-tertiary)" }}>
+            <FooBottom className="bg-[var(--mcu-on-tertiary)]">
               <p>On Tertiary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-primary-container)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-primary-container)]">
               <p>Primary Container</p>
             </FooTop>
-            <FooBottom
-              style={{
-                backgroundColor: "var(--mcu-on-primary-container)",
-              }}
-            >
+            <FooBottom className="bg-[var(--mcu-on-primary-container)]">
               <p>On Primary Container</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-secondary-container)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-secondary-container)]">
               <p>Secondary Container</p>
             </FooTop>
-            <FooBottom
-              style={{
-                backgroundColor: "var(--mcu-on-secondary-container)",
-              }}
-            >
+            <FooBottom className="bg-[var(--mcu-on-secondary-container)]">
               <p>On Secondary Container</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-tertiary-container)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-tertiary-container)]">
               <p>Tertiary Container</p>
             </FooTop>
-            <FooBottom
-              style={{
-                backgroundColor: "var(--mcu-on-tertiary-container)",
-              }}
-            >
+            <FooBottom className="bg-[var(--mcu-on-tertiary-container)]">
               <p>On Tertiary Container</p>
             </FooBottom>
           </Foo>
@@ -166,32 +124,18 @@ export function Scheme({
 
         <div className="grid grid-cols-1 grid-rows-2 gap-(--gap2)">
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-error)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-error)]">
               <p>Error</p>
             </FooTop>
-            <FooBottom style={{ backgroundColor: "var(--mcu-on-error)" }}>
+            <FooBottom className="bg-[var(--mcu-on-error)]">
               <p>On Error</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-error-container)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-error-container)]">
               <p>Error Container</p>
             </FooTop>
-            <FooBottom
-              style={{
-                backgroundColor: "var(--mcu-on-error-container)",
-              }}
-            >
+            <FooBottom className="bg-[var(--mcu-on-error-container)]">
               <p>On Error Container</p>
             </FooBottom>
           </Foo>
@@ -210,102 +154,54 @@ export function Scheme({
         <div className="grid grid-cols-3 grid-rows-1 gap-(--gap2)">
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-primary-fixed)",
-                }}
-              >
+              <div className="bg-[var(--mcu-primary-fixed)]">
                 <p>Primary Fixed</p>
               </div>
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-primary-fixed-dim)",
-                }}
-              >
+              <div className="bg-[var(--mcu-primary-fixed-dim)]">
                 <p>Primary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-on-primary-fixed)",
-                }}
-              >
+              <div className="bg-[var(--mcu-on-primary-fixed)]">
                 <p>On Primary Fixed</p>
               </div>
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-on-primary-fixed-variant)",
-                }}
-              >
+              <div className="bg-[var(--mcu-on-primary-fixed-variant)]">
                 <p>On Primary Fixed Variant</p>
               </div>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-secondary-fixed)",
-                }}
-              >
+              <div className="bg-[var(--mcu-secondary-fixed)]">
                 <p>Secondary Fixed</p>
               </div>
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-secondary-fixed-dim)",
-                }}
-              >
+              <div className="bg-[var(--mcu-secondary-fixed-dim)]">
                 <p>Secondary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-on-secondary-fixed)",
-                }}
-              >
+              <div className="bg-[var(--mcu-on-secondary-fixed)]">
                 <p>On Secondary Fixed</p>
               </div>
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-on-secondary-fixed-variant)",
-                }}
-              >
+              <div className="bg-[var(--mcu-on-secondary-fixed-variant)]">
                 <p>On Secondary Fixed Variant</p>
               </div>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-tertiary-fixed)",
-                }}
-              >
+              <div className="bg-[var(--mcu-tertiary-fixed)]">
                 <p>Tertiary Fixed</p>
               </div>
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-tertiary-fixed-dim)",
-                }}
-              >
+              <div className="bg-[var(--mcu-tertiary-fixed-dim)]">
                 <p>Tertiary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-on-tertiary-fixed)",
-                }}
-              >
+              <div className="bg-[var(--mcu-on-tertiary-fixed)]">
                 <p>On Tertiary Fixed</p>
               </div>
-              <div
-                style={{
-                  backgroundColor: "var(--mcu-on-tertiary-fixed-variant)",
-                }}
-              >
+              <div className="bg-[var(--mcu-on-tertiary-fixed-variant)]">
                 <p>On Tertiary Fixed Variant</p>
               </div>
             </FooBottom>
@@ -336,92 +232,44 @@ export function Scheme({
 
         <div className="grid grid-cols-1 gap-(--gap2)">
           <div className="h-20 grid grid-cols-3 grid-rows-1">
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface-dim)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface-dim)]">
               <p>Surface Dim</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface)]">
               <p>Surface</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface-bright)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface-bright)]">
               <p>Surface Bright</p>
             </div>
           </div>
           <div className="h-20 grid grid-cols-5 grid-rows-1">
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface-container-lowest)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface-container-lowest)]">
               <p>Surface Container Lowest</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface-container-low)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface-container-low)]">
               <p>Surface Container Low</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface-container)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface-container)]">
               <p>Surface Container</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface-container-high)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface-container-high)]">
               <p>Surface Container High</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-surface-container-highest)",
-              }}
-            >
+            <div className="bg-[var(--mcu-surface-container-highest)]">
               <p>Surface Container Highest</p>
             </div>
           </div>
           <div className="grid grid-cols-4 grid-rows-1">
-            <div
-              style={{
-                backgroundColor: "var(--mcu-on-surface)",
-              }}
-            >
+            <div className="bg-[var(--mcu-on-surface)]">
               <p>On Surface</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-on-surface-variant)",
-              }}
-            >
+            <div className="bg-[var(--mcu-on-surface-variant)]">
               <p>On Surface Variant</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-outline)",
-              }}
-            >
+            <div className="bg-[var(--mcu-outline)]">
               <p>Outline</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-outline-variant)",
-              }}
-            >
+            <div className="bg-[var(--mcu-outline-variant)]">
               <p>Outline Variant</p>
             </div>
           </div>
@@ -439,45 +287,23 @@ export function Scheme({
 
         <div className="flex flex-col gap-1">
           <Foo>
-            <FooTop
-              className="h-20"
-              style={{
-                backgroundColor: "var(--mcu-inverse-surface)",
-              }}
-            >
+            <FooTop className="h-20 bg-[var(--mcu-inverse-surface)]">
               <p>Inverse Surface</p>
             </FooTop>
-            <FooBottom
-              style={{
-                backgroundColor: "var(--mcu-inverse-on-surface)",
-              }}
-            >
+            <FooBottom className="bg-[var(--mcu-inverse-on-surface)]">
               <p>Inverse On Surface</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop
-              style={{
-                // height: "5rem",
-                backgroundColor: "var(--mcu-inverse-primary)",
-              }}
-            >
+            <FooTop className="bg-[var(--mcu-inverse-primary)]">
               <p>Inverse Primary</p>
             </FooTop>
           </Foo>
           <div className="grid grid-cols-2 gap-(--gap2)">
-            <div
-              style={{
-                backgroundColor: "var(--mcu-scrim)",
-              }}
-            >
+            <div className="bg-[var(--mcu-scrim)]">
               <p>Scrim</p>
             </div>
-            <div
-              style={{
-                backgroundColor: "var(--mcu-shadow)",
-              }}
-            >
+            <div className="bg-[var(--mcu-shadow)]">
               <p>Shadow</p>
             </div>
           </div>
@@ -497,42 +323,22 @@ export function Scheme({
           {customColors?.map((customColor) => (
             <div key={customColor.name} className="grid grid-cols-4">
               <Foo>
-                <FooTop
-                  className="h-16"
-                  style={{
-                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
-                  }}
-                >
+                <FooTop className="h-16 bg-[var(--mcu-${kebabCase(customColor.name)})]">
                   <p>{upperFirst(customColor.name)}</p>
                 </FooTop>
               </Foo>
               <Foo>
-                <FooTop
-                  className="h-16"
-                  style={{
-                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
-                  }}
-                >
+                <FooTop className="h-16 bg-[var(--mcu-on-${kebabCase(customColor.name)})]">
                   <p>On {upperFirst(customColor.name)}</p>
                 </FooTop>
               </Foo>
               <Foo>
-                <FooTop
-                  className="h-16"
-                  style={{
-                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
-                  }}
-                >
+                <FooTop className="h-16 bg-[var(--mcu-${kebabCase(customColor.name)}-container)]">
                   <p>{upperFirst(customColor.name)} Container</p>
                 </FooTop>
               </Foo>
               <Foo>
-                <FooTop
-                  className="h-16"
-                  style={{
-                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
-                  }}
-                >
+                <FooTop className="h-16 bg-[var(--mcu-on-${kebabCase(customColor.name)}-container)]">
                   <p>On {upperFirst(customColor.name)} Container</p>
                 </FooTop>
               </Foo>
@@ -566,13 +372,7 @@ export function Shades({
           []),
       ].map(({ name, isCustom }) => (
         <div key={name}>
-          <h3
-            style={{
-              fontWeight: "bold",
-              marginBottom: "0rem",
-              textTransform: "capitalize",
-            }}
-          >
+          <h3 className="font-bold mb-0 capitalize">
             {isCustom ? upperFirst(name) : name.replace("-", " ")}
           </h3>
           <div
@@ -586,10 +386,7 @@ export function Shades({
               .map((tone) => (
                 <div
                   key={tone}
-                  className="h-16 flex items-center justify-center"
-                  style={{
-                    backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
-                  }}
+                  className="h-16 flex items-center justify-center bg-[var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})]"
                 >
                   <p className="text-xs">{tone}</p>
                 </div>
