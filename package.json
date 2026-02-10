@@ -79,6 +79,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
+    "delta-e": "^0.0.8",
     "lodash-es": "^4.17.22"
   }
 }

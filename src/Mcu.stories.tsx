@@ -890,3 +890,132 @@ export const RecolorizeSvg: Story = {
     </Mcu>
   ),
 };
+
+//
+// ██████  ███████ ██      ████████  █████       ███████
+// ██   ██ ██      ██         ██    ██   ██      ██
+// ██   ██ █████   ██         ██    ███████      █████
+// ██   ██ ██      ██         ██    ██   ██      ██
+// ██████  ███████ ███████    ██    ██   ██      ███████
+//
+
+import { recolorizeSvgWithDeltaE } from "./lib/recolorizeSvgDeltaE";
+
+const RecolorizedComparisonIllustration = ({
+  svgContent,
+  palettes,
+}: {
+  svgContent: string;
+  palettes: Record<string, TonalPalette>;
+}) => {
+  const recoloredSvgOriginal = useMemo(() => {
+    return recolorizeSvgDirect(svgContent, palettes);
+  }, [svgContent, palettes]);
+
+  const recoloredSvgDeltaE = useMemo(() => {
+    return recolorizeSvgWithDeltaE(svgContent, palettes);
+  }, [svgContent, palettes]);
+
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <div>
+        <h4 className="text-sm font-bold mb-2">Original SVG</h4>
+        <div
+          className="size-64 border border-gray-300"
+          dangerouslySetInnerHTML={{ __html: svgContent }}
+        />
+      </div>
+      <div>
+        <h4 className="text-sm font-bold mb-2">Custom Scoring</h4>
+        <div
+          className="size-64 border border-gray-300"
+          dangerouslySetInnerHTML={{ __html: recoloredSvgOriginal }}
+        />
+        <p className="text-xs text-gray-600 mt-2">
+          Weighted scoring (tone, chroma, hue)
+        </p>
+      </div>
+      <div>
+        <h4 className="text-sm font-bold mb-2">Delta E (CIEDE2000)</h4>
+        <div
+          className="size-64 border border-gray-300"
+          dangerouslySetInnerHTML={{ __html: recoloredSvgDeltaE }}
+        />
+        <p className="text-xs text-gray-600 mt-2">
+          Industry-standard perceptual color distance
+        </p>
+      </div>
+    </div>
+  );
+};
+
+function ComparisonScene({
+  customColors,
+}: {
+  customColors?: McuConfig["customColors"];
+}) {
+  const { allPalettes } = useMcu();
+
+  return (
+    <Layout>
+      <div className="space-y-8">
+        <div>
+          <h3 className="text-xl font-bold mb-4">
+            Algorithm Comparison: Custom Scoring vs Delta E
+          </h3>
+          <p className="text-sm text-gray-700 mb-4">
+            This story compares the custom weighted scoring algorithm with the
+            industry-standard CIEDE2000 (Delta E) perceptual color distance
+            metric. Delta E is scientifically validated to match human color
+            perception.
+          </p>
+        </div>
+
+        <RecolorizedComparisonIllustration
+          svgContent={exampleSvg}
+          palettes={allPalettes}
+        />
+
+        <div className="prose max-w-none">
+          <h4>Key Differences:</h4>
+          <ul className="text-sm">
+            <li>
+              <strong>Custom Scoring:</strong> Uses empirical weights for tone
+              (1.0), chroma (0.3), and hue (0.2) distances
+            </li>
+            <li>
+              <strong>Delta E:</strong> Uses CIEDE2000 formula that accounts
+              for non-uniformities in human color perception
+            </li>
+            <li>
+              Both apply a 20% bonus for matching neutral/colored nature and
+              50% penalty for mismatches
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <Scheme title="Color Scheme" customColors={customColors}>
+        <Shades customColors={customColors} />
+      </Scheme>
+    </Layout>
+  );
+}
+
+export const DeltaEComparison: Story = {
+  name: "Delta E Algorithm Comparison",
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <ComparisonScene customColors={args.customColors} />
+    </Mcu>
+  ),
+};
