@@ -265,14 +265,14 @@ const RecolorizedWithFiltering = ({
 
   const recoloredSvg = useMemo(() => {
     if (!allPalettes) return svgContent;
-    
+
     // Filter palettes externally before passing to the function
     const filteredPalettes = Object.fromEntries(
       Object.entries(allPalettes).filter(([name]) =>
-        filterPalettes.includes(name)
-      )
+        filterPalettes.includes(name),
+      ),
     );
-    
+
     return recolorizeSvgDirect(svgContent, filteredPalettes);
   }, [svgContent, allPalettes, filterPalettes]);
 
@@ -370,9 +370,7 @@ export const RecolorizeSvgWithFiltering: Story = {
             />
           </div>
           <div>
-            <h3 className="text-lg font-bold mb-2">
-              All Palettes (default)
-            </h3>
+            <h3 className="text-lg font-bold mb-2">All Palettes (default)</h3>
             <RecolorizedIllustration svgContent={exampleSvg} />
           </div>
           <div>
