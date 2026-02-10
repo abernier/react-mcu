@@ -6,13 +6,6 @@ import {
 import { kebabCase } from "lodash-es";
 import { STANDARD_TONES } from "../Mcu";
 
-type Candidate = {
-  prefix: string;
-  palette: TonalPalette;
-  sourceHue: number;
-  isNeutral: boolean;
-};
-
 /**
  * Options for recolorizeSvgDirect
  */
@@ -55,28 +48,27 @@ export function recolorizeSvgDirect(
   const { tolerance = 15.0 } = options;
 
   // 1. PREPARE CANDIDATES (Super fast as palettes are already ready)
-  const candidates: Candidate[] = Object.entries(palettes).map(
-    ([name, palette]) => {
-      // Sample a representative color (tone 50) to get the palette's hue
-      const midHct = Hct.fromInt(palette.tone(50));
+  const candidates = Object.entries(palettes).map(([name, palette]) => {
+    // Sample a representative color (tone 50) to get the palette's hue
+    const midHct = Hct.fromInt(palette.tone(50));
 
-      // Auto-detect neutrals based on name or chroma
-      const isNeutral = name.includes("neutral") || midHct.chroma < 5;
+    // Auto-detect neutrals based on name or chroma
+    const isNeutral = name.includes("neutral") || midHct.chroma < 5;
 
-      return {
-        prefix: kebabCase(name), // "neutral-variant", "custom-sand"
-        palette: palette,
-        sourceHue: midHct.hue,
-        isNeutral,
-      };
-    },
-  );
+    return {
+      prefix: kebabCase(name), // "neutral-variant", "custom-sand"
+      palette: palette,
+      sourceHue: midHct.hue,
+      isNeutral,
+    };
+  });
+  console.log("Prepared candidates for recoloring:", candidates);
 
   // 2. THE CACHE (To avoid recalculating the same pixel 50 times)
   const tokenCache = new Map<string, string>();
 
   // 3. SEARCH FUNCTION (Uses prepared candidates)
-  const findBestToken = (hexInput: string): string | null => {
+  const findBestToken = (hexInput: string) => {
     if (!hexInput || hexInput === "none" || hexInput.startsWith("url"))
       return null;
     if (tokenCache.has(hexInput)) return tokenCache.get(hexInput)!;

@@ -5,6 +5,7 @@ import { useMcu } from "./Mcu.context";
 import { recolorizeSvgDirect } from "./lib/recolorizeSvg";
 import { Layout, Scheme, Shades } from "./stories-helpers";
 import type { TonalPalette } from "@material/material-color-utilities";
+import { customColors } from "./Mcu.stories";
 
 const meta = {
   component: Mcu,
@@ -123,17 +124,29 @@ const exampleSvg = `
 function Scene({
   customColors,
   includedPalettesNames = [], // if empty, use all palettes
+  excludedPalettesNames = [], // palettes to exclude
 }: {
   customColors?: McuConfig["customColors"];
   includedPalettesNames?: string[];
+  excludedPalettesNames?: string[];
 }) {
   const { allPalettes } = useMcu();
 
   let palettes: Record<string, TonalPalette> = allPalettes;
+
+  // Only include specified palettes / otherwise use all
   if (includedPalettesNames.length > 0) {
     palettes = Object.fromEntries(
       Object.entries(allPalettes).filter(([name]) =>
         includedPalettesNames.includes(name),
+      ),
+    );
+  }
+  // Exclude specified palettes
+  if (excludedPalettesNames.length > 0) {
+    palettes = Object.fromEntries(
+      Object.entries(palettes).filter(
+        ([name]) => !excludedPalettesNames.includes(name),
       ),
     );
   }
@@ -171,10 +184,19 @@ export const RecolorizeSvg: Story = {
     source: "#769CDF",
     contrastAllColors: true,
     adaptiveShades: true,
+    customColors: customColors,
   },
   render: (args) => (
     <Mcu {...args}>
-      <Scene customColors={args.customColors} />
+      <Scene
+        customColors={args.customColors}
+        // includedPalettesNames={[
+        //   "primary",
+        //   "secondary",
+        //   "tertiary"
+        // ]}
+        // excludedPalettesNames={["error"]}
+      />
     </Mcu>
   ),
 };
