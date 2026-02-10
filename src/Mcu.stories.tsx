@@ -85,11 +85,6 @@ type Story = StoryObj<typeof meta>;
 const customColor1 = "#00D68A";
 const customColor2 = "#FFE16B";
 
-export const customColors = [
-  { name: "myCustomColor1", hex: customColor1, blend: true },
-  { name: "myCustomColor2", hex: customColor2, blend: true },
-];
-
 export const St1: Story = {
   name: "Default",
   args: {
@@ -384,7 +379,10 @@ export const ContrastAllColorsSt: Story = {
     contrast: -1,
     contrastAllColors: true,
     // contrastAllColors should impact custom-colors too (as well as shades)
-    customColors,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
   },
   render: (args) => (
     <Mcu {...args}>
@@ -419,7 +417,10 @@ export const AdaptiveShadesSt: Story = {
   args: {
     source: "#769CDF",
     adaptiveShades: true,
-    customColors,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
   },
   render: (args) => (
     <Mcu {...args}>
@@ -720,7 +721,10 @@ export const CustomColorsSt: Story = {
   name: "Custom colors",
   args: {
     source: "#769CDF",
-    customColors,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
   },
   render: St1.render,
 };
@@ -867,7 +871,10 @@ export const RecolorizeSvg: Story = {
     source: "#769CDF",
     contrastAllColors: true,
     adaptiveShades: true,
-    customColors: customColors,
+    customColors: [
+      { name: "myCustomColor1", hex: customColor1, blend: true },
+      { name: "myCustomColor2", hex: customColor2, blend: true },
+    ],
   },
   render: (args) => (
     <Mcu {...args}>
