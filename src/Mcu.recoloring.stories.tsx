@@ -253,47 +253,28 @@ const RecolorizedIllustration = ({ svgContent }: { svgContent: string }) => {
   );
 };
 
-// Component that demonstrates palette filtering with include option
-const RecolorizedWithInclude = ({
+// Component that demonstrates external palette filtering
+const RecolorizedWithFiltering = ({
   svgContent,
-  includePalettes,
+  filterPalettes,
 }: {
   svgContent: string;
-  includePalettes: string[];
+  filterPalettes: string[];
 }) => {
   const { allPalettes } = useMcu();
 
   const recoloredSvg = useMemo(() => {
     if (!allPalettes) return svgContent;
-    return recolorizeSvgDirect(svgContent, allPalettes, {
-      include: includePalettes,
-    });
-  }, [svgContent, allPalettes, includePalettes]);
-
-  return (
-    <div
-      className="w-64 h-64"
-      dangerouslySetInnerHTML={{ __html: recoloredSvg }}
-    />
-  );
-};
-
-// Component that demonstrates palette filtering with exclude option
-const RecolorizedWithExclude = ({
-  svgContent,
-  excludePalettes,
-}: {
-  svgContent: string;
-  excludePalettes: string[];
-}) => {
-  const { allPalettes } = useMcu();
-
-  const recoloredSvg = useMemo(() => {
-    if (!allPalettes) return svgContent;
-    return recolorizeSvgDirect(svgContent, allPalettes, {
-      exclude: excludePalettes,
-    });
-  }, [svgContent, allPalettes, excludePalettes]);
+    
+    // Filter palettes externally before passing to the function
+    const filteredPalettes = Object.fromEntries(
+      Object.entries(allPalettes).filter(([name]) =>
+        filterPalettes.includes(name)
+      )
+    );
+    
+    return recolorizeSvgDirect(svgContent, filteredPalettes);
+  }, [svgContent, allPalettes, filterPalettes]);
 
   return (
     <div
@@ -364,7 +345,7 @@ export const RecolorizeSvg: Story = {
 };
 
 export const RecolorizeSvgWithFiltering: Story = {
-  name: "Recolorize SVG (with Include/Exclude)",
+  name: "Recolorize SVG (with External Filtering)",
   args: {
     source: "#769CDF",
     contrastAllColors: true,
@@ -396,20 +377,11 @@ export const RecolorizeSvgWithFiltering: Story = {
           </div>
           <div>
             <h3 className="text-lg font-bold mb-2">
-              Include Only: primary, secondary
+              Filtered Externally: primary, secondary only
             </h3>
-            <RecolorizedWithInclude
+            <RecolorizedWithFiltering
               svgContent={exampleSvg}
-              includePalettes={["primary", "secondary"]}
-            />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold mb-2">
-              Exclude: neutral, neutral-variant
-            </h3>
-            <RecolorizedWithExclude
-              svgContent={exampleSvg}
-              excludePalettes={["neutral", "neutral-variant"]}
+              filterPalettes={["primary", "secondary"]}
             />
           </div>
         </div>

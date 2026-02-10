@@ -95,7 +95,7 @@ describe("Mcu", () => {
 describe("recolorizeSvgDirect", () => {
   const simpleSvg = `<svg><rect fill="#FF0000"/></svg>`;
 
-  it("should use all palettes by default", () => {
+  it("should recolorize SVG with provided palettes", () => {
     let palettes: Record<string, any> = {};
 
     const TestComponent = () => {
@@ -114,7 +114,7 @@ describe("recolorizeSvgDirect", () => {
     expect(result).toContain("var(--mcu-");
   });
 
-  it("should filter palettes with include option", () => {
+  it("should support custom tolerance", () => {
     let palettes: Record<string, any> = {};
 
     const TestComponent = () => {
@@ -129,13 +129,11 @@ describe("recolorizeSvgDirect", () => {
       </Mcu>,
     );
 
-    const result = recolorizeSvgDirect(simpleSvg, palettes, {
-      include: ["primary"],
-    });
+    const result = recolorizeSvgDirect(simpleSvg, palettes, { tolerance: 20 });
     expect(result).toContain("var(--mcu-");
   });
 
-  it("should filter palettes with exclude option", () => {
+  it("should allow external palette filtering", () => {
     let palettes: Record<string, any> = {};
 
     const TestComponent = () => {
@@ -150,32 +148,9 @@ describe("recolorizeSvgDirect", () => {
       </Mcu>,
     );
 
-    const result = recolorizeSvgDirect(simpleSvg, palettes, {
-      exclude: ["primary", "secondary"],
-    });
+    // Filter palettes externally
+    const filteredPalettes = { primary: palettes.primary };
+    const result = recolorizeSvgDirect(simpleSvg, filteredPalettes);
     expect(result).toContain("var(--mcu-");
-  });
-
-  it("should throw error when both include and exclude are specified", () => {
-    let palettes: Record<string, any> = {};
-
-    const TestComponent = () => {
-      const { allPalettes } = useMcu();
-      palettes = allPalettes;
-      return <div>Test</div>;
-    };
-
-    render(
-      <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>
-        <TestComponent />
-      </Mcu>,
-    );
-
-    expect(() => {
-      recolorizeSvgDirect(simpleSvg, palettes, {
-        include: ["primary"],
-        exclude: ["secondary"],
-      });
-    }).toThrow("Cannot specify both 'include' and 'exclude' options");
   });
 });
