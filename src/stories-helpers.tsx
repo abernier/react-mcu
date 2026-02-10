@@ -2,6 +2,7 @@ import { Mcu, STANDARD_TONES } from "./Mcu";
 import type { ComponentProps } from "react";
 import { kebabCase, upperFirst } from "lodash-es";
 import { cn } from "./lib/cn";
+import { cva, type VariantProps } from "class-variance-authority";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (
@@ -32,6 +33,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+const schemeVariants = cva("flex flex-col gap-4", {
+  variants: {
+    theme: {
+      light: "bg-white text-(--sb-background)",
+      dark: ["dark", "bg-[#1c1b1f] text-(--sb-foreground)"],
+    },
+  },
+  compoundVariants: [
+    {
+      theme: ["light", "dark"],
+      className: "p-4 rounded-sm",
+    },
+  ],
+});
+
 export function Scheme({
   theme,
   title = "",
@@ -40,21 +56,12 @@ export function Scheme({
   className,
   ...props
 }: {
-  theme?: "light" | "dark";
   title?: string;
   customColors?: ComponentProps<typeof Mcu>["customColors"];
-} & Omit<ComponentProps<"div">, "title">) {
+} & VariantProps<typeof schemeVariants> &
+  Omit<ComponentProps<"div">, "title">) {
   return (
-    <div
-      className={cn(
-        theme === "light" && "p-4 rounded-sm bg-white text-(--sb-background)",
-        theme === "dark" &&
-          "dark p-4 rounded-sm bg-[#1c1b1f] text-(--sb-foreground)",
-        "flex flex-col gap-4",
-        className,
-      )}
-      {...props}
-    >
+    <div className={cn(schemeVariants({ theme }), className)} {...props}>
       <style>{`
       @scope {
         & {
