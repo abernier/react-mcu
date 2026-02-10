@@ -843,12 +843,7 @@ const RecolorizedIllustration = ({
     return recolorizeSvg(svgContent, palettes);
   }, [svgContent, palettes]);
 
-  return (
-    <div
-      className="size-64"
-      dangerouslySetInnerHTML={{ __html: recoloredSvg }}
-    />
-  );
+  return <div dangerouslySetInnerHTML={{ __html: recoloredSvg }} />;
 };
 
 // Example SVG with various colors that will be recolorized
@@ -905,13 +900,10 @@ function Scene({
 
   return (
     <Layout>
-      <div className="space-y-4">
+      <div className="space-y-4 grid grid-cols-2 gap-2">
         <div>
           <h3 className="text-lg font-bold mb-2">Original SVG</h3>
-          <div
-            className="size-64 border border-gray-300"
-            dangerouslySetInnerHTML={{ __html: exampleSvg }}
-          />
+          <div dangerouslySetInnerHTML={{ __html: exampleSvg }} />
         </div>
 
         <div>
