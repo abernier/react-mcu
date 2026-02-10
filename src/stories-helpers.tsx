@@ -41,7 +41,7 @@ export function Scheme({
   customColors?: ComponentProps<typeof Mcu>["customColors"];
 } & Omit<ComponentProps<"div">, "title">) {
   return (
-    <div className="p-4 rounded flex flex-col gap-4">
+    <div className="p-4 rounded-[4px] flex flex-col gap-4">
       <style>{`
       @scope {
         & {
