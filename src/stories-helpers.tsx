@@ -45,7 +45,7 @@ export function Scheme({
       <style>{`
       @scope {
         & {
-          [style*="background-color"] {padding:.35rem;}
+          [style*="background-color"], [class*="bg-"] {padding:.35rem;}
         }
       }
       `}</style>
@@ -63,50 +63,50 @@ export function Scheme({
 
         <div className="grid grid-cols-3 grid-rows-2 gap-(--gap2)">
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-primary)]">
+            <FooTop className="h-20 bg-primary">
               <p>Primary</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-primary)]">
+            <FooBottom className="bg-on-primary">
               <p>On Primary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-secondary)]">
+            <FooTop className="h-20 bg-secondary">
               <p>Secondary</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-secondary)]">
+            <FooBottom className="bg-on-secondary">
               <p>On Secondary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-tertiary)]">
+            <FooTop className="h-20 bg-tertiary">
               <p>Tertiary</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-tertiary)]">
+            <FooBottom className="bg-on-tertiary">
               <p>On Tertiary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-primary-container)]">
+            <FooTop className="h-20 bg-primary-container">
               <p>Primary Container</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-primary-container)]">
+            <FooBottom className="bg-on-primary-container">
               <p>On Primary Container</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-secondary-container)]">
+            <FooTop className="h-20 bg-secondary-container">
               <p>Secondary Container</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-secondary-container)]">
+            <FooBottom className="bg-on-secondary-container">
               <p>On Secondary Container</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-tertiary-container)]">
+            <FooTop className="h-20 bg-tertiary-container">
               <p>Tertiary Container</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-tertiary-container)]">
+            <FooBottom className="bg-on-tertiary-container">
               <p>On Tertiary Container</p>
             </FooBottom>
           </Foo>
@@ -124,18 +124,18 @@ export function Scheme({
 
         <div className="grid grid-cols-1 grid-rows-2 gap-(--gap2)">
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-error)]">
+            <FooTop className="h-20 bg-error">
               <p>Error</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-error)]">
+            <FooBottom className="bg-on-error">
               <p>On Error</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-error-container)]">
+            <FooTop className="h-20 bg-error-container">
               <p>Error Container</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-on-error-container)]">
+            <FooBottom className="bg-on-error-container">
               <p>On Error Container</p>
             </FooBottom>
           </Foo>
@@ -154,54 +154,54 @@ export function Scheme({
         <div className="grid grid-cols-3 grid-rows-1 gap-(--gap2)">
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div className="bg-[var(--mcu-primary-fixed)]">
+              <div className="bg-primary-fixed">
                 <p>Primary Fixed</p>
               </div>
-              <div className="bg-[var(--mcu-primary-fixed-dim)]">
+              <div className="bg-primary-fixed-dim">
                 <p>Primary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div className="bg-[var(--mcu-on-primary-fixed)]">
+              <div className="bg-on-primary-fixed">
                 <p>On Primary Fixed</p>
               </div>
-              <div className="bg-[var(--mcu-on-primary-fixed-variant)]">
+              <div className="bg-on-primary-fixed-variant">
                 <p>On Primary Fixed Variant</p>
               </div>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div className="bg-[var(--mcu-secondary-fixed)]">
+              <div className="bg-secondary-fixed">
                 <p>Secondary Fixed</p>
               </div>
-              <div className="bg-[var(--mcu-secondary-fixed-dim)]">
+              <div className="bg-secondary-fixed-dim">
                 <p>Secondary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div className="bg-[var(--mcu-on-secondary-fixed)]">
+              <div className="bg-on-secondary-fixed">
                 <p>On Secondary Fixed</p>
               </div>
-              <div className="bg-[var(--mcu-on-secondary-fixed-variant)]">
+              <div className="bg-on-secondary-fixed-variant">
                 <p>On Secondary Fixed Variant</p>
               </div>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div className="bg-[var(--mcu-tertiary-fixed)]">
+              <div className="bg-tertiary-fixed">
                 <p>Tertiary Fixed</p>
               </div>
-              <div className="bg-[var(--mcu-tertiary-fixed-dim)]">
+              <div className="bg-tertiary-fixed-dim">
                 <p>Tertiary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div className="bg-[var(--mcu-on-tertiary-fixed)]">
+              <div className="bg-on-tertiary-fixed">
                 <p>On Tertiary Fixed</p>
               </div>
-              <div className="bg-[var(--mcu-on-tertiary-fixed-variant)]">
+              <div className="bg-on-tertiary-fixed-variant">
                 <p>On Tertiary Fixed Variant</p>
               </div>
             </FooBottom>
@@ -232,44 +232,44 @@ export function Scheme({
 
         <div className="grid grid-cols-1 gap-(--gap2)">
           <div className="h-20 grid grid-cols-3 grid-rows-1">
-            <div className="bg-[var(--mcu-surface-dim)]">
+            <div className="bg-surface-dim">
               <p>Surface Dim</p>
             </div>
-            <div className="bg-[var(--mcu-surface)]">
+            <div className="bg-surface">
               <p>Surface</p>
             </div>
-            <div className="bg-[var(--mcu-surface-bright)]">
+            <div className="bg-surface-bright">
               <p>Surface Bright</p>
             </div>
           </div>
           <div className="h-20 grid grid-cols-5 grid-rows-1">
-            <div className="bg-[var(--mcu-surface-container-lowest)]">
+            <div className="bg-surface-container-lowest">
               <p>Surface Container Lowest</p>
             </div>
-            <div className="bg-[var(--mcu-surface-container-low)]">
+            <div className="bg-surface-container-low">
               <p>Surface Container Low</p>
             </div>
-            <div className="bg-[var(--mcu-surface-container)]">
+            <div className="bg-surface-container">
               <p>Surface Container</p>
             </div>
-            <div className="bg-[var(--mcu-surface-container-high)]">
+            <div className="bg-surface-container-high">
               <p>Surface Container High</p>
             </div>
-            <div className="bg-[var(--mcu-surface-container-highest)]">
+            <div className="bg-surface-container-highest">
               <p>Surface Container Highest</p>
             </div>
           </div>
           <div className="grid grid-cols-4 grid-rows-1">
-            <div className="bg-[var(--mcu-on-surface)]">
+            <div className="bg-on-surface">
               <p>On Surface</p>
             </div>
-            <div className="bg-[var(--mcu-on-surface-variant)]">
+            <div className="bg-on-surface-variant">
               <p>On Surface Variant</p>
             </div>
-            <div className="bg-[var(--mcu-outline)]">
+            <div className="bg-outline">
               <p>Outline</p>
             </div>
-            <div className="bg-[var(--mcu-outline-variant)]">
+            <div className="bg-outline-variant">
               <p>Outline Variant</p>
             </div>
           </div>
@@ -287,23 +287,23 @@ export function Scheme({
 
         <div className="flex flex-col gap-1">
           <Foo>
-            <FooTop className="h-20 bg-[var(--mcu-inverse-surface)]">
+            <FooTop className="h-20 bg-inverse-surface">
               <p>Inverse Surface</p>
             </FooTop>
-            <FooBottom className="bg-[var(--mcu-inverse-on-surface)]">
+            <FooBottom className="bg-inverse-on-surface">
               <p>Inverse On Surface</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="bg-[var(--mcu-inverse-primary)]">
+            <FooTop className="bg-inverse-primary">
               <p>Inverse Primary</p>
             </FooTop>
           </Foo>
           <div className="grid grid-cols-2 gap-(--gap2)">
-            <div className="bg-[var(--mcu-scrim)]">
+            <div className="bg-scrim">
               <p>Scrim</p>
             </div>
-            <div className="bg-[var(--mcu-shadow)]">
+            <div className="bg-shadow">
               <p>Shadow</p>
             </div>
           </div>
@@ -323,22 +323,42 @@ export function Scheme({
           {customColors?.map((customColor) => (
             <div key={customColor.name} className="grid grid-cols-4">
               <Foo>
-                <FooTop className="h-16 bg-[var(--mcu-${kebabCase(customColor.name)})]">
+                <FooTop
+                  className="h-16"
+                  style={{
+                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
+                  }}
+                >
                   <p>{upperFirst(customColor.name)}</p>
                 </FooTop>
               </Foo>
               <Foo>
-                <FooTop className="h-16 bg-[var(--mcu-on-${kebabCase(customColor.name)})]">
+                <FooTop
+                  className="h-16"
+                  style={{
+                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
+                  }}
+                >
                   <p>On {upperFirst(customColor.name)}</p>
                 </FooTop>
               </Foo>
               <Foo>
-                <FooTop className="h-16 bg-[var(--mcu-${kebabCase(customColor.name)}-container)]">
+                <FooTop
+                  className="h-16"
+                  style={{
+                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
+                  }}
+                >
                   <p>{upperFirst(customColor.name)} Container</p>
                 </FooTop>
               </Foo>
               <Foo>
-                <FooTop className="h-16 bg-[var(--mcu-on-${kebabCase(customColor.name)}-container)]">
+                <FooTop
+                  className="h-16"
+                  style={{
+                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
+                  }}
+                >
                   <p>On {upperFirst(customColor.name)} Container</p>
                 </FooTop>
               </Foo>
@@ -376,8 +396,8 @@ export function Shades({
             {isCustom ? upperFirst(name) : name.replace("-", " ")}
           </h3>
           <div
+            className="grid"
             style={{
-              display: "grid",
               gridTemplateColumns: `repeat(${STANDARD_TONES.length}, 1fr)`,
             }}
           >
@@ -386,7 +406,10 @@ export function Shades({
               .map((tone) => (
                 <div
                   key={tone}
-                  className="h-16 flex items-center justify-center bg-[var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})]"
+                  className="h-16 flex items-center justify-center"
+                  style={{
+                    backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
+                  }}
                 >
                   <p className="text-xs">{tone}</p>
                 </div>
