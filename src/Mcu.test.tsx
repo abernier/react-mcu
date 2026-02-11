@@ -1,6 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { Mcu } from "./Mcu.js";
+import { generateCss, Mcu } from "./Mcu.js";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -95,5 +95,37 @@ describe("Mcu", () => {
     styleContent = styleTag?.textContent || "";
 
     expect(styleContent).not.toContain("--mcu-brand");
+  });
+
+  it("should produce different palettes with colorMatch enabled", () => {
+    const baseConfig = {
+      source: "#769CDF",
+      primary: "#cab337",
+      secondary: "#b03a3a",
+      tertiary: "#2138d2",
+      error: "#479200",
+      neutral: "#957FF1",
+      neutralVariant: "#007EDF",
+    };
+
+    const withoutColorMatch = generateCss({
+      ...baseConfig,
+      colorMatch: false,
+    });
+    const withColorMatch = generateCss({
+      ...baseConfig,
+      colorMatch: true,
+    });
+
+    // The CSS output should differ because colorMatch preserves original chroma
+    expect(withColorMatch.css).not.toEqual(withoutColorMatch.css);
+
+    // Both should still contain the expected CSS variables
+    expect(withColorMatch.css).toContain("--mcu-primary");
+    expect(withColorMatch.css).toContain("--mcu-secondary");
+    expect(withColorMatch.css).toContain("--mcu-tertiary");
+    expect(withoutColorMatch.css).toContain("--mcu-primary");
+    expect(withoutColorMatch.css).toContain("--mcu-secondary");
+    expect(withoutColorMatch.css).toContain("--mcu-tertiary");
   });
 });
