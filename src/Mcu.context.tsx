@@ -35,6 +35,25 @@ export const McuProvider = ({
 
   const [mcuConfig, setMcuConfig] = useState(initials);
 
+  // Update mcuConfig when any of the relevant props change
+  React.useEffect(() => {
+    setMcuConfig(props);
+  }, [
+    props.source,
+    props.scheme,
+    props.contrast,
+    props.primary,
+    props.secondary,
+    props.tertiary,
+    props.neutral,
+    props.neutralVariant,
+    props.error,
+    props.colorMatch,
+    props.customColors,
+    props.contrastAllColors,
+    props.adaptiveShades,
+  ]);
+
   const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
     () => generateCss(mcuConfig),
     [mcuConfig],
