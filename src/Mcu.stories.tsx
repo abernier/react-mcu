@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo } from "react";
+import { Mcu, schemeNames, type McuConfig } from "./Mcu";
 import { useMcu } from "./Mcu.context";
 import { recolorizeSvg } from "./lib/recolorizeSvg";
-import type { TonalPalette } from "@material/material-color-utilities";
-import { Mcu, schemeNames, type McuConfig } from "./Mcu";
 import { Layout, Scheme, Shades, TailwindScheme } from "./stories-helpers";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export

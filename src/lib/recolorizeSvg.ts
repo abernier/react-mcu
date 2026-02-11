@@ -1,8 +1,7 @@
 import {
   argbFromHex,
-  hexFromArgb,
   Hct,
-  type TonalPalette,
+  hexFromArgb,
 } from "@material/material-color-utilities";
 import { converter, differenceCiede2000, parseHex } from "culori";
 import { kebabCase } from "lodash-es";
