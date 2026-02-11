@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo } from "react";
 import { useMcu } from "./Mcu.context";
 import { recolorizeSvg } from "./lib/recolorizeSvg";
-import type { TonalPalette } from "@material/material-color-utilities";
 import { Mcu, schemeNames, type McuConfig } from "./Mcu";
-import { Layout, Scheme, Shades, TailwindScheme } from "./stories-helpers";
+import { Layout, Scheme, Shades, TailwindScheme } from "./Mcu.stories.helpers";
+import { allModes } from "../.storybook/modes";
 
 // Import SVG files as raw strings
 import exampleSvg from "./assets/svgs/example.svg?raw";
@@ -909,8 +909,46 @@ function Scene({
   );
 }
 
-export const RecolorizeSvg: Story = {
+export const RecolorizeSvgSt1: Story = {
   name: "Recolorized SVG",
+  parameters: {
+    chromatic: {
+      modes: {
+        light: allModes["light"],
+        dark: allModes["dark"],
+      },
+    },
+  },
+  args: {
+    source: "#769CDF",
+    contrastAllColors: true,
+    adaptiveShades: true,
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Scene
+        customColors={args.customColors}
+        // includedPalettesNames={[
+        //   "primary",
+        //   "secondary",
+        //   "tertiary"
+        // ]}
+        excludedPalettesNames={["error"]}
+      />
+    </Mcu>
+  ),
+};
+
+export const RecolorizeSvgSt2: Story = {
+  name: "Recolorized SVG with custom-colors",
+  parameters: {
+    chromatic: {
+      modes: {
+        light: allModes["light"],
+        dark: allModes["dark"],
+      },
+    },
+  },
   args: {
     source: "#769CDF",
     contrastAllColors: true,

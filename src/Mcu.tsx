@@ -224,15 +224,10 @@ export function Mcu({
     ],
   );
 
-  const { css } = useMemo(() => generateCss(config), [config]);
-
   return (
-    <>
-      <style id={mcuStyleId}>{css}</style>
-      <McuProvider {...config} styleId={mcuStyleId}>
-        {children}
-      </McuProvider>
-    </>
+    <McuProvider {...config} styleId={mcuStyleId}>
+      {children}
+    </McuProvider>
   );
 }
 
