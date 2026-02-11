@@ -47,10 +47,6 @@ describe("Mcu", () => {
     let styleTag = document.querySelector("#mcu-styles");
     let styleContent = styleTag?.textContent || "";
 
-    // Debug: Count how many style tags exist
-    const styleTags = document.querySelectorAll("#mcu-styles");
-    console.log("Number of style tags after first render:", styleTags.length);
-
     expect(styleContent).toContain("--mcu-brand:");
     expect(styleContent).toContain("--mcu-on-brand:");
     expect(styleContent).toContain("--mcu-brand-container:");
@@ -80,19 +76,13 @@ describe("Mcu", () => {
     styleTag = document.querySelector("#mcu-styles");
     styleContent = styleTag?.textContent || "";
 
-    // Debug
-    const styleTags2 = document.querySelectorAll("#mcu-styles");
-    console.log("Number of style tags after second render:", styleTags2.length);
-    console.log("Style content length:", styleContent.length);
-    console.log("Contains success?:", styleContent.includes("--mcu-success:"));
-
     // "brand" should still be there
     expect(styleContent).toContain("--mcu-brand:");
     expect(styleContent).toContain("--mcu-on-brand:");
     expect(styleContent).toContain("--mcu-brand-container:");
     expect(styleContent).toContain("--mcu-on-brand-container:");
 
-    // "success" should be gone (THIS IS THE BUG - these will still be present)
+    // "success" should be gone
     expect(styleContent).not.toContain("--mcu-success:");
     expect(styleContent).not.toContain("--mcu-on-success:");
     expect(styleContent).not.toContain("--mcu-success-container:");

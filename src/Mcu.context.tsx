@@ -25,33 +25,76 @@ const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
 export const McuProvider = ({
   styleId,
   children,
-  ...props
+  source,
+  scheme,
+  contrast,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+  error,
+  colorMatch,
+  customColors,
+  contrastAllColors,
+  adaptiveShades,
 }: McuConfig & {
   styleId: string;
   children?: React.ReactNode;
 }) => {
-  const [initials] = useState<McuConfig>(() => props);
-  // console.log("McuProvider initials", initials);
+  const initials = useMemo(
+    (): McuConfig => ({
+      source,
+      scheme,
+      contrast,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+      error,
+      colorMatch,
+      customColors,
+      contrastAllColors,
+      adaptiveShades,
+    }),
+    [], // eslint-disable-line react-hooks/exhaustive-deps
+    // Empty deps - we only want initial values
+  );
 
   const [mcuConfig, setMcuConfig] = useState(initials);
 
-  // Update mcuConfig when any of the relevant props change
+  // Update mcuConfig when any of the relevant config props change
   React.useEffect(() => {
-    setMcuConfig(props);
+    setMcuConfig({
+      source,
+      scheme,
+      contrast,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+      error,
+      colorMatch,
+      customColors,
+      contrastAllColors,
+      adaptiveShades,
+    });
   }, [
-    props.source,
-    props.scheme,
-    props.contrast,
-    props.primary,
-    props.secondary,
-    props.tertiary,
-    props.neutral,
-    props.neutralVariant,
-    props.error,
-    props.colorMatch,
-    props.customColors,
-    props.contrastAllColors,
-    props.adaptiveShades,
+    source,
+    scheme,
+    contrast,
+    primary,
+    secondary,
+    tertiary,
+    neutral,
+    neutralVariant,
+    error,
+    colorMatch,
+    customColors,
+    contrastAllColors,
+    adaptiveShades,
   ]);
 
   const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
