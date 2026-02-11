@@ -938,6 +938,7 @@ export const RecolorizeSvgSt1: Story = {
     adaptiveShades: true,
   },
   argTypes: {
+    // Custom story-level control (not a component prop)
     svgFile: {
       control: "select",
       options: svgFileNames,
@@ -988,6 +989,7 @@ export const RecolorizeSvgSt2: Story = {
     ],
   },
   argTypes: {
+    // Custom story-level control (not a component prop)
     svgFile: {
       control: "select",
       options: svgFileNames,
