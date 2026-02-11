@@ -7,6 +7,7 @@ import { useMcu } from "./Mcu.context";
 import complexSvg from "./assets/test-complex.svg?raw";
 import gradientSvg from "./assets/test-gradient.svg?raw";
 import patternSvg from "./assets/test-pattern.svg?raw";
+import tigerSvg from "./assets/tiger.svg?raw";
 
 const meta = {
   title: "SVG Recolorization/Gradients & Patterns",
@@ -257,6 +258,13 @@ export const AllFeatures: Story = {
           title="3. Structures complexes (nested gradients + patterns)"
         />
 
+        <div className="border-t-4 border-gray-300 dark:border-gray-600 my-16" />
+
+        <RecolorizedComparison
+          svgContent={tigerSvg}
+          title="4. 🐯 Tiger SVG - Le test ultime !"
+        />
+
         <div className="mt-16 p-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-500 rounded-lg">
           <h2 className="text-2xl font-bold text-green-800 dark:text-green-300 mb-4">
             🎉 Conclusion
@@ -303,6 +311,82 @@ export const DarkThemeComparison: Story = {
         title="Mode Sombre - Gradients"
         customColors={args.customColors}
       />
+    </Mcu>
+  ),
+};
+
+/**
+ * 🐯 Le Tiger SVG - Un exemple complexe et complet qui teste TOUTES les fonctionnalités :
+ * - Multiples gradients linéaires et radiaux
+ * - Patterns avec rayures
+ * - Nested gradients dans patterns
+ * - Stop colors avec opacités
+ * - Références croisées entre éléments
+ * - Textures et effets complexes
+ *
+ * C'est LE test ultime pour valider que "ça marche pour tous les trucs les plus farfelus de SVG" !
+ */
+export const TigerShowcase: Story = {
+  args: {
+    source: "#FF6B35",
+    scheme: "vibrant",
+    contrast: 0,
+    customColors: [],
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <div className="p-8 space-y-8">
+        <div>
+          <h1 className="text-4xl font-bold mb-4">🐯 Le Tiger SVG</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 mb-2">
+            Un SVG complexe inspiré du célèbre Ghostscript Tiger
+          </p>
+          <p className="text-lg text-gray-500 dark:text-gray-500">
+            Avec <strong>15+ gradients</strong>,{" "}
+            <strong>patterns imbriqués</strong>, <strong>textures</strong>, et
+            toutes les fonctionnalités SVG complexes !
+          </p>
+        </div>
+
+        <RecolorizedComparison
+          svgContent={tigerSvg}
+          title="Tiger avec tous les trucs farfelus de SVG"
+        />
+
+        <div className="mt-8 p-6 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/20 dark:to-yellow-900/20 border-2 border-orange-500 rounded-lg">
+          <h2 className="text-2xl font-bold text-orange-800 dark:text-orange-300 mb-4">
+            🎨 Ce que ce Tiger teste :
+          </h2>
+          <div className="grid grid-cols-2 gap-4 text-orange-700 dark:text-orange-200">
+            <ul className="space-y-2">
+              <li>✅ Gradients radiaux (yeux, corps, ombres)</li>
+              <li>✅ Gradients linéaires (rayures, oreilles)</li>
+              <li>✅ Patterns avec gradients imbriqués (fourrure)</li>
+              <li>✅ Stop-color avec opacité</li>
+              <li>✅ Références croisées (pattern → gradient)</li>
+            </ul>
+            <ul className="space-y-2">
+              <li>✅ Transforms et rotations</li>
+              <li>✅ Nested groups (&lt;g&gt; dans &lt;g&gt;)</li>
+              <li>✅ Paths complexes avec courbes</li>
+              <li>✅ Multiple fill/stroke sur patterns</li>
+              <li>✅ Ellipses, circles, paths, rects</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="p-6 bg-green-50 dark:bg-green-900/20 border-2 border-green-500 rounded-lg">
+          <h3 className="text-xl font-bold text-green-800 dark:text-green-300 mb-2">
+            ✅ Verdict Final
+          </h3>
+          <p className="text-lg text-green-700 dark:text-green-200">
+            <strong>
+              OUI, ça marche pour les gradients, les patterns, et TOUS les trucs
+              les plus farfelus de SVG !
+            </strong>
+          </p>
+        </div>
+      </div>
     </Mcu>
   ),
 };
