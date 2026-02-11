@@ -1,9 +1,10 @@
 import {
   argbFromHex,
+  hexFromArgb,
   Hct,
   type TonalPalette,
 } from "@material/material-color-utilities";
-import { converter, differenceCiede2000 } from "culori";
+import { converter, differenceCiede2000, parseHex } from "culori";
 import { kebabCase } from "lodash-es";
 import { STANDARD_TONES } from "../Mcu";
 import type { useMcu } from "../Mcu.context";
@@ -102,13 +103,8 @@ export function recolorizeSvg(
     let bestScore = Infinity;
 
     // Convert target HCT to RGB color object for culori
-    const targetArgb = targetHct.toInt();
-    const targetRgb = {
-      r: ((targetArgb >> 16) & 0xff) / 255,
-      g: ((targetArgb >> 8) & 0xff) / 255,
-      b: (targetArgb & 0xff) / 255,
-      mode: "rgb" as const,
-    };
+    const targetHex = hexFromArgb(targetHct.toInt());
+    const targetRgb = parseHex(targetHex)!; // Non-null: hexFromArgb always returns valid hex
     const targetLab = rgbToLab(targetRgb);
 
     for (const c of candidates) {
@@ -125,13 +121,8 @@ export function recolorizeSvg(
         if (toneDist > tolerance) continue;
 
         // Convert palette color to RGB and LAB, then calculate CIEDE2000 distance
-        const toneArgb = toneHct.toInt();
-        const toneRgb = {
-          r: ((toneArgb >> 16) & 0xff) / 255,
-          g: ((toneArgb >> 8) & 0xff) / 255,
-          b: (toneArgb & 0xff) / 255,
-          mode: "rgb" as const,
-        };
+        const toneHex = hexFromArgb(toneHct.toInt());
+        const toneRgb = parseHex(toneHex)!; // Non-null: hexFromArgb always returns valid hex
         const toneLab = rgbToLab(toneRgb);
         const distance = deltaE(targetLab, toneLab);
 
