@@ -1,8 +1,10 @@
 import {
   argbFromHex,
+  hexFromArgb,
   Hct,
   type TonalPalette,
 } from "@material/material-color-utilities";
+import { converter, differenceCiede2000, parseHex } from "culori";
 import { kebabCase } from "lodash-es";
 import { STANDARD_TONES } from "../Mcu";
 import type { useMcu } from "../Mcu.context";
@@ -22,15 +24,14 @@ export type RecolorizeSvgOptions = {
  * This version reuses pre-computed palettes for maximum performance and perfect synchronization.
  *
  * **Matching Algorithm:**
- * Uses a score-based approach instead of aggressive filtering to find the best palette match.
- * The algorithm calculates a distance score based on:
- * - Tone distance (most important)
- * - Chroma distance (medium importance)
- * - Hue distance for colored palettes (least important)
- * - Bonus for matching neutral/colored nature
+ * Uses CIEDE2000 (delta-e) for perceptually accurate color matching via the culori library.
+ * The algorithm:
+ * 1. Converts HCT colors to LAB color space using culori
+ * 2. Calculates CIEDE2000 distance (scientifically validated for human perception)
+ * 3. Applies bonus/penalty for matching neutral/colored nature
  *
  * This ensures colored SVG elements match to colored palettes (primary, secondary, tertiary, custom)
- * rather than falling back to neutral-variant unnecessarily.
+ * rather than falling back to neutral-variant unnecessarily, using industry-standard color science.
  *
  * To filter palettes, pass a filtered subset of palettes as the second parameter.
  *
@@ -58,6 +59,10 @@ export function recolorizeSvg(
   options: RecolorizeSvgOptions = {},
 ): string {
   const { tolerance = 15.0 } = options;
+
+  // Create CIEDE2000 difference function and RGB to LAB converter (reused for all colors)
+  const deltaE = differenceCiede2000();
+  const rgbToLab = converter("lab65");
 
   // 1. PREPARE CANDIDATES (Super fast as palettes are already ready)
   const candidates = Object.entries(palettes).map(([name, palette]) => {
@@ -92,41 +97,37 @@ export function recolorizeSvg(
       return null;
     }
 
-    // NEW APPROACH: Score-based matching instead of aggressive filtering
-    // We calculate a distance score for each candidate and pick the best one
+    // NEW APPROACH: CIEDE2000-based matching for perceptually accurate color matching
+    // We calculate delta-e (color difference) for each candidate and pick the best one
     let bestToken = null;
     let bestScore = Infinity;
+
+    // Convert target HCT to RGB color object for culori
+    const targetHex = hexFromArgb(targetHct.toInt());
+    const targetRgb = parseHex(targetHex)!; // Non-null: hexFromArgb always returns valid hex
+    const targetLab = rgbToLab(targetRgb);
 
     for (const c of candidates) {
       // Determine if we should prefer this palette based on chroma similarity
       const targetIsNeutral = targetHct.chroma < 8;
       const paletteIsNeutral = c.isNeutral;
 
-      // Calculate hue distance (0-180 degrees, accounting for circular nature)
-      const hueDiff = Math.abs(targetHct.hue - c.sourceHue);
-      const normalizedHueDiff = Math.min(hueDiff, 360 - hueDiff);
-
-      // TONE MATCHING with scoring
+      // TONE MATCHING with CIEDE2000 scoring
       for (const tone of STANDARD_TONES) {
         const toneHct = Hct.fromInt(c.palette.tone(tone));
 
-        // Calculate component distances
+        // Check tone distance for early filtering (performance optimization)
         const toneDist = Math.abs(targetHct.tone - toneHct.tone);
-        const chromaDist = Math.abs(targetHct.chroma - toneHct.chroma);
-
-        // Skip if tone is too far (still apply tolerance)
         if (toneDist > tolerance) continue;
 
-        // Calculate overall score (lower is better)
-        let score = toneDist; // Tone distance is most important
+        // Convert palette color to RGB and LAB, then calculate CIEDE2000 distance
+        const toneHex = hexFromArgb(toneHct.toInt());
+        const toneRgb = parseHex(toneHex)!; // Non-null: hexFromArgb always returns valid hex
+        const toneLab = rgbToLab(toneRgb);
+        const distance = deltaE(targetLab, toneLab);
 
-        // Add chroma penalty (less important than tone)
-        score += chromaDist * 0.3;
-
-        // Add hue penalty for colored palettes (even less important)
-        if (!targetIsNeutral && !paletteIsNeutral) {
-          score += normalizedHueDiff * 0.2;
-        }
+        // Use delta-e as the base score (lower is better)
+        let score = distance;
 
         // Bonus for matching neutral/colored nature
         if (targetIsNeutral === paletteIsNeutral) {
