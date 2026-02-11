@@ -30,7 +30,6 @@ export const McuProvider = ({
   styleId: string;
   children?: React.ReactNode;
 }) => {
-  // Store initial config values for the `initials` API
   const [initials] = useState<McuConfig>(() => configProps);
 
   const [mcuConfig, setMcuConfig] = useState(initials);
