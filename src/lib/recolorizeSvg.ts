@@ -7,6 +7,10 @@ import { converter, differenceCiede2000, parseHex } from "culori";
 import { kebabCase } from "lodash-es";
 import { STANDARD_TONES } from "../Mcu";
 import type { useMcu } from "../Mcu.context";
+import {
+  recolorizeSvgWithAI,
+  type AIRecolorizationConfig,
+} from "./recolorizeSvgWithAI";
 
 /**
  * Options for recolorizeSvg
@@ -16,13 +20,25 @@ export type RecolorizeSvgOptions = {
    * Tone matching tolerance (default: 15.0)
    */
   tolerance?: number;
+
+  /**
+   * Optional AI configuration for semantic color assignment
+   * When provided, uses AI to understand the image and assign colors based on semantic roles
+   * Falls back to distance-based approach on error
+   */
+  aiConfig?: AIRecolorizationConfig;
 };
 
 /**
  * Ultra-optimized SVG recoloring that consumes directly the palettes from the MCU Context.
  * This version reuses pre-computed palettes for maximum performance and perfect synchronization.
  *
- * **Matching Algorithm:**
+ * **Two Modes:**
+ *
+ * 1. **Distance-based (default):** Uses CIEDE2000 for perceptually accurate color matching
+ * 2. **AI-powered (optional):** Uses AI to understand semantic roles and assign colors intelligently
+ *
+ * **Distance-based Matching Algorithm:**
  * Uses CIEDE2000 (delta-e) for perceptually accurate color matching via the culori library.
  * The algorithm:
  * 1. Converts HCT colors to LAB color space using culori
@@ -32,16 +48,33 @@ export type RecolorizeSvgOptions = {
  * This ensures colored SVG elements match to colored palettes (primary, secondary, tertiary, custom)
  * rather than falling back to neutral-variant unnecessarily, using industry-standard color science.
  *
+ * **AI-powered Approach:**
+ * When `aiConfig` is provided, the function:
+ * 1. Sends the SVG to an AI service (OpenAI, Anthropic, or custom)
+ * 2. AI analyzes the image and identifies semantic roles of elements
+ * 3. Maps roles to appropriate palettes (e.g., "primary-object" → primary palette)
+ * 4. Falls back to distance-based approach on error
+ *
  * To filter palettes, pass a filtered subset of palettes as the second parameter.
  *
  * @param svgString - The SVG content as a string
  * @param palettes - The palettes to use for recoloring. Filter externally if needed.
- * @param options - Optional configuration for tolerance
- * @returns Recolorized SVG string with MCU CSS variables
+ * @param options - Optional configuration for tolerance and AI
+ * @returns Recolorized SVG string with MCU CSS variables (or Promise if using AI)
  *
  * @example
- * // Use all palettes
+ * // Use distance-based approach (default)
  * recolorizeSvg(svg, allPalettes)
+ *
+ * @example
+ * // Use AI-powered approach
+ * await recolorizeSvg(svg, allPalettes, {
+ *   aiConfig: {
+ *     provider: "openai",
+ *     apiKey: process.env.OPENAI_API_KEY,
+ *     model: "gpt-4o"
+ *   }
+ * })
  *
  * @example
  * // Filter palettes externally
@@ -56,9 +89,34 @@ export function recolorizeSvg(
   svgString: string,
   palettes: ReturnType<typeof useMcu>["allPalettes"],
   options: RecolorizeSvgOptions = {},
-): string {
-  const { tolerance = 15.0 } = options;
+): string | Promise<string> {
+  const { tolerance = 15.0, aiConfig } = options;
 
+  // If AI config is provided, use AI-powered approach with fallback
+  if (aiConfig) {
+    return recolorizeSvgWithAI(svgString, palettes, aiConfig).catch((error) => {
+      console.warn(
+        "AI-powered recolorization failed, falling back to distance-based approach:",
+        error,
+      );
+      // Fallback to distance-based approach
+      return recolorizeSvgDistanceBased(svgString, palettes, tolerance);
+    });
+  }
+
+  // Use distance-based approach
+  return recolorizeSvgDistanceBased(svgString, palettes, tolerance);
+}
+
+/**
+ * Distance-based SVG recolorization (original implementation)
+ * Extracted as a separate function for code organization and fallback support
+ */
+function recolorizeSvgDistanceBased(
+  svgString: string,
+  palettes: ReturnType<typeof useMcu>["allPalettes"],
+  tolerance: number,
+): string {
   // Create CIEDE2000 difference function and RGB to LAB converter (reused for all colors)
   const deltaE = differenceCiede2000();
   const rgbToLab = converter("lab65");

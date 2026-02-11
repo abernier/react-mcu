@@ -37,6 +37,7 @@ Extra:
       (not only the core-colors)
 - [x] `adaptiveShades`: shades adapt to the light/dark mode (instead of being
       fixed)
+- [x] **AI-powered SVG recolorization**: Intelligent color assignment based on semantic understanding of image elements (see [docs/AI_RECOLORIZATION.md](docs/AI_RECOLORIZATION.md))
 
 # Usage
 
