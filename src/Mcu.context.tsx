@@ -31,6 +31,7 @@ export const McuProvider = ({
   children?: React.ReactNode;
 }) => {
   const [initials] = useState<McuConfig>(() => configProps);
+  // console.log("McuProvider initials", initials);
 
   const [mcuConfig, setMcuConfig] = useState(initials);
 
