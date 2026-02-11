@@ -90,7 +90,7 @@ describe("Mcu", () => {
     expect(styleContent).not.toContain("--mcu-success-0:");
     expect(styleContent).not.toContain("--mcu-success-100:");
 
-    // Rerender with no custom colors
+    // Rerender with no custom colors (empty array)
     rerender(
       <Mcu source="#6750A4" customColors={[]}>
         <div>Test content</div>
@@ -98,6 +98,22 @@ describe("Mcu", () => {
     );
 
     // Check that all custom color variables are removed
+    styleTag = document.querySelector("#mcu-styles");
+    styleContent = styleTag?.textContent || "";
+
+    expect(styleContent).not.toContain("--mcu-brand:");
+    expect(styleContent).not.toContain("--mcu-on-brand:");
+    expect(styleContent).not.toContain("--mcu-brand-container:");
+    expect(styleContent).not.toContain("--mcu-on-brand-container:");
+
+    // Rerender without customColors prop at all (should use default empty array)
+    rerender(
+      <Mcu source="#6750A4">
+        <div>Test content</div>
+      </Mcu>,
+    );
+
+    // Check that custom colors are still not present
     styleTag = document.querySelector("#mcu-styles");
     styleContent = styleTag?.textContent || "";
 
