@@ -78,7 +78,6 @@ export function recolorizeSvg(
       isNeutral,
     };
   });
-  console.log(`Prepared candidate palettes`, candidates);
 
   // 2. THE CACHE (To avoid recalculating the same pixel 50 times)
   const tokenCache = new Map<string, string>();
@@ -157,7 +156,6 @@ export function recolorizeSvg(
     }
 
     tokenCache.set(hexInput, bestToken);
-    console.log("bestToken", { hexInput, bestToken, bestScore });
     return bestToken;
   };
 
