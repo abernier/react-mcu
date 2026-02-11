@@ -61,11 +61,6 @@ describe("recolorizeSvg - Gradient support", () => {
     `;
     const result = recolorizeSvg(svg, mockPalettes);
 
-    // Debug output - show the full result
-    console.log("\n=== GRADIENT TEST FULL RESULT ===");
-    console.log(result);
-    console.log("=== END RESULT ===\n");
-
     // Gradient stops should be recolorized
     expect(result).toContain("var(--mcu-");
     expect(result).not.toContain("#FF6B6B");
