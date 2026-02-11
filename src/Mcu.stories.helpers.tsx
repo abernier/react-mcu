@@ -1,8 +1,8 @@
-import { Mcu, STANDARD_TONES } from "./Mcu";
-import type { ComponentProps } from "react";
-import { kebabCase, upperFirst } from "lodash-es";
-import { cn } from "./lib/cn";
 import { cva, type VariantProps } from "class-variance-authority";
+import { kebabCase, upperFirst } from "lodash-es";
+import type { ComponentProps } from "react";
+import { cn } from "./lib/cn";
+import { Mcu, STANDARD_TONES } from "./Mcu";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (

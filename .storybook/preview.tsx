@@ -1,7 +1,6 @@
 import type { Preview } from "@storybook/react-vite";
-import { useEffect } from "react";
-import "./preview.css";
 import "../src/tailwind.css";
+import "./preview.css";
 
 import { withThemeByClassName } from "@storybook/addon-themes";
 
