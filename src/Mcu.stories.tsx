@@ -6,6 +6,8 @@ import { Mcu, schemeNames, type McuConfig } from "./Mcu";
 import { Layout, Scheme, Shades, TailwindScheme } from "./Mcu.stories.helpers";
 import { allModes } from "../.storybook/modes";
 
+import exampleSvg from "./assets/example.svg?raw";
+
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   component: Mcu,
@@ -846,33 +848,13 @@ const RecolorizedIllustration = ({
   return <div dangerouslySetInnerHTML={{ __html: recoloredSvg }} />;
 };
 
-// Example SVG with various colors that will be recolorized
-const exampleSvg = `
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="200" height="200" fill="#F5F5F5"/>
-  
-  <!-- Orange shapes (will map to primary palette) -->
-  <circle cx="50" cy="50" r="30" fill="#ffaf1e"/>
-  <circle cx="150" cy="50" r="20" fill="#faa11c"/>
-  <rect x="20" y="100" width="40" height="40" fill="#ec801a"/>
-  
-  <!-- Darker orange/red shapes -->
-  <circle cx="100" cy="100" r="25" fill="#d46c1a"/>
-  <rect x="120" y="100" width="30" height="30" fill="#97381c"/>
-  <circle cx="50" cy="150" r="15" fill="#7b2719"/>
-  <rect x="80" y="140" width="25" height="25" fill="#591716"/>
-  
-  <!-- Light accent -->
-  <circle cx="150" cy="150" r="20" fill="#fbc775"/>
-</svg>
-`;
-
 function Scene({
+  svgContent = exampleSvg,
   customColors,
   includedPalettesNames = [], // if empty, use all palettes
   excludedPalettesNames = [], // palettes to exclude
 }: {
+  svgContent?: string;
   customColors?: McuConfig["customColors"];
   includedPalettesNames?: string[];
   excludedPalettesNames?: string[];
@@ -903,13 +885,13 @@ function Scene({
       <div className="space-y-4 grid grid-cols-2 gap-2">
         <div>
           <h3 className="text-lg font-bold mb-2">Original SVG</h3>
-          <div dangerouslySetInnerHTML={{ __html: exampleSvg }} />
+          <div dangerouslySetInnerHTML={{ __html: svgContent }} />
         </div>
 
         <div>
           <h3 className="text-lg font-bold mb-2">Recolorized SVG</h3>
           <RecolorizedIllustration
-            svgContent={exampleSvg}
+            svgContent={svgContent}
             palettes={palettes}
           />
         </div>
