@@ -6,12 +6,7 @@ import { Mcu, schemeNames, type McuConfig } from "./Mcu";
 import { Layout, Scheme, Shades, TailwindScheme } from "./Mcu.stories.helpers";
 import { allModes } from "../.storybook/modes";
 
-// Import SVG files as raw strings
-import exampleSvg from "./assets/svgs/example.svg?raw";
-import landscapeSvg from "./assets/svgs/landscape.svg?raw";
-import geometricSvg from "./assets/svgs/geometric.svg?raw";
-import iconSetSvg from "./assets/svgs/icon-set.svg?raw";
-import uiComponentsSvg from "./assets/svgs/ui-components.svg?raw";
+import exampleSvg from "./assets/example.svg?raw";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -967,94 +962,6 @@ export const RecolorizeSvgSt2: Story = {
         //   "secondary",
         //   "tertiary"
         // ]}
-        excludedPalettesNames={["error"]}
-      />
-    </Mcu>
-  ),
-};
-
-export const RecolorizeLandscape: Story = {
-  name: "Recolorized SVG - Landscape",
-  args: {
-    source: "#769CDF",
-    contrastAllColors: true,
-    adaptiveShades: true,
-    customColors: [
-      { name: "myCustomColor1", hex: customColor1, blend: true },
-      { name: "myCustomColor2", hex: customColor2, blend: true },
-    ],
-  },
-  render: (args) => (
-    <Mcu {...args}>
-      <Scene
-        svgContent={landscapeSvg}
-        customColors={args.customColors}
-        excludedPalettesNames={["error"]}
-      />
-    </Mcu>
-  ),
-};
-
-export const RecolorizeGeometric: Story = {
-  name: "Recolorized SVG - Geometric",
-  args: {
-    source: "#769CDF",
-    contrastAllColors: true,
-    adaptiveShades: true,
-    customColors: [
-      { name: "myCustomColor1", hex: customColor1, blend: true },
-      { name: "myCustomColor2", hex: customColor2, blend: true },
-    ],
-  },
-  render: (args) => (
-    <Mcu {...args}>
-      <Scene
-        svgContent={geometricSvg}
-        customColors={args.customColors}
-        excludedPalettesNames={["error"]}
-      />
-    </Mcu>
-  ),
-};
-
-export const RecolorizeIconSet: Story = {
-  name: "Recolorized SVG - Icon Set",
-  args: {
-    source: "#769CDF",
-    contrastAllColors: true,
-    adaptiveShades: true,
-    customColors: [
-      { name: "myCustomColor1", hex: customColor1, blend: true },
-      { name: "myCustomColor2", hex: customColor2, blend: true },
-    ],
-  },
-  render: (args) => (
-    <Mcu {...args}>
-      <Scene
-        svgContent={iconSetSvg}
-        customColors={args.customColors}
-        excludedPalettesNames={["error"]}
-      />
-    </Mcu>
-  ),
-};
-
-export const RecolorizeUIComponents: Story = {
-  name: "Recolorized SVG - UI Components",
-  args: {
-    source: "#769CDF",
-    contrastAllColors: true,
-    adaptiveShades: true,
-    customColors: [
-      { name: "myCustomColor1", hex: customColor1, blend: true },
-      { name: "myCustomColor2", hex: customColor2, blend: true },
-    ],
-  },
-  render: (args) => (
-    <Mcu {...args}>
-      <Scene
-        svgContent={uiComponentsSvg}
-        customColors={args.customColors}
         excludedPalettesNames={["error"]}
       />
     </Mcu>
