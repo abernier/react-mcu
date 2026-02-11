@@ -25,74 +25,23 @@ const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
 export const McuProvider = ({
   styleId,
   children,
-  source,
-  scheme,
-  contrast,
-  primary,
-  secondary,
-  tertiary,
-  neutral,
-  neutralVariant,
-  error,
-  colorMatch,
-  customColors,
-  contrastAllColors,
-  adaptiveShades,
+  ...configProps
 }: McuConfig & {
   styleId: string;
   children?: React.ReactNode;
 }) => {
   // Store initial config values for the `initials` API
-  const [initials] = useState<McuConfig>(() => ({
-    source,
-    scheme,
-    contrast,
-    primary,
-    secondary,
-    tertiary,
-    neutral,
-    neutralVariant,
-    error,
-    colorMatch,
-    customColors,
-    contrastAllColors,
-    adaptiveShades,
-  }));
+  const [initials] = useState<McuConfig>(() => configProps);
 
   const [mcuConfig, setMcuConfig] = useState(initials);
 
-  // Update mcuConfig when any of the relevant config props change
+  // Update mcuConfig when configProps change
+  // Use a stable key to detect when config values have changed
+  const configKey = JSON.stringify(configProps);
   React.useEffect(() => {
-    setMcuConfig({
-      source,
-      scheme,
-      contrast,
-      primary,
-      secondary,
-      tertiary,
-      neutral,
-      neutralVariant,
-      error,
-      colorMatch,
-      customColors,
-      contrastAllColors,
-      adaptiveShades,
-    });
-  }, [
-    source,
-    scheme,
-    contrast,
-    primary,
-    secondary,
-    tertiary,
-    neutral,
-    neutralVariant,
-    error,
-    colorMatch,
-    customColors,
-    contrastAllColors,
-    adaptiveShades,
-  ]);
+    setMcuConfig(configProps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configKey]);
 
   const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
     () => generateCss(mcuConfig),
