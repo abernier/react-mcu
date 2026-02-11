@@ -25,15 +25,23 @@ const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
 export const McuProvider = ({
   styleId,
   children,
-  ...props
+  ...configProps
 }: McuConfig & {
   styleId: string;
   children?: React.ReactNode;
 }) => {
-  const [initials] = useState<McuConfig>(() => props);
+  const [initials] = useState<McuConfig>(() => configProps);
   // console.log("McuProvider initials", initials);
 
   const [mcuConfig, setMcuConfig] = useState(initials);
+
+  // Update mcuConfig when configProps change
+  // Use a stable key to detect when config values have changed
+  const configKey = JSON.stringify(configProps);
+  React.useEffect(() => {
+    setMcuConfig(configProps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configKey]);
 
   const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
     () => generateCss(mcuConfig),
