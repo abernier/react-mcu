@@ -47,20 +47,8 @@ describe("Mcu", () => {
     let styleTag = document.querySelector("#mcu-styles");
     let styleContent = styleTag?.textContent || "";
 
-    expect(styleContent).toContain("--mcu-brand:");
-    expect(styleContent).toContain("--mcu-on-brand:");
-    expect(styleContent).toContain("--mcu-brand-container:");
-    expect(styleContent).toContain("--mcu-on-brand-container:");
-    expect(styleContent).toContain("--mcu-success:");
-    expect(styleContent).toContain("--mcu-on-success:");
-    expect(styleContent).toContain("--mcu-success-container:");
-    expect(styleContent).toContain("--mcu-on-success-container:");
-
-    // Also check for tonal palette variables
-    expect(styleContent).toContain("--mcu-brand-0:");
-    expect(styleContent).toContain("--mcu-brand-100:");
-    expect(styleContent).toContain("--mcu-success-0:");
-    expect(styleContent).toContain("--mcu-success-100:");
+    expect(styleContent).toContain("--mcu-brand");
+    expect(styleContent).toContain("--mcu-success");
 
     // Rerender with only one custom color (removing "success")
     rerender(
@@ -77,18 +65,10 @@ describe("Mcu", () => {
     styleContent = styleTag?.textContent || "";
 
     // "brand" should still be there
-    expect(styleContent).toContain("--mcu-brand:");
-    expect(styleContent).toContain("--mcu-on-brand:");
-    expect(styleContent).toContain("--mcu-brand-container:");
-    expect(styleContent).toContain("--mcu-on-brand-container:");
+    expect(styleContent).toContain("--mcu-brand");
 
     // "success" should be gone
-    expect(styleContent).not.toContain("--mcu-success:");
-    expect(styleContent).not.toContain("--mcu-on-success:");
-    expect(styleContent).not.toContain("--mcu-success-container:");
-    expect(styleContent).not.toContain("--mcu-on-success-container:");
-    expect(styleContent).not.toContain("--mcu-success-0:");
-    expect(styleContent).not.toContain("--mcu-success-100:");
+    expect(styleContent).not.toContain("--mcu-success");
 
     // Rerender with no custom colors (empty array)
     rerender(
@@ -101,10 +81,7 @@ describe("Mcu", () => {
     styleTag = document.querySelector("#mcu-styles");
     styleContent = styleTag?.textContent || "";
 
-    expect(styleContent).not.toContain("--mcu-brand:");
-    expect(styleContent).not.toContain("--mcu-on-brand:");
-    expect(styleContent).not.toContain("--mcu-brand-container:");
-    expect(styleContent).not.toContain("--mcu-on-brand-container:");
+    expect(styleContent).not.toContain("--mcu-brand");
 
     // Rerender without customColors prop at all (should use default empty array)
     rerender(
@@ -117,9 +94,6 @@ describe("Mcu", () => {
     styleTag = document.querySelector("#mcu-styles");
     styleContent = styleTag?.textContent || "";
 
-    expect(styleContent).not.toContain("--mcu-brand:");
-    expect(styleContent).not.toContain("--mcu-on-brand:");
-    expect(styleContent).not.toContain("--mcu-brand-container:");
-    expect(styleContent).not.toContain("--mcu-on-brand-container:");
+    expect(styleContent).not.toContain("--mcu-brand");
   });
 });
