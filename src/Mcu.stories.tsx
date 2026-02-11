@@ -6,7 +6,25 @@ import { Mcu, schemeNames, type McuConfig } from "./Mcu";
 import { useMcu } from "./Mcu.context";
 import { Layout, Scheme, Shades, TailwindScheme } from "./Mcu.stories.helpers";
 
-import exampleSvg from "./assets/example.svg?raw";
+// Import all SVG files from assets folder
+import abstractSvgRaw from "./assets/abstract.svg?raw";
+import exampleSvgRaw from "./assets/example.svg?raw";
+import geometricSvgRaw from "./assets/geometric.svg?raw";
+import shapesSvgRaw from "./assets/shapes.svg?raw";
+
+// Create a mapping of filename to SVG content
+const svgFiles = {
+  example: exampleSvgRaw,
+  abstract: abstractSvgRaw,
+  geometric: geometricSvgRaw,
+  shapes: shapesSvgRaw,
+} as const;
+
+// Get the list of available SVG filenames for the control
+const svgFileNames = Object.keys(svgFiles) as Array<keyof typeof svgFiles>;
+
+// For backwards compatibility
+const exampleSvg = svgFiles["example"];
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -919,19 +937,35 @@ export const RecolorizeSvgSt1: Story = {
     contrastAllColors: true,
     adaptiveShades: true,
   },
-  render: (args) => (
-    <Mcu {...args}>
-      <Scene
-        customColors={args.customColors}
-        // includedPalettesNames={[
-        //   "primary",
-        //   "secondary",
-        //   "tertiary"
-        // ]}
-        excludedPalettesNames={["error"]}
-      />
-    </Mcu>
-  ),
+  argTypes: {
+    svgFile: {
+      control: "select",
+      options: svgFileNames,
+      description: "Select which SVG file to display",
+    },
+  } as any,
+  render: (args) => {
+    const argsWithSvg = args as typeof args & {
+      svgFile?: keyof typeof svgFiles;
+    };
+    const svgContent = argsWithSvg.svgFile
+      ? svgFiles[argsWithSvg.svgFile]
+      : exampleSvg;
+    return (
+      <Mcu {...args}>
+        <Scene
+          svgContent={svgContent}
+          customColors={args.customColors}
+          // includedPalettesNames={[
+          //   "primary",
+          //   "secondary",
+          //   "tertiary"
+          // ]}
+          excludedPalettesNames={["error"]}
+        />
+      </Mcu>
+    );
+  },
 };
 
 export const RecolorizeSvgSt2: Story = {
@@ -953,17 +987,33 @@ export const RecolorizeSvgSt2: Story = {
       { name: "myCustomColor2", hex: customColor2, blend: true },
     ],
   },
-  render: (args) => (
-    <Mcu {...args}>
-      <Scene
-        customColors={args.customColors}
-        // includedPalettesNames={[
-        //   "primary",
-        //   "secondary",
-        //   "tertiary"
-        // ]}
-        excludedPalettesNames={["error"]}
-      />
-    </Mcu>
-  ),
+  argTypes: {
+    svgFile: {
+      control: "select",
+      options: svgFileNames,
+      description: "Select which SVG file to display",
+    },
+  } as any,
+  render: (args) => {
+    const argsWithSvg = args as typeof args & {
+      svgFile?: keyof typeof svgFiles;
+    };
+    const svgContent = argsWithSvg.svgFile
+      ? svgFiles[argsWithSvg.svgFile]
+      : exampleSvg;
+    return (
+      <Mcu {...args}>
+        <Scene
+          svgContent={svgContent}
+          customColors={args.customColors}
+          // includedPalettesNames={[
+          //   "primary",
+          //   "secondary",
+          //   "tertiary"
+          // ]}
+          excludedPalettesNames={["error"]}
+        />
+      </Mcu>
+    );
+  },
 };
