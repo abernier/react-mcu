@@ -42,25 +42,22 @@ export const McuProvider = ({
   styleId: string;
   children?: React.ReactNode;
 }) => {
-  const initials = useMemo(
-    (): McuConfig => ({
-      source,
-      scheme,
-      contrast,
-      primary,
-      secondary,
-      tertiary,
-      neutral,
-      neutralVariant,
-      error,
-      colorMatch,
-      customColors,
-      contrastAllColors,
-      adaptiveShades,
-    }),
-    [], // eslint-disable-line react-hooks/exhaustive-deps
-    // Empty deps - we only want initial values
-  );
+  // Store initial config values for the `initials` API
+  const [initials] = useState<McuConfig>(() => ({
+    source,
+    scheme,
+    contrast,
+    primary,
+    secondary,
+    tertiary,
+    neutral,
+    neutralVariant,
+    error,
+    colorMatch,
+    customColors,
+    contrastAllColors,
+    adaptiveShades,
+  }));
 
   const [mcuConfig, setMcuConfig] = useState(initials);
 
