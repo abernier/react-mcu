@@ -3,9 +3,7 @@
 import {
   argbFromHex,
   Blend,
-  CorePalette,
   type CustomColor,
-  customColor,
   DynamicColor,
   DynamicScheme,
   Hct,
