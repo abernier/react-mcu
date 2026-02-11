@@ -11,6 +11,25 @@ import { useMcu } from "./Mcu.context";
  * like Next.js App Router, where components are server-rendered by default
  * and client components must be explicitly marked with "use client".
  *
+ * DIFFERENCE WITH Mcu.test.tsx (non-RSC tests):
+ * ------------------------------------------------
+ * Mcu.test.tsx:
+ *   - 1 simple test that verifies basic CSS variable injection
+ *   - Tests the core functionality only
+ *
+ * Mcu.rsc.test.tsx (this file):
+ *   - 8 comprehensive tests covering RSC-specific scenarios
+ *   - Tests multiple color schemes (tonalSpot, vibrant)
+ *   - Tests custom colors functionality
+ *   - Tests the useMcu hook (setMcuConfig, getMcuColor)
+ *   - Tests dynamic color updates
+ *   - Tests server-side imports (simulating RSC behavior)
+ *
+ * WHY TWO SEPARATE FILES?
+ * - Mcu.test.tsx: Basic smoke test for core functionality
+ * - Mcu.rsc.test.tsx: Comprehensive test suite ensuring the component
+ *   works in RSC environments where "use client" is critical
+ *
  * Related: https://github.com/abernier/react-mcu/pull/50
  */
 describe("RSC Compatibility - Functional Tests", () => {
