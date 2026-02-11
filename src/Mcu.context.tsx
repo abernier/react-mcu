@@ -1,6 +1,9 @@
 "use client";
 
-import { hexFromArgb } from "@material/material-color-utilities";
+import {
+  hexFromArgb,
+  type TonalPalette,
+} from "@material/material-color-utilities";
 import React, {
   useCallback,
   useInsertionEffect,
@@ -14,33 +17,33 @@ type Api = {
   initials: McuConfig;
   setMcuConfig: (config: McuConfig) => void;
   getMcuColor: (colorName: TokenName, theme?: string) => string;
+  allPalettes: Record<string, TonalPalette>;
 };
 
 const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
 
 export const McuProvider = ({
-  source: initialSource,
-  scheme: initialScheme,
-  contrast: initialContrast,
-  customColors: initialCustomColors,
-  contrastAllColors: initialContrastAllColors,
   styleId,
   children,
+  ...configProps
 }: McuConfig & {
   styleId: string;
   children?: React.ReactNode;
 }) => {
-  const [initials] = useState<McuConfig>(() => ({
-    source: initialSource,
-    scheme: initialScheme,
-    contrast: initialContrast,
-    customColors: initialCustomColors,
-    contrastAllColors: initialContrastAllColors,
-  }));
+  const [initials] = useState<McuConfig>(() => configProps);
   // console.log("McuProvider initials", initials);
+
   const [mcuConfig, setMcuConfig] = useState(initials);
 
-  const { css, mergedColorsLight, mergedColorsDark } = useMemo(
+  // Update mcuConfig when configProps change
+  // Use a stable key to detect when config values have changed
+  const configKey = JSON.stringify(configProps);
+  React.useEffect(() => {
+    setMcuConfig(configProps);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [configKey]);
+
+  const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
     () => generateCss(mcuConfig),
     [mcuConfig],
   );
@@ -83,8 +86,9 @@ export const McuProvider = ({
         initials,
         setMcuConfig,
         getMcuColor,
+        allPalettes,
       }) satisfies Api,
-    [getMcuColor, initials],
+    [getMcuColor, initials, allPalettes],
   );
 
   return <Provider value={value}>{children}</Provider>;

@@ -35,6 +35,8 @@ Extra:
 
 - [x] `contrastAllColors`: contrast also applies to custom-colors and shades
       (not only the core-colors)
+- [x] `adaptiveShades`: shades adapt to the light/dark mode (instead of being
+      fixed)
 
 # Usage
 

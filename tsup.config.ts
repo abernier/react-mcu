@@ -1,5 +1,5 @@
-import { defineConfig } from "tsup";
 import { copyFileSync } from "fs";
+import { defineConfig } from "tsup";
 
 export default defineConfig({
   entryPoints: ["src/index.ts"],
