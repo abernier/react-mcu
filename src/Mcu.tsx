@@ -86,11 +86,9 @@ export type McuConfig = {
   error?: string;
   /**
    * Color match mode for core colors.
-   * When true, stays true to input colors without harmonization.
-   * When false (default), colors may be adjusted for better harmonization.
+   * When true, stays true to input colors by preserving their original chroma (saturation).
+   * When false (default), colors may be adjusted to use the scheme's chroma for better harmonization.
    * Corresponds to "Color match - Stay true to my color inputs" in Material Theme Builder.
-   *
-   * @deprecated Not yet implemented. This prop is currently ignored.
    */
   colorMatch?: boolean;
   /**
@@ -495,6 +493,7 @@ function createColorPalette(
   colorDef: ColorDefinition & { hex: string },
   baseScheme: DynamicScheme,
   effectiveSourceForHarmonization: number,
+  colorMatch: boolean,
 ) {
   // Get the color value, applying harmonization if needed
   const colorArgb = argbFromHex(colorDef.hex);
@@ -506,7 +505,11 @@ function createColorPalette(
 
   // Determine which chroma to use based on color type
   let targetChroma: number;
-  if (colorDef.core && colorDef.chromaSource) {
+  if (colorMatch && colorDef.core) {
+    // Color match mode: preserve the input color's original chroma
+    // This corresponds to "Stay true to my color inputs" in Material Theme Builder
+    targetChroma = hct.chroma;
+  } else if (colorDef.core && colorDef.chromaSource) {
     // Core colors use specific chroma values from the base scheme
     if (colorDef.chromaSource === "neutral") {
       targetChroma = baseScheme.neutralPalette.chroma;
@@ -617,7 +620,12 @@ export function generateCss({
   const colorPalettes = Object.fromEntries(
     definedColors.map((colorDef) => [
       colorDef.name,
-      createColorPalette(colorDef, baseScheme, effectiveSourceForHarmonization),
+      createColorPalette(
+        colorDef,
+        baseScheme,
+        effectiveSourceForHarmonization,
+        colorMatch,
+      ),
     ]),
   );
 

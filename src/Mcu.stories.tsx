@@ -51,6 +51,9 @@ const meta = {
     contrast: {
       control: { type: "range", min: -1, max: 1, step: 0.1 },
     },
+    colorMatch: {
+      control: "boolean",
+    },
     contrastAllColors: {
       control: "boolean",
     },
@@ -756,25 +759,42 @@ export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantSt: Story = {
 
 //
 
-// export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantColorMatchSt: Story =
-//   {
-//     name: "[primary][secondary][tertiary][error][neutral][neutralVariant][colorMatch]",
-//     args: {
-//       source: "#769CDF", // keep source because required (but primary will be considered effective one)
-//       primary: "#cab337",
-//       secondary: "#b03a3a",
-//       tertiary: "#2138d2",
-//       error: "#479200",
-//       neutral: "#957FF1",
-//       neutralVariant: "#007EDF",
-//       colorMatch: true,
-//     },
-//     render: (args) => (
-//       <Mcu {...args}>
-//         <Bar customColors={args.customColors} />
-//       </Mcu>
-//     ),
-//   };
+export const PrimarySecondaryTertiaryErrorNeutralNeutralVariantColorMatchSt: Story =
+  {
+    name: "[primary][secondary][tertiary][error][neutral][neutralVariant][colorMatch]",
+    args: {
+      source: "#769CDF",
+      primary: "#cab337",
+      secondary: "#b03a3a",
+      tertiary: "#2138d2",
+      error: "#479200",
+      neutral: "#957FF1",
+      neutralVariant: "#007EDF",
+      colorMatch: true,
+    },
+    render: (args) => (
+      <Mcu {...args}>
+        <Layout>
+          <Scheme
+            theme="light"
+            title="Light scheme"
+            customColors={args.customColors}
+          >
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+
+          <Scheme
+            theme="dark"
+            title="Dark scheme"
+            customColors={args.customColors}
+          >
+            {args.adaptiveShades && <Shades customColors={args.customColors} />}
+          </Scheme>
+          {!args.adaptiveShades && <Shades customColors={args.customColors} />}
+        </Layout>
+      </Mcu>
+    ),
+  };
 
 //
 //  ██████ ██    ██ ███████ ████████  ██████  ███    ███
