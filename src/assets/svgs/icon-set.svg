@@ -1,0 +1,22 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="200" fill="#F0F0F0"/>
+  
+  <!-- Heart icon -->
+  <path d="M50,60 C50,50 40,40 30,40 C20,40 10,50 10,60 C10,80 30,100 50,120 C70,100 90,80 90,60 C90,50 80,40 70,40 C60,40 50,50 50,60 Z" fill="#E74C3C"/>
+  
+  <!-- Star icon -->
+  <polygon points="150,30 160,60 190,60 165,80 175,110 150,90 125,110 135,80 110,60 140,60" fill="#F39C12"/>
+  
+  <!-- Home icon -->
+  <path d="M50,140 L50,190 L90,190 L90,160 L60,160 L60,190 L50,190 L50,140 M50,140 L70,120 L90,140" fill="#3498DB"/>
+  <rect x="60" y="160" width="20" height="30" fill="#2980B9"/>
+  
+  <!-- Settings icon (gear) -->
+  <circle cx="150" cy="170" r="20" fill="#95A5A6"/>
+  <circle cx="150" cy="170" r="12" fill="#7F8C8D"/>
+  <rect x="148" y="145" width="4" height="10" fill="#95A5A6"/>
+  <rect x="148" y="185" width="4" height="10" fill="#95A5A6"/>
+  <rect x="125" y="168" width="10" height="4" fill="#95A5A6"/>
+  <rect x="165" y="168" width="10" height="4" fill="#95A5A6"/>
+</svg>

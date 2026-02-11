@@ -1,0 +1,20 @@
+<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sky -->
+  <rect width="200" height="150" fill="#87CEEB"/>
+  
+  <!-- Sun -->
+  <circle cx="180" cy="30" r="15" fill="#FFD700"/>
+  
+  <!-- Mountains -->
+  <polygon points="0,150 40,80 80,150" fill="#8B7355"/>
+  <polygon points="50,150 100,60 150,150" fill="#A0826D"/>
+  <polygon points="120,150 160,70 200,150" fill="#8B7355"/>
+  
+  <!-- Trees -->
+  <rect x="20" y="110" width="8" height="40" fill="#8B4513"/>
+  <circle cx="24" cy="110" r="12" fill="#228B22"/>
+  <rect x="60" y="120" width="8" height="30" fill="#8B4513"/>
+  <circle cx="64" cy="120" r="10" fill="#2E8B57"/>
+  <rect x="140" y="115" width="8" height="35" fill="#8B4513"/>
+  <circle cx="144" cy="115" r="11" fill="#228B22"/>
+</svg>
