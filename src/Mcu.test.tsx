@@ -1,7 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { z } from "zod";
-import { Mcu, STANDARD_TONES, exportTheme, exportTokenNames } from "./Mcu.js";
+import { Mcu, STANDARD_TONES, exportTheme, tokenNames } from "./Mcu.js";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -107,8 +107,8 @@ describe("Mcu", () => {
 const hexColor = z.string().regex(/^#[0-9A-F]{6}$/);
 
 const schemeSchema = z.object(
-  Object.fromEntries(exportTokenNames.map((name) => [name, hexColor])) as {
-    [K in (typeof exportTokenNames)[number]]: typeof hexColor;
+  Object.fromEntries(tokenNames.map((name) => [name, hexColor])) as {
+    [K in (typeof tokenNames)[number]]: typeof hexColor;
   },
 );
 

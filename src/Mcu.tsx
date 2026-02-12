@@ -231,66 +231,6 @@ export function Mcu({
 
 // all colors https://github.com/material-foundation/material-color-utilities/blob/a800772dbf1adae9b5072daf975c1af7c9fddfe1/typescript/dynamiccolor/material_dynamic_colors.ts#L320
 export const tokenNames = [
-  "background",
-  "onBackground",
-  "surface",
-  "surfaceDim",
-  "surfaceBright",
-  "surfaceContainerLowest",
-  "surfaceContainerLow",
-  "surfaceContainer",
-  "surfaceContainerHigh",
-  "surfaceContainerHighest",
-  "onSurface",
-  "onSurfaceVariant",
-  "outline",
-  "outlineVariant",
-  "inverseSurface",
-  "inverseOnSurface",
-  "primary",
-  // "primaryDim",
-  "onPrimary",
-  "primaryContainer",
-  "onPrimaryContainer",
-  "primaryFixed",
-  "primaryFixedDim",
-  "onPrimaryFixed",
-  "onPrimaryFixedVariant",
-  "inversePrimary",
-  "primaryFixed",
-  "primaryFixedDim",
-  "onPrimaryFixed",
-  "onPrimaryFixedVariant",
-  "secondary",
-  // "secondaryDim",
-  "onSecondary",
-  "secondaryContainer",
-  "onSecondaryContainer",
-  "secondaryFixed",
-  "secondaryFixedDim",
-  "onSecondaryFixed",
-  "onSecondaryFixedVariant",
-  "tertiary",
-  // "tertiaryDim",
-  "onTertiary",
-  "tertiaryContainer",
-  "onTertiaryContainer",
-  "tertiaryFixed",
-  "tertiaryFixedDim",
-  "onTertiaryFixed",
-  "onTertiaryFixedVariant",
-  "error",
-  // "errorDim",
-  "onError",
-  "errorContainer",
-  "onErrorContainer",
-  "scrim", // added manually, was missing
-  "shadow", // added manually, was missing
-] as const;
-export type TokenName = (typeof tokenNames)[number];
-
-// Token names used in Material Theme Builder export (includes surfaceTint and surfaceVariant)
-export const exportTokenNames = [
   "primary",
   "surfaceTint",
   "onPrimary",
@@ -341,6 +281,7 @@ export const exportTokenNames = [
   "surfaceContainerHigh",
   "surfaceContainerHighest",
 ] as const;
+export type TokenName = (typeof tokenNames)[number];
 
 //
 // Utility function to convert an array of keys to an object/dictionary of key-value pairs
@@ -937,7 +878,7 @@ export function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
   // Generate scheme tokens for a given DynamicScheme
   const schemeToTokens = (s: DynamicScheme): MaterialThemeBuilderScheme => {
     const tokens: MaterialThemeBuilderScheme = {};
-    for (const name of exportTokenNames) {
+    for (const name of tokenNames) {
       const dynamicColor = MaterialDynamicColors[
         name as keyof typeof MaterialDynamicColors
       ] as DynamicColor | undefined;
