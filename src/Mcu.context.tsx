@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  hexFromArgb,
-  type TonalPalette,
-} from "@material/material-color-utilities";
+import { hexFromArgb, TonalPalette } from "@material/material-color-utilities";
 import React, {
   useCallback,
   useInsertionEffect,
@@ -11,13 +8,20 @@ import React, {
   useState,
 } from "react";
 import { createRequiredContext } from "./lib/createRequiredContext";
-import { generateCss, type McuConfig, type TokenName } from "./Mcu";
+import {
+  generateCss,
+  type McuConfig,
+  schemeToTokens,
+  type TokenName,
+} from "./Mcu";
+import { exportTheme } from "./Mcu.exporter";
 
 type Api = {
   initials: McuConfig;
   setMcuConfig: (config: McuConfig) => void;
   getMcuColor: (colorName: TokenName, theme?: string) => string;
   allPalettes: Record<string, TonalPalette>;
+  exportTheme: () => ReturnType<typeof exportTheme>;
 };
 
 const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
@@ -43,10 +47,14 @@ export const McuProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey]);
 
-  const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
-    () => generateCss(mcuConfig),
-    [mcuConfig],
-  );
+  const {
+    css,
+    mergedColorsLight,
+    mergedColorsDark,
+    allPalettes,
+    createSchemeForExport,
+    exportPalettes,
+  } = useMemo(() => generateCss(mcuConfig), [mcuConfig]);
 
   //
   // <style>
@@ -77,6 +85,21 @@ export const McuProvider = ({
   );
 
   //
+  // exportTheme
+  //
+
+  const exportThemeFn = useCallback(
+    () =>
+      exportTheme(
+        mcuConfig,
+        createSchemeForExport,
+        schemeToTokens,
+        exportPalettes,
+      ),
+    [mcuConfig, createSchemeForExport, exportPalettes],
+  );
+
+  //
   // api
   //
 
@@ -87,8 +110,9 @@ export const McuProvider = ({
         setMcuConfig,
         getMcuColor,
         allPalettes,
+        exportTheme: exportThemeFn,
       }) satisfies Api,
-    [getMcuColor, initials, allPalettes],
+    [getMcuColor, initials, allPalettes, exportThemeFn],
   );
 
   return <Provider value={value}>{children}</Provider>;

@@ -118,7 +118,7 @@ export type McuConfig = {
   adaptiveShades?: boolean;
 };
 
-const schemesMap = {
+export const schemesMap = {
   tonalSpot: SchemeTonalSpot,
   monochrome: SchemeMonochrome,
   neutral: SchemeNeutral,
@@ -130,7 +130,7 @@ const schemesMap = {
 export const schemeNames = Object.keys(
   schemesMap,
 ) as (keyof typeof schemesMap)[];
-type SchemeName = (typeof schemeNames)[number];
+export type SchemeName = (typeof schemeNames)[number];
 
 export const DEFAULT_SCHEME: SchemeName = "tonalSpot";
 export const DEFAULT_CONTRAST = 0;
@@ -160,7 +160,7 @@ const Variant = {
 } as const;
 
 // Map scheme names to Variant values
-const schemeToVariant: Record<SchemeName, number> = {
+export const schemeToVariant: Record<SchemeName, number> = {
   tonalSpot: Variant.TONAL_SPOT,
   monochrome: Variant.MONOCHROME,
   neutral: Variant.NEUTRAL,
@@ -234,6 +234,8 @@ export const tokenNames = [
   "background",
   "onBackground",
   "surface",
+  "surfaceTint", // for exporter
+  "surfaceVariant", // for exporter
   "surfaceDim",
   "surfaceBright",
   "surfaceContainerLowest",
@@ -327,7 +329,7 @@ function toRecord<T, K extends string, V>(
 //
 
 // Extended color definition that includes both core and custom colors
-type ColorDefinition = {
+export type ColorDefinition = {
   name: string;
   hex?: string;
   blend?: boolean;
@@ -491,7 +493,7 @@ const generateTonalPaletteVars = (
 // Helper function to create a palette for any color (core or custom)
 // This unifies the logic between core colors and custom colors
 //
-function createColorPalette(
+export function createColorPalette(
   colorDef: ColorDefinition & { hex: string },
   baseScheme: DynamicScheme,
   effectiveSourceForHarmonization: number,
@@ -755,6 +757,30 @@ export function generateCss({
     ...colorPalettes,
   };
 
+  // Helper to create a DynamicScheme for any contrast/isDark combination
+  // Used by the exporter to generate all 6 scheme variants
+  // Uses Variant.NEUTRAL to match Material Theme Builder export format
+  const createSchemeForExport = (contrastLevel: number, isDark: boolean) => {
+    const s = new DynamicScheme({
+      sourceColorArgb: effectiveSourceArgb,
+      variant: Variant.NEUTRAL,
+      contrastLevel,
+      isDark,
+      primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
+      secondaryPalette:
+        colorPalettes["secondary"] || baseScheme.secondaryPalette,
+      tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
+      neutralPalette: colorPalettes["neutral"] || baseScheme.neutralPalette,
+      neutralVariantPalette:
+        colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
+    });
+    const ep = colorPalettes["error"];
+    if (ep) {
+      s.errorPalette = ep;
+    }
+    return s;
+  };
+
   return {
     css: `
 :root { ${lightVars} ${lightTonalVars} }
@@ -763,5 +789,100 @@ export function generateCss({
     mergedColorsLight,
     mergedColorsDark,
     allPalettes,
+    createSchemeForExport,
+    exportPalettes: buildExportPalettes({
+      source: hexSource,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+    }),
+  };
+}
+
+/**
+ * Convert a DynamicScheme into a record of token name → uppercase hex color.
+ */
+export function schemeToTokens(s: DynamicScheme) {
+  const tokens: Record<string, string> = {};
+  for (const name of tokenNames) {
+    const dynamicColor = MaterialDynamicColors[
+      name as keyof typeof MaterialDynamicColors
+    ] as DynamicColor | undefined;
+    if (dynamicColor && "getArgb" in dynamicColor) {
+      tokens[name] = hexFromArgb(dynamicColor.getArgb(s)).toUpperCase();
+    }
+  }
+  return tokens;
+}
+
+/**
+ * Convert a TonalPalette into a record of tone number → uppercase hex color.
+ */
+export function paletteTones(palette: TonalPalette) {
+  const tones: Record<string, string> = {};
+  for (const tone of STANDARD_TONES) {
+    tones[String(tone)] = hexFromArgb(palette.tone(tone)).toUpperCase();
+  }
+  return tones;
+}
+
+/**
+ * Build the 5 tonal palettes for a Material Theme Builder export.
+ *
+ * Uses the same algorithm as Material Theme Builder:
+ * primary=source chroma, secondary=chroma/3, tertiary=hue+60 chroma/2,
+ * neutral=chroma/12, neutral-variant=chroma/6
+ */
+export function buildExportPalettes({
+  source: hexSource,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+}: McuConfig) {
+  const effectiveSource = primary || hexSource;
+  const sourceHct = Hct.fromInt(argbFromHex(effectiveSource));
+
+  const paletteFor = (
+    hex: string | undefined,
+    fallbackHue: number,
+    fallbackChroma: number,
+  ) => {
+    if (hex) {
+      const hct = Hct.fromInt(argbFromHex(hex));
+      return TonalPalette.fromHueAndChroma(hct.hue, hct.chroma);
+    }
+    return TonalPalette.fromHueAndChroma(fallbackHue, fallbackChroma);
+  };
+
+  return {
+    primary: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma),
+    ),
+    secondary: paletteTones(
+      paletteFor(secondary, sourceHct.hue, sourceHct.chroma / 3),
+    ),
+    tertiary: paletteTones(
+      paletteFor(tertiary, sourceHct.hue + 60, sourceHct.chroma / 2),
+    ),
+    neutral: paletteTones(
+      neutral
+        ? TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(neutral)).hue,
+            4,
+          )
+        : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12),
+    ),
+    "neutral-variant": paletteTones(
+      neutralVariant
+        ? TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(neutralVariant)).hue,
+            8,
+          )
+        : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 6),
+    ),
   };
 }
