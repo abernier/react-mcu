@@ -27,12 +27,6 @@ export function exportTheme(
   ) => Parameters<typeof schemeToTokens>[0],
   schemeToTokensFn: typeof schemeToTokens,
   palettes: ReturnType<typeof buildExportPalettes>,
-  backgroundOverrides?: {
-    lightBackground: string;
-    lightOnBackground: string;
-    darkBackground: string;
-    darkOnBackground: string;
-  },
 ) {
   const {
     source: hexSource,
@@ -52,18 +46,6 @@ export function exportTheme(
   const darkTokens = schemeToTokensFn(createSchemeForExport(0, true));
   const darkMediumTokens = schemeToTokensFn(createSchemeForExport(0.5, true));
   const darkHighTokens = schemeToTokensFn(createSchemeForExport(1.0, true));
-
-  // Apply source-neutral background/onBackground overrides when neutral is overridden
-  if (backgroundOverrides) {
-    for (const tokens of [lightTokens, lightMediumTokens, lightHighTokens]) {
-      tokens.background = backgroundOverrides.lightBackground;
-      tokens.onBackground = backgroundOverrides.lightOnBackground;
-    }
-    for (const tokens of [darkTokens, darkMediumTokens, darkHighTokens]) {
-      tokens.background = backgroundOverrides.darkBackground;
-      tokens.onBackground = backgroundOverrides.darkOnBackground;
-    }
-  }
 
   const schemes = {
     light: lightTokens,

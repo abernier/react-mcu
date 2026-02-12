@@ -53,7 +53,6 @@ export const McuProvider = ({
     mergedColorsDark,
     allPalettes,
     createSchemeForExport,
-    exportBackgroundOverrides,
     exportPalettes,
   } = useMemo(() => generateCss(mcuConfig), [mcuConfig]);
 
@@ -96,14 +95,8 @@ export const McuProvider = ({
         createSchemeForExport,
         schemeToTokens,
         exportPalettes,
-        exportBackgroundOverrides,
       ),
-    [
-      mcuConfig,
-      createSchemeForExport,
-      exportPalettes,
-      exportBackgroundOverrides,
-    ],
+    [mcuConfig, createSchemeForExport, exportPalettes],
   );
 
   //

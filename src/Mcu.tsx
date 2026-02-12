@@ -781,25 +781,6 @@ export function generateCss({
     return s;
   };
 
-  // Material Theme Builder uses source-derived neutral for background/onBackground
-  // even when a neutral override is provided
-  const exportBackgroundOverrides = neutral
-    ? {
-        lightBackground: hexFromArgb(
-          baseScheme.neutralPalette.tone(98),
-        ).toUpperCase(),
-        lightOnBackground: hexFromArgb(
-          baseScheme.neutralPalette.tone(10),
-        ).toUpperCase(),
-        darkBackground: hexFromArgb(
-          baseScheme.neutralPalette.tone(6),
-        ).toUpperCase(),
-        darkOnBackground: hexFromArgb(
-          baseScheme.neutralPalette.tone(90),
-        ).toUpperCase(),
-      }
-    : undefined;
-
   return {
     css: `
 :root { ${lightVars} ${lightTonalVars} }
@@ -809,7 +790,6 @@ export function generateCss({
     mergedColorsDark,
     allPalettes,
     createSchemeForExport,
-    exportBackgroundOverrides,
     exportPalettes: buildExportPalettes({
       source: hexSource,
       primary,
