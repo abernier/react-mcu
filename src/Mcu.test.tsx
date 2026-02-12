@@ -1,5 +1,6 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { z } from "zod";
 import { Mcu, exportTheme } from "./Mcu.js";
 
 describe("Mcu", () => {
@@ -98,161 +99,136 @@ describe("Mcu", () => {
   });
 });
 
+//
+// Zod schema for Material Theme Builder export format validation
+//
+
+const hexColor = z.string().regex(/^#[0-9A-F]{6}$/);
+
+const schemeSchema = z.object({
+  primary: hexColor,
+  surfaceTint: hexColor,
+  onPrimary: hexColor,
+  primaryContainer: hexColor,
+  onPrimaryContainer: hexColor,
+  secondary: hexColor,
+  onSecondary: hexColor,
+  secondaryContainer: hexColor,
+  onSecondaryContainer: hexColor,
+  tertiary: hexColor,
+  onTertiary: hexColor,
+  tertiaryContainer: hexColor,
+  onTertiaryContainer: hexColor,
+  error: hexColor,
+  onError: hexColor,
+  errorContainer: hexColor,
+  onErrorContainer: hexColor,
+  background: hexColor,
+  onBackground: hexColor,
+  surface: hexColor,
+  onSurface: hexColor,
+  surfaceVariant: hexColor,
+  onSurfaceVariant: hexColor,
+  outline: hexColor,
+  outlineVariant: hexColor,
+  shadow: hexColor,
+  scrim: hexColor,
+  inverseSurface: hexColor,
+  inverseOnSurface: hexColor,
+  inversePrimary: hexColor,
+  primaryFixed: hexColor,
+  onPrimaryFixed: hexColor,
+  primaryFixedDim: hexColor,
+  onPrimaryFixedVariant: hexColor,
+  secondaryFixed: hexColor,
+  onSecondaryFixed: hexColor,
+  secondaryFixedDim: hexColor,
+  onSecondaryFixedVariant: hexColor,
+  tertiaryFixed: hexColor,
+  onTertiaryFixed: hexColor,
+  tertiaryFixedDim: hexColor,
+  onTertiaryFixedVariant: hexColor,
+  surfaceDim: hexColor,
+  surfaceBright: hexColor,
+  surfaceContainerLowest: hexColor,
+  surfaceContainerLow: hexColor,
+  surfaceContainer: hexColor,
+  surfaceContainerHigh: hexColor,
+  surfaceContainerHighest: hexColor,
+});
+
+const tonalPaletteSchema = z.object({
+  "0": hexColor,
+  "5": hexColor,
+  "10": hexColor,
+  "15": hexColor,
+  "20": hexColor,
+  "25": hexColor,
+  "30": hexColor,
+  "35": hexColor,
+  "40": hexColor,
+  "50": hexColor,
+  "60": hexColor,
+  "70": hexColor,
+  "80": hexColor,
+  "90": hexColor,
+  "95": hexColor,
+  "98": hexColor,
+  "99": hexColor,
+  "100": hexColor,
+});
+
+const materialThemeBuilderExportSchema = z.object({
+  description: z.string(),
+  seed: hexColor,
+  coreColors: z.object({
+    primary: hexColor,
+  }),
+  extendedColors: z.array(
+    z.object({
+      name: z.string(),
+      color: hexColor,
+      harmonized: z.boolean(),
+    }),
+  ),
+  schemes: z.object({
+    light: schemeSchema,
+    "light-medium-contrast": schemeSchema,
+    "light-high-contrast": schemeSchema,
+    dark: schemeSchema,
+    "dark-medium-contrast": schemeSchema,
+    "dark-high-contrast": schemeSchema,
+  }),
+  palettes: z.object({
+    primary: tonalPaletteSchema,
+    secondary: tonalPaletteSchema,
+    tertiary: tonalPaletteSchema,
+    neutral: tonalPaletteSchema,
+    "neutral-variant": tonalPaletteSchema,
+  }),
+});
+
 describe("exportTheme", () => {
   it("should return a valid Material Theme Builder-compatible JSON structure", () => {
     const result = exportTheme({ source: "#769CDF" });
 
-    // Check top-level structure
-    expect(result).toHaveProperty("description");
-    expect(result).toHaveProperty("seed", "#769CDF");
-    expect(result).toHaveProperty("coreColors");
-    expect(result.coreColors).toHaveProperty("primary");
-    expect(result).toHaveProperty("extendedColors");
-    expect(result.extendedColors).toEqual([]);
-    expect(result).toHaveProperty("schemes");
-    expect(result).toHaveProperty("palettes");
-  });
-
-  it("should contain all 6 scheme variants", () => {
-    const result = exportTheme({ source: "#769CDF" });
-
-    expect(result.schemes).toHaveProperty("light");
-    expect(result.schemes).toHaveProperty("light-medium-contrast");
-    expect(result.schemes).toHaveProperty("light-high-contrast");
-    expect(result.schemes).toHaveProperty("dark");
-    expect(result.schemes).toHaveProperty("dark-medium-contrast");
-    expect(result.schemes).toHaveProperty("dark-high-contrast");
-  });
-
-  it("should contain all expected color tokens in each scheme", () => {
-    const result = exportTheme({ source: "#769CDF" });
-
-    const expectedTokens = [
-      "primary",
-      "surfaceTint",
-      "onPrimary",
-      "primaryContainer",
-      "onPrimaryContainer",
-      "secondary",
-      "onSecondary",
-      "secondaryContainer",
-      "onSecondaryContainer",
-      "tertiary",
-      "onTertiary",
-      "tertiaryContainer",
-      "onTertiaryContainer",
-      "error",
-      "onError",
-      "errorContainer",
-      "onErrorContainer",
-      "background",
-      "onBackground",
-      "surface",
-      "onSurface",
-      "surfaceVariant",
-      "onSurfaceVariant",
-      "outline",
-      "outlineVariant",
-      "shadow",
-      "scrim",
-      "inverseSurface",
-      "inverseOnSurface",
-      "inversePrimary",
-      "primaryFixed",
-      "onPrimaryFixed",
-      "primaryFixedDim",
-      "onPrimaryFixedVariant",
-      "secondaryFixed",
-      "onSecondaryFixed",
-      "secondaryFixedDim",
-      "onSecondaryFixedVariant",
-      "tertiaryFixed",
-      "onTertiaryFixed",
-      "tertiaryFixedDim",
-      "onTertiaryFixedVariant",
-      "surfaceDim",
-      "surfaceBright",
-      "surfaceContainerLowest",
-      "surfaceContainerLow",
-      "surfaceContainer",
-      "surfaceContainerHigh",
-      "surfaceContainerHighest",
-    ];
-
-    for (const schemeName of Object.keys(result.schemes) as Array<
-      keyof typeof result.schemes
-    >) {
-      for (const token of expectedTokens) {
-        expect(result.schemes[schemeName]).toHaveProperty(token);
-      }
+    const parsed = materialThemeBuilderExportSchema.safeParse(result);
+    if (!parsed.success) {
+      throw new Error(
+        `Schema validation failed:\n${parsed.error.issues.map((i) => `  - ${i.path.join(".")}: ${i.message}`).join("\n")}`,
+      );
     }
-  });
 
-  it("should contain all 5 tonal palettes with standard tones", () => {
-    const result = exportTheme({ source: "#769CDF" });
-
-    const expectedPalettes = [
-      "primary",
-      "secondary",
-      "tertiary",
-      "neutral",
-      "neutral-variant",
-    ];
-    const expectedTones = [
-      "0",
-      "5",
-      "10",
-      "15",
-      "20",
-      "25",
-      "30",
-      "35",
-      "40",
-      "50",
-      "60",
-      "70",
-      "80",
-      "90",
-      "95",
-      "98",
-      "99",
-      "100",
-    ];
-
-    for (const palette of expectedPalettes) {
-      expect(result.palettes).toHaveProperty(palette);
-      for (const tone of expectedTones) {
-        expect(
-          result.palettes[palette as keyof typeof result.palettes],
-        ).toHaveProperty(tone);
-      }
-    }
-  });
-
-  it("should produce uppercase hex color values", () => {
-    const result = exportTheme({ source: "#769CDF" });
-
-    // Check seed
-    expect(result.seed).toMatch(/^#[0-9A-F]{6}$/);
-
-    // Check scheme tokens are uppercase hex
-    const lightPrimary = result.schemes.light.primary;
-    expect(lightPrimary).toMatch(/^#[0-9A-F]{6}$/);
-
-    // Check palette tones are uppercase hex
-    const primaryTone0 = result.palettes.primary["0"];
-    expect(primaryTone0).toMatch(/^#[0-9A-F]{6}$/);
+    expect(parsed.data.seed).toBe("#769CDF");
+    expect(parsed.data.extendedColors).toEqual([]);
   });
 
   it("should produce different colors for different contrast levels", () => {
     const result = exportTheme({ source: "#769CDF" });
 
-    // Light and light-high-contrast should have different primary values
     expect(result.schemes.light.primary).not.toBe(
       result.schemes["light-high-contrast"].primary,
     );
-
-    // Dark and dark-high-contrast should have different primary values
     expect(result.schemes.dark.primary).not.toBe(
       result.schemes["dark-high-contrast"].primary,
     );
@@ -266,6 +242,9 @@ describe("exportTheme", () => {
         { name: "success", hex: "#28A745", blend: false },
       ],
     });
+
+    const parsed = materialThemeBuilderExportSchema.safeParse(result);
+    expect(parsed.success).toBe(true);
 
     expect(result.extendedColors).toHaveLength(2);
     expect(result.extendedColors[0]).toEqual({
@@ -284,7 +263,6 @@ describe("exportTheme", () => {
     const tonalSpot = exportTheme({ source: "#769CDF", scheme: "tonalSpot" });
     const vibrant = exportTheme({ source: "#769CDF", scheme: "vibrant" });
 
-    // Different scheme variants should produce different color tokens
     expect(tonalSpot.schemes.light.primary).not.toBe(
       vibrant.schemes.light.primary,
     );
