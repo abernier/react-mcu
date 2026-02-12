@@ -11,13 +11,20 @@ import React, {
   useState,
 } from "react";
 import { createRequiredContext } from "./lib/createRequiredContext";
-import { generateCss, type McuConfig, type TokenName } from "./Mcu";
+import {
+  exportTheme,
+  generateCss,
+  type MaterialThemeBuilderExport,
+  type McuConfig,
+  type TokenName,
+} from "./Mcu";
 
 type Api = {
   initials: McuConfig;
   setMcuConfig: (config: McuConfig) => void;
   getMcuColor: (colorName: TokenName, theme?: string) => string;
   allPalettes: Record<string, TonalPalette>;
+  exportTheme: () => MaterialThemeBuilderExport;
 };
 
 const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
@@ -77,6 +84,12 @@ export const McuProvider = ({
   );
 
   //
+  // exportTheme
+  //
+
+  const exportThemeFn = useCallback(() => exportTheme(mcuConfig), [mcuConfig]);
+
+  //
   // api
   //
 
@@ -87,8 +100,9 @@ export const McuProvider = ({
         setMcuConfig,
         getMcuColor,
         allPalettes,
+        exportTheme: exportThemeFn,
       }) satisfies Api,
-    [getMcuColor, initials, allPalettes],
+    [getMcuColor, initials, allPalettes, exportThemeFn],
   );
 
   return <Provider value={value}>{children}</Provider>;

@@ -289,6 +289,59 @@ export const tokenNames = [
 ] as const;
 export type TokenName = (typeof tokenNames)[number];
 
+// Token names used in Material Theme Builder export (includes surfaceTint and surfaceVariant)
+const exportTokenNames = [
+  "primary",
+  "surfaceTint",
+  "onPrimary",
+  "primaryContainer",
+  "onPrimaryContainer",
+  "secondary",
+  "onSecondary",
+  "secondaryContainer",
+  "onSecondaryContainer",
+  "tertiary",
+  "onTertiary",
+  "tertiaryContainer",
+  "onTertiaryContainer",
+  "error",
+  "onError",
+  "errorContainer",
+  "onErrorContainer",
+  "background",
+  "onBackground",
+  "surface",
+  "onSurface",
+  "surfaceVariant",
+  "onSurfaceVariant",
+  "outline",
+  "outlineVariant",
+  "shadow",
+  "scrim",
+  "inverseSurface",
+  "inverseOnSurface",
+  "inversePrimary",
+  "primaryFixed",
+  "onPrimaryFixed",
+  "primaryFixedDim",
+  "onPrimaryFixedVariant",
+  "secondaryFixed",
+  "onSecondaryFixed",
+  "secondaryFixedDim",
+  "onSecondaryFixedVariant",
+  "tertiaryFixed",
+  "onTertiaryFixed",
+  "tertiaryFixedDim",
+  "onTertiaryFixedVariant",
+  "surfaceDim",
+  "surfaceBright",
+  "surfaceContainerLowest",
+  "surfaceContainerLow",
+  "surfaceContainer",
+  "surfaceContainerHigh",
+  "surfaceContainerHighest",
+] as const;
+
 //
 // Utility function to convert an array of keys to an object/dictionary of key-value pairs
 //
@@ -763,5 +816,184 @@ export function generateCss({
     mergedColorsLight,
     mergedColorsDark,
     allPalettes,
+  };
+}
+
+//
+// Material Theme Builder-compatible JSON export
+//
+
+export type MaterialThemeBuilderScheme = Record<string, string>;
+
+export type MaterialThemeBuilderExport = {
+  description: string;
+  seed: string;
+  coreColors: {
+    primary: string;
+  };
+  extendedColors: Array<{
+    name: string;
+    color: string;
+    harmonized: boolean;
+  }>;
+  schemes: {
+    light: MaterialThemeBuilderScheme;
+    "light-medium-contrast": MaterialThemeBuilderScheme;
+    "light-high-contrast": MaterialThemeBuilderScheme;
+    dark: MaterialThemeBuilderScheme;
+    "dark-medium-contrast": MaterialThemeBuilderScheme;
+    "dark-high-contrast": MaterialThemeBuilderScheme;
+  };
+  palettes: {
+    primary: Record<string, string>;
+    secondary: Record<string, string>;
+    tertiary: Record<string, string>;
+    neutral: Record<string, string>;
+    "neutral-variant": Record<string, string>;
+  };
+};
+
+/**
+ * Generate a Material Theme Builder-compatible JSON export.
+ *
+ * This produces the same JSON format that Material Theme Builder
+ * (https://material-foundation.github.io/material-theme-builder/) exports,
+ * including all 6 scheme variants and 5 tonal palettes.
+ */
+export function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
+  const {
+    source: hexSource,
+    scheme = DEFAULT_SCHEME,
+    primary,
+    secondary,
+    tertiary,
+    neutral,
+    neutralVariant,
+    error,
+    customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
+  } = config;
+
+  const sourceArgb = argbFromHex(hexSource);
+  const effectiveSource = primary || hexSource;
+  const effectiveSourceArgb = argbFromHex(effectiveSource);
+
+  const SchemeClass = schemesMap[scheme];
+  const primaryHct = Hct.fromInt(effectiveSourceArgb);
+  const variant = schemeToVariant[scheme];
+
+  // Build color palettes for core color overrides (same logic as generateCss)
+  const effectiveSourceForHarmonization = primary
+    ? argbFromHex(primary)
+    : sourceArgb;
+  const baseScheme = new SchemeClass(primaryHct, false, 0);
+
+  const coreColorDefs: (ColorDefinition & { hex?: string })[] = [
+    { name: "primary", hex: primary, core: true, chromaSource: "primary" },
+    { name: "secondary", hex: secondary, core: true, chromaSource: "primary" },
+    { name: "tertiary", hex: tertiary, core: true, chromaSource: "primary" },
+    { name: "error", hex: error, core: true, chromaSource: "primary" },
+    { name: "neutral", hex: neutral, core: true, chromaSource: "neutral" },
+    {
+      name: "neutralVariant",
+      hex: neutralVariant,
+      core: true,
+      chromaSource: "neutralVariant",
+    },
+  ];
+
+  const definedCoreColors = coreColorDefs.filter(
+    (c): c is ColorDefinition & { hex: string } => c.hex !== undefined,
+  );
+
+  const colorPalettes = Object.fromEntries(
+    definedCoreColors.map((colorDef) => [
+      colorDef.name,
+      createColorPalette(colorDef, baseScheme, effectiveSourceForHarmonization),
+    ]),
+  );
+
+  // Helper to create a DynamicScheme for a given contrast level and isDark
+  const createScheme = (contrastLevel: number, isDark: boolean) => {
+    const s = new DynamicScheme({
+      sourceColorArgb: effectiveSourceArgb,
+      variant,
+      contrastLevel,
+      isDark,
+      primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
+      secondaryPalette:
+        colorPalettes["secondary"] || baseScheme.secondaryPalette,
+      tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
+      neutralPalette: colorPalettes["neutral"] || baseScheme.neutralPalette,
+      neutralVariantPalette:
+        colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
+    });
+    const errorPalette = colorPalettes["error"];
+    if (errorPalette) {
+      s.errorPalette = errorPalette;
+    }
+    return s;
+  };
+
+  // Generate scheme tokens for a given DynamicScheme
+  const schemeToTokens = (s: DynamicScheme): MaterialThemeBuilderScheme => {
+    const tokens: MaterialThemeBuilderScheme = {};
+    for (const name of exportTokenNames) {
+      const dynamicColor = MaterialDynamicColors[
+        name as keyof typeof MaterialDynamicColors
+      ] as DynamicColor | undefined;
+      if (dynamicColor && "getArgb" in dynamicColor) {
+        tokens[name] = hexFromArgb(dynamicColor.getArgb(s)).toUpperCase();
+      }
+    }
+    return tokens;
+  };
+
+  // Generate all 6 scheme variants
+  const schemes = {
+    light: schemeToTokens(createScheme(0, false)),
+    "light-medium-contrast": schemeToTokens(createScheme(0.5, false)),
+    "light-high-contrast": schemeToTokens(createScheme(1.0, false)),
+    dark: schemeToTokens(createScheme(0, true)),
+    "dark-medium-contrast": schemeToTokens(createScheme(0.5, true)),
+    "dark-high-contrast": schemeToTokens(createScheme(1.0, true)),
+  };
+
+  // Generate tonal palettes (same for all contrast levels)
+  const refScheme = createScheme(0, false);
+  const paletteTones = (palette: TonalPalette): Record<string, string> => {
+    const tones: Record<string, string> = {};
+    for (const tone of STANDARD_TONES) {
+      tones[String(tone)] = hexFromArgb(palette.tone(tone)).toUpperCase();
+    }
+    return tones;
+  };
+
+  const palettes = {
+    primary: paletteTones(refScheme.primaryPalette),
+    secondary: paletteTones(refScheme.secondaryPalette),
+    tertiary: paletteTones(refScheme.tertiaryPalette),
+    neutral: paletteTones(refScheme.neutralPalette),
+    "neutral-variant": paletteTones(refScheme.neutralVariantPalette),
+  };
+
+  // Build extendedColors from customColors
+  const extendedColors = hexCustomColors.map((c) => ({
+    name: c.name,
+    color: c.hex.toUpperCase(),
+    harmonized: c.blend ?? DEFAULT_BLEND,
+  }));
+
+  // Determine primary color for coreColors
+  const primaryColor = primary || hexFromArgb(sourceArgb).toUpperCase();
+
+  return {
+    description: `Material Theme Builder export from react-mcu`,
+    seed: hexSource.toUpperCase(),
+    coreColors: {
+      primary: primaryColor.toUpperCase(),
+    },
+    extendedColors,
+    schemes,
+    palettes,
   };
 }
