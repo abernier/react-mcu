@@ -23,8 +23,7 @@ describe("exportTheme", () => {
     expect(exported).toEqual(reference);
   });
 
-  // Fails on background/onBackground: Mcu.tsx needs to use source-derived neutral for these tokens when neutral is overridden
-  it.fails(
+  it(
     "should match the official Material Theme Builder export for source #CAB337 with all core colors and custom colors",
     () => {
       const { result } = renderHook(() => useMcu(), {
