@@ -759,10 +759,11 @@ export function generateCss({
 
   // Helper to create a DynamicScheme for any contrast/isDark combination
   // Used by the exporter to generate all 6 scheme variants
+  // Uses Variant.NEUTRAL to match Material Theme Builder export format
   const createSchemeForExport = (contrastLevel: number, isDark: boolean) => {
     const s = new DynamicScheme({
       sourceColorArgb: effectiveSourceArgb,
-      variant,
+      variant: Variant.NEUTRAL,
       contrastLevel,
       isDark,
       primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
@@ -780,6 +781,25 @@ export function generateCss({
     return s;
   };
 
+  // Material Theme Builder uses source-derived neutral for background/onBackground
+  // even when a neutral override is provided
+  const exportBackgroundOverrides = neutral
+    ? {
+        lightBackground: hexFromArgb(
+          baseScheme.neutralPalette.tone(98),
+        ).toUpperCase(),
+        lightOnBackground: hexFromArgb(
+          baseScheme.neutralPalette.tone(10),
+        ).toUpperCase(),
+        darkBackground: hexFromArgb(
+          baseScheme.neutralPalette.tone(6),
+        ).toUpperCase(),
+        darkOnBackground: hexFromArgb(
+          baseScheme.neutralPalette.tone(90),
+        ).toUpperCase(),
+      }
+    : undefined;
+
   return {
     css: `
 :root { ${lightVars} ${lightTonalVars} }
@@ -789,7 +809,15 @@ export function generateCss({
     mergedColorsDark,
     allPalettes,
     createSchemeForExport,
-    exportPalettes: buildExportPalettes(sourceArgb),
+    exportBackgroundOverrides,
+    exportPalettes: buildExportPalettes({
+      source: hexSource,
+      primary,
+      secondary,
+      tertiary,
+      neutral,
+      neutralVariant,
+    }),
   };
 }
 
@@ -827,23 +855,54 @@ export function paletteTones(palette: TonalPalette) {
  * primary=source chroma, secondary=chroma/3, tertiary=hue+60 chroma/2,
  * neutral=chroma/12, neutral-variant=chroma/6
  */
-export function buildExportPalettes(sourceArgb: number) {
-  const sourceHct = Hct.fromInt(sourceArgb);
+export function buildExportPalettes({
+  source: hexSource,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+}: McuConfig) {
+  const effectiveSource = primary || hexSource;
+  const sourceHct = Hct.fromInt(argbFromHex(effectiveSource));
+
+  const paletteFor = (
+    hex: string | undefined,
+    fallbackHue: number,
+    fallbackChroma: number,
+  ) => {
+    if (hex) {
+      const hct = Hct.fromInt(argbFromHex(hex));
+      return TonalPalette.fromHueAndChroma(hct.hue, hct.chroma);
+    }
+    return TonalPalette.fromHueAndChroma(fallbackHue, fallbackChroma);
+  };
+
   return {
     primary: paletteTones(
       TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma),
     ),
     secondary: paletteTones(
-      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 3),
+      paletteFor(secondary, sourceHct.hue, sourceHct.chroma / 3),
     ),
     tertiary: paletteTones(
-      TonalPalette.fromHueAndChroma(sourceHct.hue + 60, sourceHct.chroma / 2),
+      paletteFor(tertiary, sourceHct.hue + 60, sourceHct.chroma / 2),
     ),
     neutral: paletteTones(
-      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12),
+      neutral
+        ? TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(neutral)).hue,
+            4,
+          )
+        : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12),
     ),
     "neutral-variant": paletteTones(
-      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 6),
+      neutralVariant
+        ? TonalPalette.fromHueAndChroma(
+            Hct.fromInt(argbFromHex(neutralVariant)).hue,
+            8,
+          )
+        : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 6),
     ),
   };
 }

@@ -27,41 +27,75 @@ export function exportTheme(
   ) => Parameters<typeof schemeToTokens>[0],
   schemeToTokensFn: typeof schemeToTokens,
   palettes: ReturnType<typeof buildExportPalettes>,
+  backgroundOverrides?: {
+    lightBackground: string;
+    lightOnBackground: string;
+    darkBackground: string;
+    darkOnBackground: string;
+  },
 ) {
   const {
     source: hexSource,
     primary,
+    secondary,
+    tertiary,
+    error,
+    neutral,
+    neutralVariant,
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
   } = config;
 
   // Generate all 6 scheme variants using pre-computed scheme factory from Mcu.tsx
+  const lightTokens = schemeToTokensFn(createSchemeForExport(0, false));
+  const lightMediumTokens = schemeToTokensFn(createSchemeForExport(0.5, false));
+  const lightHighTokens = schemeToTokensFn(createSchemeForExport(1.0, false));
+  const darkTokens = schemeToTokensFn(createSchemeForExport(0, true));
+  const darkMediumTokens = schemeToTokensFn(createSchemeForExport(0.5, true));
+  const darkHighTokens = schemeToTokensFn(createSchemeForExport(1.0, true));
+
+  // Apply source-neutral background/onBackground overrides when neutral is overridden
+  if (backgroundOverrides) {
+    for (const tokens of [lightTokens, lightMediumTokens, lightHighTokens]) {
+      tokens.background = backgroundOverrides.lightBackground;
+      tokens.onBackground = backgroundOverrides.lightOnBackground;
+    }
+    for (const tokens of [darkTokens, darkMediumTokens, darkHighTokens]) {
+      tokens.background = backgroundOverrides.darkBackground;
+      tokens.onBackground = backgroundOverrides.darkOnBackground;
+    }
+  }
+
   const schemes = {
-    light: schemeToTokensFn(createSchemeForExport(0, false)),
-    "light-medium-contrast": schemeToTokensFn(
-      createSchemeForExport(0.5, false),
-    ),
-    "light-high-contrast": schemeToTokensFn(createSchemeForExport(1.0, false)),
-    dark: schemeToTokensFn(createSchemeForExport(0, true)),
-    "dark-medium-contrast": schemeToTokensFn(createSchemeForExport(0.5, true)),
-    "dark-high-contrast": schemeToTokensFn(createSchemeForExport(1.0, true)),
+    light: lightTokens,
+    "light-medium-contrast": lightMediumTokens,
+    "light-high-contrast": lightHighTokens,
+    dark: darkTokens,
+    "dark-medium-contrast": darkMediumTokens,
+    "dark-high-contrast": darkHighTokens,
   };
 
   // Build extendedColors from customColors
   const extendedColors = hexCustomColors.map((c) => ({
     name: c.name,
     color: c.hex.toUpperCase(),
+    description: "",
     harmonized: c.blend ?? DEFAULT_BLEND,
   }));
 
-  // Determine primary color for coreColors
-  const primaryColor = primary || hexSource;
+  // Build coreColors — include all provided core colors
+  const coreColors: Record<string, string> = {
+    primary: (primary || hexSource).toUpperCase(),
+  };
+  if (secondary) coreColors.secondary = secondary.toUpperCase();
+  if (tertiary) coreColors.tertiary = tertiary.toUpperCase();
+  if (error) coreColors.error = error.toUpperCase();
+  if (neutral) coreColors.neutral = neutral.toUpperCase();
+  if (neutralVariant) coreColors.neutralVariant = neutralVariant.toUpperCase();
 
   return {
     description: `Material Theme Builder export from react-mcu`,
     seed: hexSource.toUpperCase(),
-    coreColors: {
-      primary: primaryColor.toUpperCase(),
-    },
+    coreColors,
     extendedColors,
     schemes,
     palettes,
