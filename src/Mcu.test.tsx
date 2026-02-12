@@ -111,16 +111,9 @@ describe("exportTheme", () => {
       wrapper: ({ children }) => <Mcu source="#769CDF">{children}</Mcu>,
     });
 
-    const exported = result.current.exportTheme();
+    const { description, ...exported } = result.current.exportTheme();
+    const { description: _, ...reference } = materialThemeBuilderReference;
 
-    expect(exported.seed).toEqual(materialThemeBuilderReference.seed);
-    expect(exported.coreColors).toEqual(
-      materialThemeBuilderReference.coreColors,
-    );
-    expect(exported.extendedColors).toEqual(
-      materialThemeBuilderReference.extendedColors,
-    );
-    expect(exported.schemes).toEqual(materialThemeBuilderReference.schemes);
-    expect(exported.palettes).toEqual(materialThemeBuilderReference.palettes);
+    expect(exported).toEqual(reference);
   });
 });
