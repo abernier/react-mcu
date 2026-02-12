@@ -24,36 +24,6 @@ import {
 // Material Theme Builder-compatible JSON export
 //
 
-type MaterialThemeBuilderScheme = Record<string, string>;
-
-export type MaterialThemeBuilderExport = {
-  description: string;
-  seed: string;
-  coreColors: {
-    primary: string;
-  };
-  extendedColors: Array<{
-    name: string;
-    color: string;
-    harmonized: boolean;
-  }>;
-  schemes: {
-    light: MaterialThemeBuilderScheme;
-    "light-medium-contrast": MaterialThemeBuilderScheme;
-    "light-high-contrast": MaterialThemeBuilderScheme;
-    dark: MaterialThemeBuilderScheme;
-    "dark-medium-contrast": MaterialThemeBuilderScheme;
-    "dark-high-contrast": MaterialThemeBuilderScheme;
-  };
-  palettes: {
-    primary: Record<string, string>;
-    secondary: Record<string, string>;
-    tertiary: Record<string, string>;
-    neutral: Record<string, string>;
-    "neutral-variant": Record<string, string>;
-  };
-};
-
 /**
  * Generate a Material Theme Builder-compatible JSON export.
  *
@@ -61,7 +31,7 @@ export type MaterialThemeBuilderExport = {
  * (https://material-foundation.github.io/material-theme-builder/) exports,
  * including all 6 scheme variants and 5 tonal palettes.
  */
-export function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
+export function exportTheme(config: McuConfig) {
   const {
     source: hexSource,
     scheme = DEFAULT_SCHEME,
@@ -88,7 +58,7 @@ export function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
     : sourceArgb;
   const baseScheme = new SchemeClass(primaryHct, false, 0);
 
-  const coreColorDefs: (ColorDefinition & { hex?: string })[] = [
+  const coreColorDefs: ColorDefinition[] = [
     { name: "primary", hex: primary, core: true, chromaSource: "primary" },
     { name: "secondary", hex: secondary, core: true, chromaSource: "primary" },
     { name: "tertiary", hex: tertiary, core: true, chromaSource: "primary" },
@@ -136,8 +106,8 @@ export function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
   };
 
   // Generate scheme tokens for a given DynamicScheme
-  const schemeToTokens = (s: DynamicScheme): MaterialThemeBuilderScheme => {
-    const tokens: MaterialThemeBuilderScheme = {};
+  const schemeToTokens = (s: DynamicScheme) => {
+    const tokens: Record<string, string> = {};
     for (const name of tokenNames) {
       const dynamicColor = MaterialDynamicColors[
         name as keyof typeof MaterialDynamicColors
@@ -164,7 +134,7 @@ export function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
   // primary=source chroma, secondary=chroma/3, tertiary=hue+60 chroma/2,
   // neutral=chroma/12, neutral-variant=chroma/6
   const sourceHct = Hct.fromInt(sourceArgb);
-  const paletteTones = (palette: TonalPalette): Record<string, string> => {
+  const paletteTones = (palette: TonalPalette) => {
     const tones: Record<string, string> = {};
     for (const tone of STANDARD_TONES) {
       tones[String(tone)] = hexFromArgb(palette.tone(tone)).toUpperCase();

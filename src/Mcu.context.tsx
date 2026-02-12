@@ -9,14 +9,14 @@ import React, {
 } from "react";
 import { createRequiredContext } from "./lib/createRequiredContext";
 import { generateCss, type McuConfig, type TokenName } from "./Mcu";
-import { exportTheme, type MaterialThemeBuilderExport } from "./Mcu.exporter";
+import { exportTheme } from "./Mcu.exporter";
 
 type Api = {
   initials: McuConfig;
   setMcuConfig: (config: McuConfig) => void;
   getMcuColor: (colorName: TokenName, theme?: string) => string;
   allPalettes: Record<string, TonalPalette>;
-  exportTheme: () => MaterialThemeBuilderExport;
+  exportTheme: () => ReturnType<typeof exportTheme>;
 };
 
 const [useMcu, Provider, McuContext] = createRequiredContext<Api>();
