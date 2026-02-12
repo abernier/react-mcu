@@ -1,7 +1,8 @@
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, render, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { z } from "zod";
-import { Mcu, STANDARD_TONES, exportTheme, tokenNames } from "./Mcu.js";
+import { useMcu } from "./Mcu.context.js";
+import { Mcu, STANDARD_TONES, tokenNames } from "./Mcu.js";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -151,10 +152,18 @@ const materialThemeBuilderExportSchema = z.object({
 });
 
 describe("exportTheme", () => {
-  it("should return a valid Material Theme Builder-compatible JSON structure", () => {
-    const result = exportTheme({ source: "#769CDF" });
+  afterEach(() => {
+    cleanup();
+    document.querySelectorAll("#mcu-styles").forEach((el) => el.remove());
+  });
 
-    const parsed = materialThemeBuilderExportSchema.safeParse(result);
+  it("should return a valid Material Theme Builder-compatible JSON structure", () => {
+    const { result } = renderHook(() => useMcu(), {
+      wrapper: ({ children }) => <Mcu source="#769CDF">{children}</Mcu>,
+    });
+
+    const exported = result.current.exportTheme();
+    const parsed = materialThemeBuilderExportSchema.safeParse(exported);
     if (!parsed.success) {
       throw new Error(
         `Schema validation failed:\n${parsed.error.issues.map((i) => `  - ${i.path.join(".")}: ${i.message}`).join("\n")}`,
@@ -166,35 +175,46 @@ describe("exportTheme", () => {
   });
 
   it("should produce different colors for different contrast levels", () => {
-    const result = exportTheme({ source: "#769CDF" });
+    const { result } = renderHook(() => useMcu(), {
+      wrapper: ({ children }) => <Mcu source="#769CDF">{children}</Mcu>,
+    });
 
-    expect(result.schemes.light.primary).not.toBe(
-      result.schemes["light-high-contrast"].primary,
+    const exported = result.current.exportTheme();
+
+    expect(exported.schemes.light.primary).not.toBe(
+      exported.schemes["light-high-contrast"].primary,
     );
-    expect(result.schemes.dark.primary).not.toBe(
-      result.schemes["dark-high-contrast"].primary,
+    expect(exported.schemes.dark.primary).not.toBe(
+      exported.schemes["dark-high-contrast"].primary,
     );
   });
 
   it("should include extended colors from customColors", () => {
-    const result = exportTheme({
-      source: "#769CDF",
-      customColors: [
-        { name: "brand", hex: "#FF5733", blend: true },
-        { name: "success", hex: "#28A745", blend: false },
-      ],
+    const { result } = renderHook(() => useMcu(), {
+      wrapper: ({ children }) => (
+        <Mcu
+          source="#769CDF"
+          customColors={[
+            { name: "brand", hex: "#FF5733", blend: true },
+            { name: "success", hex: "#28A745", blend: false },
+          ]}
+        >
+          {children}
+        </Mcu>
+      ),
     });
 
-    const parsed = materialThemeBuilderExportSchema.safeParse(result);
+    const exported = result.current.exportTheme();
+    const parsed = materialThemeBuilderExportSchema.safeParse(exported);
     expect(parsed.success).toBe(true);
 
-    expect(result.extendedColors).toHaveLength(2);
-    expect(result.extendedColors[0]).toEqual({
+    expect(exported.extendedColors).toHaveLength(2);
+    expect(exported.extendedColors[0]).toEqual({
       name: "brand",
       color: "#FF5733",
       harmonized: true,
     });
-    expect(result.extendedColors[1]).toEqual({
+    expect(exported.extendedColors[1]).toEqual({
       name: "success",
       color: "#28A745",
       harmonized: false,
@@ -202,8 +222,26 @@ describe("exportTheme", () => {
   });
 
   it("should respect scheme variant parameter", () => {
-    const tonalSpot = exportTheme({ source: "#769CDF", scheme: "tonalSpot" });
-    const vibrant = exportTheme({ source: "#769CDF", scheme: "vibrant" });
+    const { result: tonalSpotResult } = renderHook(() => useMcu(), {
+      wrapper: ({ children }) => (
+        <Mcu source="#769CDF" scheme="tonalSpot">
+          {children}
+        </Mcu>
+      ),
+    });
+    const tonalSpot = tonalSpotResult.current.exportTheme();
+
+    cleanup();
+    document.querySelectorAll("#mcu-styles").forEach((el) => el.remove());
+
+    const { result: vibrantResult } = renderHook(() => useMcu(), {
+      wrapper: ({ children }) => (
+        <Mcu source="#769CDF" scheme="vibrant">
+          {children}
+        </Mcu>
+      ),
+    });
+    const vibrant = vibrantResult.current.exportTheme();
 
     expect(tonalSpot.schemes.light.primary).not.toBe(
       vibrant.schemes.light.primary,
