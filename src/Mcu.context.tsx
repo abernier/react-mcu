@@ -8,7 +8,12 @@ import React, {
   useState,
 } from "react";
 import { createRequiredContext } from "./lib/createRequiredContext";
-import { generateCss, type McuConfig, type TokenName } from "./Mcu";
+import {
+  generateCss,
+  type McuConfig,
+  schemeToTokens,
+  type TokenName,
+} from "./Mcu";
 import { exportTheme } from "./Mcu.exporter";
 
 type Api = {
@@ -42,10 +47,14 @@ export const McuProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey]);
 
-  const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
-    () => generateCss(mcuConfig),
-    [mcuConfig],
-  );
+  const {
+    css,
+    mergedColorsLight,
+    mergedColorsDark,
+    allPalettes,
+    createSchemeForExport,
+    exportPalettes,
+  } = useMemo(() => generateCss(mcuConfig), [mcuConfig]);
 
   //
   // <style>
@@ -79,7 +88,16 @@ export const McuProvider = ({
   // exportTheme
   //
 
-  const exportThemeFn = useCallback(() => exportTheme(mcuConfig), [mcuConfig]);
+  const exportThemeFn = useCallback(
+    () =>
+      exportTheme(
+        mcuConfig,
+        createSchemeForExport,
+        schemeToTokens,
+        exportPalettes,
+      ),
+    [mcuConfig, createSchemeForExport, exportPalettes],
+  );
 
   //
   // api

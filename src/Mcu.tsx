@@ -757,6 +757,29 @@ export function generateCss({
     ...colorPalettes,
   };
 
+  // Helper to create a DynamicScheme for any contrast/isDark combination
+  // Used by the exporter to generate all 6 scheme variants
+  const createSchemeForExport = (contrastLevel: number, isDark: boolean) => {
+    const s = new DynamicScheme({
+      sourceColorArgb: effectiveSourceArgb,
+      variant,
+      contrastLevel,
+      isDark,
+      primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
+      secondaryPalette:
+        colorPalettes["secondary"] || baseScheme.secondaryPalette,
+      tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
+      neutralPalette: colorPalettes["neutral"] || baseScheme.neutralPalette,
+      neutralVariantPalette:
+        colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
+    });
+    const ep = colorPalettes["error"];
+    if (ep) {
+      s.errorPalette = ep;
+    }
+    return s;
+  };
+
   return {
     css: `
 :root { ${lightVars} ${lightTonalVars} }
@@ -765,5 +788,62 @@ export function generateCss({
     mergedColorsLight,
     mergedColorsDark,
     allPalettes,
+    createSchemeForExport,
+    exportPalettes: buildExportPalettes(sourceArgb),
+  };
+}
+
+/**
+ * Convert a DynamicScheme into a record of token name → uppercase hex color.
+ */
+export function schemeToTokens(s: DynamicScheme) {
+  const tokens: Record<string, string> = {};
+  for (const name of tokenNames) {
+    const dynamicColor = MaterialDynamicColors[
+      name as keyof typeof MaterialDynamicColors
+    ] as DynamicColor | undefined;
+    if (dynamicColor && "getArgb" in dynamicColor) {
+      tokens[name] = hexFromArgb(dynamicColor.getArgb(s)).toUpperCase();
+    }
+  }
+  return tokens;
+}
+
+/**
+ * Convert a TonalPalette into a record of tone number → uppercase hex color.
+ */
+export function paletteTones(palette: TonalPalette) {
+  const tones: Record<string, string> = {};
+  for (const tone of STANDARD_TONES) {
+    tones[String(tone)] = hexFromArgb(palette.tone(tone)).toUpperCase();
+  }
+  return tones;
+}
+
+/**
+ * Build the 5 tonal palettes for a Material Theme Builder export.
+ *
+ * Uses the same algorithm as Material Theme Builder:
+ * primary=source chroma, secondary=chroma/3, tertiary=hue+60 chroma/2,
+ * neutral=chroma/12, neutral-variant=chroma/6
+ */
+export function buildExportPalettes(sourceArgb: number) {
+  const sourceHct = Hct.fromInt(sourceArgb);
+  return {
+    primary: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma),
+    ),
+    secondary: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 3),
+    ),
+    tertiary: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue + 60, sourceHct.chroma / 2),
+    ),
+    neutral: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12),
+    ),
+    "neutral-variant": paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 6),
+    ),
   };
 }
