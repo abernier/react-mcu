@@ -7,7 +7,7 @@ import {
   Hct,
   hexFromArgb,
   MaterialDynamicColors,
-  type TonalPalette,
+  TonalPalette,
 } from "@material/material-color-utilities";
 import React, {
   useCallback,
@@ -170,8 +170,11 @@ function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
     "dark-high-contrast": schemeToTokens(createScheme(1.0, true)),
   };
 
-  // Generate tonal palettes (same for all contrast levels)
-  const refScheme = createScheme(0, false);
+  // Generate tonal palettes from source HCT
+  // Uses the same algorithm as Material Theme Builder:
+  // primary=source chroma, secondary=chroma/3, tertiary=hue+60 chroma/2,
+  // neutral=chroma/12, neutral-variant=chroma/6
+  const sourceHct = Hct.fromInt(sourceArgb);
   const paletteTones = (palette: TonalPalette): Record<string, string> => {
     const tones: Record<string, string> = {};
     for (const tone of STANDARD_TONES) {
@@ -181,11 +184,21 @@ function exportTheme(config: McuConfig): MaterialThemeBuilderExport {
   };
 
   const palettes = {
-    primary: paletteTones(refScheme.primaryPalette),
-    secondary: paletteTones(refScheme.secondaryPalette),
-    tertiary: paletteTones(refScheme.tertiaryPalette),
-    neutral: paletteTones(refScheme.neutralPalette),
-    "neutral-variant": paletteTones(refScheme.neutralVariantPalette),
+    primary: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma),
+    ),
+    secondary: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 3),
+    ),
+    tertiary: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue + 60, sourceHct.chroma / 2),
+    ),
+    neutral: paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12),
+    ),
+    "neutral-variant": paletteTones(
+      TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 6),
+    ),
   };
 
   // Build extendedColors from customColors

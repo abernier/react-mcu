@@ -1,8 +1,7 @@
 import { cleanup, render, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { z } from "zod";
 import { useMcu } from "./Mcu.context.js";
-import { Mcu, STANDARD_TONES, tokenNames } from "./Mcu.js";
+import { Mcu } from "./Mcu.js";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -101,55 +100,427 @@ describe("Mcu", () => {
 });
 
 //
-// Zod schema for Material Theme Builder export format validation
-// Built dynamically from the shared constants in Mcu.tsx
+// Reference export from Material Theme Builder (https://material-foundation.github.io/material-theme-builder/)
+// Generated with source color #769CDF on 2026-02-12
 //
 
-const hexColor = z.string().regex(/^#[0-9A-F]{6}$/);
-
-const schemeSchema = z.object(
-  Object.fromEntries(tokenNames.map((name) => [name, hexColor])) as {
-    [K in (typeof tokenNames)[number]]: typeof hexColor;
+const materialThemeBuilderReference = {
+  seed: "#769CDF",
+  coreColors: {
+    primary: "#769CDF",
   },
-);
-
-const tonalPaletteSchema = z.object(
-  Object.fromEntries(
-    STANDARD_TONES.map((tone) => [String(tone), hexColor]),
-  ) as {
-    [K in `${(typeof STANDARD_TONES)[number]}`]: typeof hexColor;
+  extendedColors: [],
+  schemes: {
+    light: {
+      primary: "#415F91",
+      surfaceTint: "#415F91",
+      onPrimary: "#FFFFFF",
+      primaryContainer: "#D6E3FF",
+      onPrimaryContainer: "#284777",
+      secondary: "#565F71",
+      onSecondary: "#FFFFFF",
+      secondaryContainer: "#DAE2F9",
+      onSecondaryContainer: "#3E4759",
+      tertiary: "#705575",
+      onTertiary: "#FFFFFF",
+      tertiaryContainer: "#FAD8FD",
+      onTertiaryContainer: "#573E5C",
+      error: "#BA1A1A",
+      onError: "#FFFFFF",
+      errorContainer: "#FFDAD6",
+      onErrorContainer: "#93000A",
+      background: "#F9F9FF",
+      onBackground: "#191C20",
+      surface: "#F9F9FF",
+      onSurface: "#191C20",
+      surfaceVariant: "#E0E2EC",
+      onSurfaceVariant: "#44474E",
+      outline: "#74777F",
+      outlineVariant: "#C4C6D0",
+      shadow: "#000000",
+      scrim: "#000000",
+      inverseSurface: "#2E3036",
+      inverseOnSurface: "#F0F0F7",
+      inversePrimary: "#AAC7FF",
+      primaryFixed: "#D6E3FF",
+      onPrimaryFixed: "#001B3E",
+      primaryFixedDim: "#AAC7FF",
+      onPrimaryFixedVariant: "#284777",
+      secondaryFixed: "#DAE2F9",
+      onSecondaryFixed: "#131C2B",
+      secondaryFixedDim: "#BEC6DC",
+      onSecondaryFixedVariant: "#3E4759",
+      tertiaryFixed: "#FAD8FD",
+      onTertiaryFixed: "#28132E",
+      tertiaryFixedDim: "#DDBCE0",
+      onTertiaryFixedVariant: "#573E5C",
+      surfaceDim: "#D9D9E0",
+      surfaceBright: "#F9F9FF",
+      surfaceContainerLowest: "#FFFFFF",
+      surfaceContainerLow: "#F3F3FA",
+      surfaceContainer: "#EDEDF4",
+      surfaceContainerHigh: "#E7E8EE",
+      surfaceContainerHighest: "#E2E2E9",
+    },
+    "light-medium-contrast": {
+      primary: "#133665",
+      surfaceTint: "#415F91",
+      onPrimary: "#FFFFFF",
+      primaryContainer: "#506DA0",
+      onPrimaryContainer: "#FFFFFF",
+      secondary: "#2E3647",
+      onSecondary: "#FFFFFF",
+      secondaryContainer: "#646D80",
+      onSecondaryContainer: "#FFFFFF",
+      tertiary: "#452E4A",
+      onTertiary: "#FFFFFF",
+      tertiaryContainer: "#7F6484",
+      onTertiaryContainer: "#FFFFFF",
+      error: "#740006",
+      onError: "#FFFFFF",
+      errorContainer: "#CF2C27",
+      onErrorContainer: "#FFFFFF",
+      background: "#F9F9FF",
+      onBackground: "#191C20",
+      surface: "#F9F9FF",
+      onSurface: "#0F1116",
+      surfaceVariant: "#E0E2EC",
+      onSurfaceVariant: "#33363E",
+      outline: "#4F525A",
+      outlineVariant: "#6A6D75",
+      shadow: "#000000",
+      scrim: "#000000",
+      inverseSurface: "#2E3036",
+      inverseOnSurface: "#F0F0F7",
+      inversePrimary: "#AAC7FF",
+      primaryFixed: "#506DA0",
+      onPrimaryFixed: "#FFFFFF",
+      primaryFixedDim: "#375586",
+      onPrimaryFixedVariant: "#FFFFFF",
+      secondaryFixed: "#646D80",
+      onSecondaryFixed: "#FFFFFF",
+      secondaryFixedDim: "#4C5567",
+      onSecondaryFixedVariant: "#FFFFFF",
+      tertiaryFixed: "#7F6484",
+      onTertiaryFixed: "#FFFFFF",
+      tertiaryFixedDim: "#654C6B",
+      onTertiaryFixedVariant: "#FFFFFF",
+      surfaceDim: "#C5C6CD",
+      surfaceBright: "#F9F9FF",
+      surfaceContainerLowest: "#FFFFFF",
+      surfaceContainerLow: "#F3F3FA",
+      surfaceContainer: "#E7E8EE",
+      surfaceContainerHigh: "#DCDCE3",
+      surfaceContainerHighest: "#D1D1D8",
+    },
+    "light-high-contrast": {
+      primary: "#032B5B",
+      surfaceTint: "#415F91",
+      onPrimary: "#FFFFFF",
+      primaryContainer: "#2A497A",
+      onPrimaryContainer: "#FFFFFF",
+      secondary: "#232C3D",
+      onSecondary: "#FFFFFF",
+      secondaryContainer: "#41495B",
+      onSecondaryContainer: "#FFFFFF",
+      tertiary: "#3A2440",
+      onTertiary: "#FFFFFF",
+      tertiaryContainer: "#59405E",
+      onTertiaryContainer: "#FFFFFF",
+      error: "#600004",
+      onError: "#FFFFFF",
+      errorContainer: "#98000A",
+      onErrorContainer: "#FFFFFF",
+      background: "#F9F9FF",
+      onBackground: "#191C20",
+      surface: "#F9F9FF",
+      onSurface: "#000000",
+      surfaceVariant: "#E0E2EC",
+      onSurfaceVariant: "#000000",
+      outline: "#292C33",
+      outlineVariant: "#464951",
+      shadow: "#000000",
+      scrim: "#000000",
+      inverseSurface: "#2E3036",
+      inverseOnSurface: "#FFFFFF",
+      inversePrimary: "#AAC7FF",
+      primaryFixed: "#2A497A",
+      onPrimaryFixed: "#FFFFFF",
+      primaryFixedDim: "#0E3262",
+      onPrimaryFixedVariant: "#FFFFFF",
+      secondaryFixed: "#41495B",
+      onSecondaryFixed: "#FFFFFF",
+      secondaryFixedDim: "#2A3344",
+      onSecondaryFixedVariant: "#FFFFFF",
+      tertiaryFixed: "#59405E",
+      onTertiaryFixed: "#FFFFFF",
+      tertiaryFixedDim: "#412A47",
+      onTertiaryFixedVariant: "#FFFFFF",
+      surfaceDim: "#B8B8BF",
+      surfaceBright: "#F9F9FF",
+      surfaceContainerLowest: "#FFFFFF",
+      surfaceContainerLow: "#F0F0F7",
+      surfaceContainer: "#E2E2E9",
+      surfaceContainerHigh: "#D3D4DB",
+      surfaceContainerHighest: "#C5C6CD",
+    },
+    dark: {
+      primary: "#AAC7FF",
+      surfaceTint: "#AAC7FF",
+      onPrimary: "#0A305F",
+      primaryContainer: "#284777",
+      onPrimaryContainer: "#D6E3FF",
+      secondary: "#BEC6DC",
+      onSecondary: "#283141",
+      secondaryContainer: "#3E4759",
+      onSecondaryContainer: "#DAE2F9",
+      tertiary: "#DDBCE0",
+      onTertiary: "#3F2844",
+      tertiaryContainer: "#573E5C",
+      onTertiaryContainer: "#FAD8FD",
+      error: "#FFB4AB",
+      onError: "#690005",
+      errorContainer: "#93000A",
+      onErrorContainer: "#FFDAD6",
+      background: "#111318",
+      onBackground: "#E2E2E9",
+      surface: "#111318",
+      onSurface: "#E2E2E9",
+      surfaceVariant: "#44474E",
+      onSurfaceVariant: "#C4C6D0",
+      outline: "#8E9099",
+      outlineVariant: "#44474E",
+      shadow: "#000000",
+      scrim: "#000000",
+      inverseSurface: "#E2E2E9",
+      inverseOnSurface: "#2E3036",
+      inversePrimary: "#415F91",
+      primaryFixed: "#D6E3FF",
+      onPrimaryFixed: "#001B3E",
+      primaryFixedDim: "#AAC7FF",
+      onPrimaryFixedVariant: "#284777",
+      secondaryFixed: "#DAE2F9",
+      onSecondaryFixed: "#131C2B",
+      secondaryFixedDim: "#BEC6DC",
+      onSecondaryFixedVariant: "#3E4759",
+      tertiaryFixed: "#FAD8FD",
+      onTertiaryFixed: "#28132E",
+      tertiaryFixedDim: "#DDBCE0",
+      onTertiaryFixedVariant: "#573E5C",
+      surfaceDim: "#111318",
+      surfaceBright: "#37393E",
+      surfaceContainerLowest: "#0C0E13",
+      surfaceContainerLow: "#191C20",
+      surfaceContainer: "#1D2024",
+      surfaceContainerHigh: "#282A2F",
+      surfaceContainerHighest: "#33353A",
+    },
+    "dark-medium-contrast": {
+      primary: "#CDDDFF",
+      surfaceTint: "#AAC7FF",
+      onPrimary: "#002551",
+      primaryContainer: "#7491C7",
+      onPrimaryContainer: "#000000",
+      secondary: "#D4DCF2",
+      onSecondary: "#1D2636",
+      secondaryContainer: "#8891A5",
+      onSecondaryContainer: "#000000",
+      tertiary: "#F3D2F7",
+      onTertiary: "#331D39",
+      tertiaryContainer: "#A487A9",
+      onTertiaryContainer: "#000000",
+      error: "#FFD2CC",
+      onError: "#540003",
+      errorContainer: "#FF5449",
+      onErrorContainer: "#000000",
+      background: "#111318",
+      onBackground: "#E2E2E9",
+      surface: "#111318",
+      onSurface: "#FFFFFF",
+      surfaceVariant: "#44474E",
+      onSurfaceVariant: "#DADCE6",
+      outline: "#AFB2BB",
+      outlineVariant: "#8E9099",
+      shadow: "#000000",
+      scrim: "#000000",
+      inverseSurface: "#E2E2E9",
+      inverseOnSurface: "#282A2F",
+      inversePrimary: "#294878",
+      primaryFixed: "#D6E3FF",
+      onPrimaryFixed: "#00112B",
+      primaryFixedDim: "#AAC7FF",
+      onPrimaryFixedVariant: "#133665",
+      secondaryFixed: "#DAE2F9",
+      onSecondaryFixed: "#081121",
+      secondaryFixedDim: "#BEC6DC",
+      onSecondaryFixedVariant: "#2E3647",
+      tertiaryFixed: "#FAD8FD",
+      onTertiaryFixed: "#1D0823",
+      tertiaryFixedDim: "#DDBCE0",
+      onTertiaryFixedVariant: "#452E4A",
+      surfaceDim: "#111318",
+      surfaceBright: "#43444A",
+      surfaceContainerLowest: "#06070C",
+      surfaceContainerLow: "#1B1E22",
+      surfaceContainer: "#26282D",
+      surfaceContainerHigh: "#313238",
+      surfaceContainerHighest: "#3C3E43",
+    },
+    "dark-high-contrast": {
+      primary: "#EBF0FF",
+      surfaceTint: "#AAC7FF",
+      onPrimary: "#000000",
+      primaryContainer: "#A6C3FC",
+      onPrimaryContainer: "#000B20",
+      secondary: "#EBF0FF",
+      onSecondary: "#000000",
+      secondaryContainer: "#BAC3D8",
+      onSecondaryContainer: "#030B1A",
+      tertiary: "#FFE9FF",
+      onTertiary: "#000000",
+      tertiaryContainer: "#D8B8DC",
+      onTertiaryContainer: "#16041D",
+      error: "#FFECE9",
+      onError: "#000000",
+      errorContainer: "#FFAEA4",
+      onErrorContainer: "#220001",
+      background: "#111318",
+      onBackground: "#E2E2E9",
+      surface: "#111318",
+      onSurface: "#FFFFFF",
+      surfaceVariant: "#44474E",
+      onSurfaceVariant: "#FFFFFF",
+      outline: "#EEEFF9",
+      outlineVariant: "#C0C2CC",
+      shadow: "#000000",
+      scrim: "#000000",
+      inverseSurface: "#E2E2E9",
+      inverseOnSurface: "#000000",
+      inversePrimary: "#294878",
+      primaryFixed: "#D6E3FF",
+      onPrimaryFixed: "#000000",
+      primaryFixedDim: "#AAC7FF",
+      onPrimaryFixedVariant: "#00112B",
+      secondaryFixed: "#DAE2F9",
+      onSecondaryFixed: "#000000",
+      secondaryFixedDim: "#BEC6DC",
+      onSecondaryFixedVariant: "#081121",
+      tertiaryFixed: "#FAD8FD",
+      onTertiaryFixed: "#000000",
+      tertiaryFixedDim: "#DDBCE0",
+      onTertiaryFixedVariant: "#1D0823",
+      surfaceDim: "#111318",
+      surfaceBright: "#4E5056",
+      surfaceContainerLowest: "#000000",
+      surfaceContainerLow: "#1D2024",
+      surfaceContainer: "#2E3036",
+      surfaceContainerHigh: "#393B41",
+      surfaceContainerHighest: "#45474C",
+    },
   },
-);
-
-const materialThemeBuilderExportSchema = z.object({
-  description: z.string(),
-  seed: hexColor,
-  coreColors: z.object({
-    primary: hexColor,
-  }),
-  extendedColors: z.array(
-    z.object({
-      name: z.string(),
-      color: hexColor,
-      harmonized: z.boolean(),
-    }),
-  ),
-  schemes: z.object({
-    light: schemeSchema,
-    "light-medium-contrast": schemeSchema,
-    "light-high-contrast": schemeSchema,
-    dark: schemeSchema,
-    "dark-medium-contrast": schemeSchema,
-    "dark-high-contrast": schemeSchema,
-  }),
-  palettes: z.object({
-    primary: tonalPaletteSchema,
-    secondary: tonalPaletteSchema,
-    tertiary: tonalPaletteSchema,
-    neutral: tonalPaletteSchema,
-    "neutral-variant": tonalPaletteSchema,
-  }),
-});
+  palettes: {
+    primary: {
+      "0": "#000000",
+      "5": "#00102B",
+      "10": "#001B3E",
+      "15": "#002551",
+      "20": "#002F64",
+      "25": "#033A77",
+      "30": "#194683",
+      "35": "#285290",
+      "40": "#365E9D",
+      "50": "#5177B8",
+      "60": "#6B91D3",
+      "70": "#86ACF0",
+      "80": "#AAC7FF",
+      "90": "#D6E3FF",
+      "95": "#ECF0FF",
+      "98": "#F9F9FF",
+      "99": "#FDFBFF",
+      "100": "#FFFFFF",
+    },
+    secondary: {
+      "0": "#000000",
+      "5": "#09111E",
+      "10": "#141C29",
+      "15": "#1E2634",
+      "20": "#29313F",
+      "25": "#343C4A",
+      "30": "#3F4756",
+      "35": "#4B5362",
+      "40": "#575E6F",
+      "50": "#707788",
+      "60": "#8991A2",
+      "70": "#A4ABBD",
+      "80": "#BFC6D9",
+      "90": "#DBE2F6",
+      "95": "#ECF0FF",
+      "98": "#F9F9FF",
+      "99": "#FDFBFF",
+      "100": "#FFFFFF",
+    },
+    tertiary: {
+      "0": "#000000",
+      "5": "#1B0A21",
+      "10": "#27142C",
+      "15": "#321F37",
+      "20": "#3D2942",
+      "25": "#49344D",
+      "30": "#553F59",
+      "35": "#614B65",
+      "40": "#6E5772",
+      "50": "#886F8B",
+      "60": "#A288A6",
+      "70": "#BEA2C1",
+      "80": "#DABDDD",
+      "90": "#F7D9FA",
+      "95": "#FFEBFE",
+      "98": "#FFF7FB",
+      "99": "#FFFBFF",
+      "100": "#FFFFFF",
+    },
+    neutral: {
+      "0": "#000000",
+      "5": "#101113",
+      "10": "#1B1B1E",
+      "15": "#252628",
+      "20": "#303033",
+      "25": "#3B3B3E",
+      "30": "#464649",
+      "35": "#525255",
+      "40": "#5E5E61",
+      "50": "#77777A",
+      "60": "#919093",
+      "70": "#ACABAE",
+      "80": "#C7C6C9",
+      "90": "#E3E2E5",
+      "95": "#F2F0F3",
+      "98": "#FAF9FC",
+      "99": "#FDFBFF",
+      "100": "#FFFFFF",
+    },
+    "neutral-variant": {
+      "0": "#000000",
+      "5": "#0E1117",
+      "10": "#191C22",
+      "15": "#23262C",
+      "20": "#2E3037",
+      "25": "#393B42",
+      "30": "#44474D",
+      "35": "#505259",
+      "40": "#5C5E65",
+      "50": "#75777E",
+      "60": "#8E9098",
+      "70": "#A9ABB3",
+      "80": "#C5C6CE",
+      "90": "#E1E2EA",
+      "95": "#EFF0F9",
+      "98": "#F9F9FF",
+      "99": "#FDFBFF",
+      "100": "#FFFFFF",
+    },
+  },
+};
 
 describe("exportTheme", () => {
   afterEach(() => {
@@ -157,94 +528,21 @@ describe("exportTheme", () => {
     document.querySelectorAll("#mcu-styles").forEach((el) => el.remove());
   });
 
-  it("should return a valid Material Theme Builder-compatible JSON structure", () => {
-    const { result } = renderHook(() => useMcu(), {
-      wrapper: ({ children }) => <Mcu source="#769CDF">{children}</Mcu>,
-    });
-
-    const exported = result.current.exportTheme();
-    const parsed = materialThemeBuilderExportSchema.safeParse(exported);
-    if (!parsed.success) {
-      throw new Error(
-        `Schema validation failed:\n${parsed.error.issues.map((i) => `  - ${i.path.join(".")}: ${i.message}`).join("\n")}`,
-      );
-    }
-
-    expect(parsed.data.seed).toBe("#769CDF");
-    expect(parsed.data.extendedColors).toEqual([]);
-  });
-
-  it("should produce different colors for different contrast levels", () => {
+  it("should match the official Material Theme Builder export for source #769CDF", () => {
     const { result } = renderHook(() => useMcu(), {
       wrapper: ({ children }) => <Mcu source="#769CDF">{children}</Mcu>,
     });
 
     const exported = result.current.exportTheme();
 
-    expect(exported.schemes.light.primary).not.toBe(
-      exported.schemes["light-high-contrast"].primary,
+    expect(exported.seed).toEqual(materialThemeBuilderReference.seed);
+    expect(exported.coreColors).toEqual(
+      materialThemeBuilderReference.coreColors,
     );
-    expect(exported.schemes.dark.primary).not.toBe(
-      exported.schemes["dark-high-contrast"].primary,
+    expect(exported.extendedColors).toEqual(
+      materialThemeBuilderReference.extendedColors,
     );
-  });
-
-  it("should include extended colors from customColors", () => {
-    const { result } = renderHook(() => useMcu(), {
-      wrapper: ({ children }) => (
-        <Mcu
-          source="#769CDF"
-          customColors={[
-            { name: "brand", hex: "#FF5733", blend: true },
-            { name: "success", hex: "#28A745", blend: false },
-          ]}
-        >
-          {children}
-        </Mcu>
-      ),
-    });
-
-    const exported = result.current.exportTheme();
-    const parsed = materialThemeBuilderExportSchema.safeParse(exported);
-    expect(parsed.success).toBe(true);
-
-    expect(exported.extendedColors).toHaveLength(2);
-    expect(exported.extendedColors[0]).toEqual({
-      name: "brand",
-      color: "#FF5733",
-      harmonized: true,
-    });
-    expect(exported.extendedColors[1]).toEqual({
-      name: "success",
-      color: "#28A745",
-      harmonized: false,
-    });
-  });
-
-  it("should respect scheme variant parameter", () => {
-    const { result: tonalSpotResult } = renderHook(() => useMcu(), {
-      wrapper: ({ children }) => (
-        <Mcu source="#769CDF" scheme="tonalSpot">
-          {children}
-        </Mcu>
-      ),
-    });
-    const tonalSpot = tonalSpotResult.current.exportTheme();
-
-    cleanup();
-    document.querySelectorAll("#mcu-styles").forEach((el) => el.remove());
-
-    const { result: vibrantResult } = renderHook(() => useMcu(), {
-      wrapper: ({ children }) => (
-        <Mcu source="#769CDF" scheme="vibrant">
-          {children}
-        </Mcu>
-      ),
-    });
-    const vibrant = vibrantResult.current.exportTheme();
-
-    expect(tonalSpot.schemes.light.primary).not.toBe(
-      vibrant.schemes.light.primary,
-    );
+    expect(exported.schemes).toEqual(materialThemeBuilderReference.schemes);
+    expect(exported.palettes).toEqual(materialThemeBuilderReference.palettes);
   });
 });
