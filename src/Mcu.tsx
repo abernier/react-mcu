@@ -234,8 +234,8 @@ export const tokenNames = [
   "background",
   "onBackground",
   "surface",
-  "surfaceTint",
-  "surfaceVariant",
+  "surfaceTint", // for exporter
+  "surfaceVariant", // for exporter
   "surfaceDim",
   "surfaceBright",
   "surfaceContainerLowest",
