@@ -290,7 +290,7 @@ export const tokenNames = [
 export type TokenName = (typeof tokenNames)[number];
 
 // Token names used in Material Theme Builder export (includes surfaceTint and surfaceVariant)
-const exportTokenNames = [
+export const exportTokenNames = [
   "primary",
   "surfaceTint",
   "onPrimary",

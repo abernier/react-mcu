@@ -1,7 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { z } from "zod";
-import { Mcu, exportTheme } from "./Mcu.js";
+import { Mcu, STANDARD_TONES, exportTheme, exportTokenNames } from "./Mcu.js";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -101,82 +101,24 @@ describe("Mcu", () => {
 
 //
 // Zod schema for Material Theme Builder export format validation
+// Built dynamically from the shared constants in Mcu.tsx
 //
 
 const hexColor = z.string().regex(/^#[0-9A-F]{6}$/);
 
-const schemeSchema = z.object({
-  primary: hexColor,
-  surfaceTint: hexColor,
-  onPrimary: hexColor,
-  primaryContainer: hexColor,
-  onPrimaryContainer: hexColor,
-  secondary: hexColor,
-  onSecondary: hexColor,
-  secondaryContainer: hexColor,
-  onSecondaryContainer: hexColor,
-  tertiary: hexColor,
-  onTertiary: hexColor,
-  tertiaryContainer: hexColor,
-  onTertiaryContainer: hexColor,
-  error: hexColor,
-  onError: hexColor,
-  errorContainer: hexColor,
-  onErrorContainer: hexColor,
-  background: hexColor,
-  onBackground: hexColor,
-  surface: hexColor,
-  onSurface: hexColor,
-  surfaceVariant: hexColor,
-  onSurfaceVariant: hexColor,
-  outline: hexColor,
-  outlineVariant: hexColor,
-  shadow: hexColor,
-  scrim: hexColor,
-  inverseSurface: hexColor,
-  inverseOnSurface: hexColor,
-  inversePrimary: hexColor,
-  primaryFixed: hexColor,
-  onPrimaryFixed: hexColor,
-  primaryFixedDim: hexColor,
-  onPrimaryFixedVariant: hexColor,
-  secondaryFixed: hexColor,
-  onSecondaryFixed: hexColor,
-  secondaryFixedDim: hexColor,
-  onSecondaryFixedVariant: hexColor,
-  tertiaryFixed: hexColor,
-  onTertiaryFixed: hexColor,
-  tertiaryFixedDim: hexColor,
-  onTertiaryFixedVariant: hexColor,
-  surfaceDim: hexColor,
-  surfaceBright: hexColor,
-  surfaceContainerLowest: hexColor,
-  surfaceContainerLow: hexColor,
-  surfaceContainer: hexColor,
-  surfaceContainerHigh: hexColor,
-  surfaceContainerHighest: hexColor,
-});
+const schemeSchema = z.object(
+  Object.fromEntries(exportTokenNames.map((name) => [name, hexColor])) as {
+    [K in (typeof exportTokenNames)[number]]: typeof hexColor;
+  },
+);
 
-const tonalPaletteSchema = z.object({
-  "0": hexColor,
-  "5": hexColor,
-  "10": hexColor,
-  "15": hexColor,
-  "20": hexColor,
-  "25": hexColor,
-  "30": hexColor,
-  "35": hexColor,
-  "40": hexColor,
-  "50": hexColor,
-  "60": hexColor,
-  "70": hexColor,
-  "80": hexColor,
-  "90": hexColor,
-  "95": hexColor,
-  "98": hexColor,
-  "99": hexColor,
-  "100": hexColor,
-});
+const tonalPaletteSchema = z.object(
+  Object.fromEntries(
+    STANDARD_TONES.map((tone) => [String(tone), hexColor]),
+  ) as {
+    [K in `${(typeof STANDARD_TONES)[number]}`]: typeof hexColor;
+  },
+);
 
 const materialThemeBuilderExportSchema = z.object({
   description: z.string(),
