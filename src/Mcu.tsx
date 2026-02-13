@@ -535,30 +535,7 @@ const toCssVars = (mergedColors: Record<string, number>) => {
 };
 
 /**
- * Builder API - generates Material Design color schemes
- *
- * @param hexSource - Source color in hex format (required)
- * @param options - Configuration options (optional)
- * @returns Object with toCss() and toJson() methods
- *
- * @example
- * ```ts
- * import { builder } from "react-mcu"
- *
- * const colors = builder("#6750A4", {
- *   scheme: "vibrant",
- *   contrast: 0.5,
- *   customColors: [
- *     { name: "brand", hex: "#FF5733", blend: true }
- *   ]
- * });
- *
- * // Get as JSON
- * const json = colors.toJson();
- *
- * // Get as CSS
- * const css = colors.toCss();
- * ```
+ * Builder API
  */
 export function builder(
   hexSource: McuConfig["source"],
