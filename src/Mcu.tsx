@@ -897,8 +897,8 @@ export function builder(
 
       // Extract custom colors information
       const customColorsArray = hexCustomColors;
-      const lightColors = schemes["light"]!;
-      const darkColors = schemes["dark"]!;
+      const lightColors = schemes["light"] ?? {};
+      const darkColors = schemes["dark"] ?? {};
       const customColorsFormatted =
         customColorsArray && customColorsArray.length > 0
           ? customColorsArray.map((customColor) => {
@@ -959,7 +959,7 @@ export function builder(
         coreColors: {
           primary: hexSource.toUpperCase(),
         },
-        extendedColors: [] as unknown[],
+        extendedColors: [] as never[],
         schemes,
         palettes: jsonPalettes,
         ...(customColorsFormatted && { customColors: customColorsFormatted }),
