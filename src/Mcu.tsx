@@ -867,7 +867,6 @@ export function builder(
       };
     },
 
-    // Internal data for React component
     mergedColorsLight,
     mergedColorsDark,
     allPalettes,
