@@ -560,14 +560,9 @@ const toCssVars = (mergedColors: Record<string, number>) => {
  * const css = colors.toCss();
  * ```
  */
-export function builder(source: string, options?: Omit<McuConfig, "source">) {
-  const config: McuConfig = {
-    source,
-    ...options,
-  };
-
-  const {
-    source: hexSource,
+export function builder(
+  source: McuConfig["source"],
+  {
     scheme = DEFAULT_SCHEME,
     contrast = DEFAULT_CONTRAST,
     primary,
@@ -579,12 +574,12 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
     contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
     adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
-  } = config;
-
-  const sourceArgb = argbFromHex(hexSource);
+  }: Omit<McuConfig, "source"> = {},
+) {
+  const sourceArgb = argbFromHex(source);
 
   // Determine the effective source for harmonization
-  const effectiveSource = primary || hexSource;
+  const effectiveSource = primary || source;
   const effectiveSourceArgb = argbFromHex(effectiveSource);
   const effectiveSourceForHarmonization = primary
     ? argbFromHex(primary)
@@ -806,7 +801,7 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
       });
 
       // Extract custom colors information
-      const customColorsArray = config.customColors;
+      const customColorsArray = customColors;
       const customColorsFormatted =
         customColorsArray && customColorsArray.length > 0
           ? customColorsArray.map((customColor) => {
