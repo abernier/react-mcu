@@ -1,5 +1,3 @@
-"use client";
-
 import {
   hexFromArgb,
   type TonalPalette,
@@ -11,7 +9,7 @@ import React, {
   useState,
 } from "react";
 import { createRequiredContext } from "./lib/createRequiredContext";
-import { generateCss, type McuConfig, type TokenName } from "./Mcu";
+import { builder, type McuConfig, type TokenName } from "./Mcu";
 
 type Api = {
   initials: McuConfig;
@@ -44,7 +42,7 @@ export const McuProvider = ({
   }, [configKey]);
 
   const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
-    () => generateCss(mcuConfig),
+    () => builder(mcuConfig.source, mcuConfig)._getInternalData(),
     [mcuConfig],
   );
 
