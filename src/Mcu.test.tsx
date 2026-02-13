@@ -2,6 +2,7 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { builder, Mcu } from "./Mcu";
 import fixture from "./fixtures/material-theme-builder-769CDF.json";
+import fixture2 from "./fixtures/material-theme-builder-CAB337.json";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -118,7 +119,7 @@ describe("builder", () => {
         { name: "Custom Color 2", hex: "#FFE16B", blend: true },
       ],
     }).toJson();
-    expect(result).toEqual(fixture);
+    expect(result).toEqual(fixture2);
   });
 
   it("should generate CSS with toCss()", () => {
