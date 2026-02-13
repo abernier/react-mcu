@@ -738,6 +738,208 @@ export function builder(
     ...colorPalettes,
   };
 
+  // ──────────────────────────────────────────────────────────────────────────
+  // Compute all data needed by both toCss() and toJson()
+  // so that formatters contain zero domain logic
+  // ──────────────────────────────────────────────────────────────────────────
+
+  const sourceHct = Hct.fromInt(sourceArgb);
+
+  // Determine if any core colors are overridden
+  const hasOverrides = !!(
+    primary ||
+    secondary ||
+    tertiary ||
+    error ||
+    neutral ||
+    neutralVariant
+  );
+
+  // --- coreColors / extendedColors / seed (used by toJson) ----------------
+
+  const seed = hexSource.toUpperCase();
+
+  const coreColors: Record<string, string> = {
+    primary: (primary || hexSource).toUpperCase(),
+  };
+  if (secondary) coreColors.secondary = secondary.toUpperCase();
+  if (tertiary) coreColors.tertiary = tertiary.toUpperCase();
+  if (error) coreColors.error = error.toUpperCase();
+  if (neutral) coreColors.neutral = neutral.toUpperCase();
+  if (neutralVariant) coreColors.neutralVariant = neutralVariant.toUpperCase();
+
+  const extendedColors = hexCustomColors.map((c) => ({
+    name: c.name,
+    color: c.hex.toUpperCase(),
+    description: "",
+    harmonized: c.blend ?? DEFAULT_BLEND,
+  }));
+
+  // --- 6 scheme variants (used by toJson) ---------------------------------
+
+  // Helper to extract scheme colors in fixture token order
+  const extractSchemeColors = (s: DynamicScheme, bgScheme?: DynamicScheme) => {
+    const colors: Record<string, string> = {};
+    for (const tokenName of fixtureTokenOrder) {
+      const dynamicColor =
+        MaterialDynamicColors[tokenName as keyof typeof MaterialDynamicColors];
+      if (
+        dynamicColor &&
+        typeof dynamicColor === "object" &&
+        "getArgb" in dynamicColor
+      ) {
+        // When core colors are overridden, background/onBackground come from
+        // the source scheme (based on primary/source color) rather than the
+        // overridden neutral palette
+        const useScheme =
+          bgScheme &&
+          (tokenName === "background" || tokenName === "onBackground")
+            ? bgScheme
+            : s;
+        colors[tokenName] = hexFromArgb(
+          (dynamicColor as DynamicColor).getArgb(useScheme),
+        ).toUpperCase();
+      }
+    }
+    return colors;
+  };
+
+  const contrastLevels = [
+    { name: "light", isDark: false, contrast: 0 },
+    { name: "light-medium-contrast", isDark: false, contrast: 0.5 },
+    { name: "light-high-contrast", isDark: false, contrast: 1.0 },
+    { name: "dark", isDark: true, contrast: 0 },
+    { name: "dark-medium-contrast", isDark: true, contrast: 0.5 },
+    { name: "dark-high-contrast", isDark: true, contrast: 1.0 },
+  ];
+
+  const jsonSchemes: Record<string, Record<string, string>> = {};
+
+  if (hasOverrides) {
+    // When core colors are overridden, create palettes from each overridden color
+    // using SchemeClass to get the proper palette generation
+    const overridePrimaryHct = Hct.fromInt(argbFromHex(primary || hexSource));
+    const primaryPalScheme = new SchemeClass(overridePrimaryHct, false, 0);
+
+    const secondaryPalScheme = secondary
+      ? new SchemeClass(Hct.fromInt(argbFromHex(secondary)), false, 0)
+      : primaryPalScheme;
+    const tertiaryPalScheme = tertiary
+      ? new SchemeClass(Hct.fromInt(argbFromHex(tertiary)), false, 0)
+      : primaryPalScheme;
+    const errorPalScheme = error
+      ? new SchemeClass(Hct.fromInt(argbFromHex(error)), false, 0)
+      : primaryPalScheme;
+    const neutralPalScheme = neutral
+      ? new SchemeClass(Hct.fromInt(argbFromHex(neutral)), false, 0)
+      : primaryPalScheme;
+    const neutralVariantPalScheme = neutralVariant
+      ? new SchemeClass(Hct.fromInt(argbFromHex(neutralVariant)), false, 0)
+      : primaryPalScheme;
+
+    for (const { name, isDark, contrast: contrastLevel } of contrastLevels) {
+      const s = new DynamicScheme({
+        sourceColorArgb: argbFromHex(primary || hexSource),
+        variant: schemeToVariant[scheme],
+        contrastLevel,
+        isDark,
+        primaryPalette: primaryPalScheme.primaryPalette,
+        secondaryPalette: secondaryPalScheme.primaryPalette,
+        tertiaryPalette: tertiaryPalScheme.primaryPalette,
+        neutralPalette: neutralPalScheme.neutralPalette,
+        neutralVariantPalette: neutralVariantPalScheme.neutralVariantPalette,
+      });
+      s.errorPalette = errorPalScheme.primaryPalette;
+
+      // Background/onBackground use the primary source scheme's neutral palette
+      const bgScheme = new SchemeClass(
+        overridePrimaryHct,
+        isDark,
+        contrastLevel,
+      );
+      jsonSchemes[name] = extractSchemeColors(s, bgScheme);
+    }
+  } else {
+    // No overrides: use SchemeClass directly
+    for (const { name, isDark, contrast: contrastLevel } of contrastLevels) {
+      const s = new SchemeClass(sourceHct, isDark, contrastLevel);
+      jsonSchemes[name] = extractSchemeColors(s);
+    }
+  }
+
+  // --- JSON palettes (used by toJson) -------------------------------------
+
+  let jsonPrimaryPal: TonalPalette;
+  let jsonSecondaryPal: TonalPalette;
+  let jsonTertiaryPal: TonalPalette;
+  let jsonNeutralPal: TonalPalette;
+  let jsonNeutralVariantPal: TonalPalette;
+
+  if (hasOverrides) {
+    // When colors are overridden, use TonalPalette.fromInt for each color
+    jsonPrimaryPal = TonalPalette.fromInt(argbFromHex(primary || hexSource));
+    jsonSecondaryPal = secondary
+      ? TonalPalette.fromInt(argbFromHex(secondary))
+      : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 3);
+    jsonTertiaryPal = tertiary
+      ? TonalPalette.fromInt(argbFromHex(tertiary))
+      : TonalPalette.fromHueAndChroma(
+          (sourceHct.hue + 60) % 360,
+          sourceHct.chroma / 2,
+        );
+    // Neutral: hue from overridden color, fixed chroma 4
+    jsonNeutralPal = neutral
+      ? TonalPalette.fromHueAndChroma(Hct.fromInt(argbFromHex(neutral)).hue, 4)
+      : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12);
+    // NeutralVariant: hue from overridden color, fixed chroma 8
+    jsonNeutralVariantPal = neutralVariant
+      ? TonalPalette.fromHueAndChroma(
+          Hct.fromInt(argbFromHex(neutralVariant)).hue,
+          8,
+        )
+      : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 6);
+  } else {
+    // No overrides: use formulas based on source color
+    jsonPrimaryPal = TonalPalette.fromInt(sourceArgb);
+    jsonSecondaryPal = TonalPalette.fromHueAndChroma(
+      sourceHct.hue,
+      sourceHct.chroma / 3,
+    );
+    jsonTertiaryPal = TonalPalette.fromHueAndChroma(
+      (sourceHct.hue + 60) % 360,
+      sourceHct.chroma / 2,
+    );
+    jsonNeutralPal = TonalPalette.fromHueAndChroma(
+      sourceHct.hue,
+      sourceHct.chroma / 12,
+    );
+    jsonNeutralVariantPal = TonalPalette.fromHueAndChroma(
+      sourceHct.hue,
+      sourceHct.chroma / 6,
+    );
+  }
+
+  const jsonPalettes: Record<string, Record<string, string>> = {};
+  const paletteEntries: [string, TonalPalette][] = [
+    ["primary", jsonPrimaryPal],
+    ["secondary", jsonSecondaryPal],
+    ["tertiary", jsonTertiaryPal],
+    ["neutral", jsonNeutralPal],
+    ["neutral-variant", jsonNeutralVariantPal],
+  ];
+
+  for (const [name, palette] of paletteEntries) {
+    const tones: Record<string, string> = {};
+    for (const tone of STANDARD_TONES) {
+      tones[tone.toString()] = hexFromArgb(palette.tone(tone)).toUpperCase();
+    }
+    jsonPalettes[name] = tones;
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
+  // Pure formatters – no domain logic below this line
+  // ──────────────────────────────────────────────────────────────────────────
+
   return {
     toCss() {
       const lightVars = toCssVars(mergedColorsLight);
@@ -747,47 +949,47 @@ export function builder(
       // Use the palettes from both light and dark schemes
       // When contrastAllColors is enabled, tonal shades adjust based on contrast level
       // When adaptiveShades is enabled, shades invert in dark mode
-      const generateTonalVars = (scheme: DynamicScheme) =>
+      const generateTonalVars = (s: DynamicScheme) =>
         [
           generateTonalPaletteVars(
             "primary",
-            scheme.primaryPalette,
-            scheme,
+            s.primaryPalette,
+            s,
             contrastAllColors,
             adaptiveShades,
           ),
           generateTonalPaletteVars(
             "secondary",
-            scheme.secondaryPalette,
-            scheme,
+            s.secondaryPalette,
+            s,
             contrastAllColors,
             adaptiveShades,
           ),
           generateTonalPaletteVars(
             "tertiary",
-            scheme.tertiaryPalette,
-            scheme,
+            s.tertiaryPalette,
+            s,
             contrastAllColors,
             adaptiveShades,
           ),
           generateTonalPaletteVars(
             "error",
-            scheme.errorPalette,
-            scheme,
+            s.errorPalette,
+            s,
             contrastAllColors,
             adaptiveShades,
           ),
           generateTonalPaletteVars(
             "neutral",
-            scheme.neutralPalette,
-            scheme,
+            s.neutralPalette,
+            s,
             contrastAllColors,
             adaptiveShades,
           ),
           generateTonalPaletteVars(
             "neutral-variant",
-            scheme.neutralVariantPalette,
-            scheme,
+            s.neutralVariantPalette,
+            s,
             contrastAllColors,
             adaptiveShades,
           ),
@@ -797,7 +999,7 @@ export function builder(
             return generateTonalPaletteVars(
               kebabCase(customColorObj.name),
               palette,
-              scheme,
+              s,
               contrastAllColors,
               adaptiveShades,
             );
@@ -814,218 +1016,11 @@ export function builder(
     },
 
     toJson() {
-      const sourceHct = Hct.fromInt(sourceArgb);
-
-      // Determine if any core colors are overridden
-      const hasOverrides = !!(
-        primary ||
-        secondary ||
-        tertiary ||
-        error ||
-        neutral ||
-        neutralVariant
-      );
-
-      // Build coreColors object: include only the colors that are specified
-      const coreColors: Record<string, string> = {
-        primary: (primary || hexSource).toUpperCase(),
-      };
-      if (secondary) coreColors.secondary = secondary.toUpperCase();
-      if (tertiary) coreColors.tertiary = tertiary.toUpperCase();
-      if (error) coreColors.error = error.toUpperCase();
-      if (neutral) coreColors.neutral = neutral.toUpperCase();
-      if (neutralVariant)
-        coreColors.neutralVariant = neutralVariant.toUpperCase();
-
-      // Build extendedColors array matching Material Theme Builder format
-      const extendedColors = hexCustomColors.map((c) => ({
-        name: c.name,
-        color: c.hex.toUpperCase(),
-        description: "",
-        harmonized: c.blend ?? DEFAULT_BLEND,
-      }));
-
-      // Helper to extract scheme colors in fixture token order
-      const extractSchemeColors = (
-        s: DynamicScheme,
-        bgScheme?: DynamicScheme,
-      ) => {
-        const colors: Record<string, string> = {};
-        for (const tokenName of fixtureTokenOrder) {
-          const dynamicColor =
-            MaterialDynamicColors[
-              tokenName as keyof typeof MaterialDynamicColors
-            ];
-          if (
-            dynamicColor &&
-            typeof dynamicColor === "object" &&
-            "getArgb" in dynamicColor
-          ) {
-            // When core colors are overridden, background/onBackground come from
-            // the source scheme (based on primary/source color) rather than the
-            // overridden neutral palette
-            const useScheme =
-              bgScheme &&
-              (tokenName === "background" || tokenName === "onBackground")
-                ? bgScheme
-                : s;
-            colors[tokenName] = hexFromArgb(
-              (dynamicColor as DynamicColor).getArgb(useScheme),
-            ).toUpperCase();
-          }
-        }
-        return colors;
-      };
-
-      // Generate all 6 scheme variants
-      const contrastLevels = [
-        { name: "light", isDark: false, contrast: 0 },
-        { name: "light-medium-contrast", isDark: false, contrast: 0.5 },
-        { name: "light-high-contrast", isDark: false, contrast: 1.0 },
-        { name: "dark", isDark: true, contrast: 0 },
-        { name: "dark-medium-contrast", isDark: true, contrast: 0.5 },
-        { name: "dark-high-contrast", isDark: true, contrast: 1.0 },
-      ];
-
-      const schemes: Record<string, Record<string, string>> = {};
-
-      if (hasOverrides) {
-        // When core colors are overridden, create palettes from each overridden color
-        // using SchemeTonalSpot to get the proper palette generation
-        const primaryHct = Hct.fromInt(argbFromHex(primary || hexSource));
-        const primaryPalScheme = new SchemeClass(primaryHct, false, 0);
-
-        const secondaryPalScheme = secondary
-          ? new SchemeClass(Hct.fromInt(argbFromHex(secondary)), false, 0)
-          : primaryPalScheme;
-        const tertiaryPalScheme = tertiary
-          ? new SchemeClass(Hct.fromInt(argbFromHex(tertiary)), false, 0)
-          : primaryPalScheme;
-        const errorPalScheme = error
-          ? new SchemeClass(Hct.fromInt(argbFromHex(error)), false, 0)
-          : primaryPalScheme;
-        const neutralPalScheme = neutral
-          ? new SchemeClass(Hct.fromInt(argbFromHex(neutral)), false, 0)
-          : primaryPalScheme;
-        const neutralVariantPalScheme = neutralVariant
-          ? new SchemeClass(Hct.fromInt(argbFromHex(neutralVariant)), false, 0)
-          : primaryPalScheme;
-
-        for (const {
-          name,
-          isDark,
-          contrast: contrastLevel,
-        } of contrastLevels) {
-          const s = new DynamicScheme({
-            sourceColorArgb: argbFromHex(primary || hexSource),
-            variant: schemeToVariant[scheme],
-            contrastLevel,
-            isDark,
-            primaryPalette: primaryPalScheme.primaryPalette,
-            secondaryPalette: secondaryPalScheme.primaryPalette,
-            tertiaryPalette: tertiaryPalScheme.primaryPalette,
-            neutralPalette: neutralPalScheme.neutralPalette,
-            neutralVariantPalette:
-              neutralVariantPalScheme.neutralVariantPalette,
-          });
-          s.errorPalette = errorPalScheme.primaryPalette;
-
-          // Background/onBackground use the primary source scheme's neutral palette
-          const bgScheme = new SchemeClass(primaryHct, isDark, contrastLevel);
-          schemes[name] = extractSchemeColors(s, bgScheme);
-        }
-      } else {
-        // No overrides: use SchemeClass directly
-        for (const {
-          name,
-          isDark,
-          contrast: contrastLevel,
-        } of contrastLevels) {
-          const s = new SchemeClass(sourceHct, isDark, contrastLevel);
-          schemes[name] = extractSchemeColors(s);
-        }
-      }
-
-      // Generate palettes matching Material Theme Builder format
-      let jsonPrimaryPal: TonalPalette;
-      let jsonSecondaryPal: TonalPalette;
-      let jsonTertiaryPal: TonalPalette;
-      let jsonNeutralPal: TonalPalette;
-      let jsonNeutralVariantPal: TonalPalette;
-
-      if (hasOverrides) {
-        // When colors are overridden, use TonalPalette.fromInt for each color
-        jsonPrimaryPal = TonalPalette.fromInt(
-          argbFromHex(primary || hexSource),
-        );
-        jsonSecondaryPal = secondary
-          ? TonalPalette.fromInt(argbFromHex(secondary))
-          : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 3);
-        jsonTertiaryPal = tertiary
-          ? TonalPalette.fromInt(argbFromHex(tertiary))
-          : TonalPalette.fromHueAndChroma(
-              (sourceHct.hue + 60) % 360,
-              sourceHct.chroma / 2,
-            );
-        // Neutral: hue from overridden color, fixed chroma 4
-        jsonNeutralPal = neutral
-          ? TonalPalette.fromHueAndChroma(
-              Hct.fromInt(argbFromHex(neutral)).hue,
-              4,
-            )
-          : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12);
-        // NeutralVariant: hue from overridden color, fixed chroma 8
-        jsonNeutralVariantPal = neutralVariant
-          ? TonalPalette.fromHueAndChroma(
-              Hct.fromInt(argbFromHex(neutralVariant)).hue,
-              8,
-            )
-          : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 6);
-      } else {
-        // No overrides: use formulas based on source color
-        jsonPrimaryPal = TonalPalette.fromInt(sourceArgb);
-        jsonSecondaryPal = TonalPalette.fromHueAndChroma(
-          sourceHct.hue,
-          sourceHct.chroma / 3,
-        );
-        jsonTertiaryPal = TonalPalette.fromHueAndChroma(
-          (sourceHct.hue + 60) % 360,
-          sourceHct.chroma / 2,
-        );
-        jsonNeutralPal = TonalPalette.fromHueAndChroma(
-          sourceHct.hue,
-          sourceHct.chroma / 12,
-        );
-        jsonNeutralVariantPal = TonalPalette.fromHueAndChroma(
-          sourceHct.hue,
-          sourceHct.chroma / 6,
-        );
-      }
-
-      const jsonPalettes: Record<string, Record<string, string>> = {};
-      const paletteEntries: [string, TonalPalette][] = [
-        ["primary", jsonPrimaryPal],
-        ["secondary", jsonSecondaryPal],
-        ["tertiary", jsonTertiaryPal],
-        ["neutral", jsonNeutralPal],
-        ["neutral-variant", jsonNeutralVariantPal],
-      ];
-
-      for (const [name, palette] of paletteEntries) {
-        const tones: Record<string, string> = {};
-        for (const tone of STANDARD_TONES) {
-          tones[tone.toString()] = hexFromArgb(
-            palette.tone(tone),
-          ).toUpperCase();
-        }
-        jsonPalettes[name] = tones;
-      }
-
       return {
-        seed: hexSource.toUpperCase(),
+        seed,
         coreColors,
         extendedColors,
-        schemes,
+        schemes: jsonSchemes,
         palettes: jsonPalettes,
       };
     },
