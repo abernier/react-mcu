@@ -765,3 +765,157 @@ export function generateCss({
     allPalettes,
   };
 }
+
+/**
+ * Builder API - generates Material Design color scheme as JSON
+ *
+ * @param source - Source color in hex format (required)
+ * @param options - Configuration options (optional)
+ * @returns Object containing light and dark theme colors, palettes, and custom colors
+ *
+ * @example
+ * ```ts
+ * import { builder } from "react-mcu"
+ *
+ * const colors = builder("#6750A4", {
+ *   scheme: "vibrant",
+ *   contrast: 0.5,
+ *   primary: "#FF0000",
+ *   customColors: [
+ *     { name: "brand", hex: "#FF5733", blend: true }
+ *   ],
+ *   contrastAllColors: true
+ * })
+ * ```
+ */
+export function builder(
+  source: string,
+  options?: Omit<McuConfig, "source">,
+): {
+  schemes: {
+    light: Record<string, string>;
+    dark: Record<string, string>;
+  };
+  palettes: Record<
+    string,
+    {
+      [key: number]: string;
+    }
+  >;
+  customColors?: {
+    name: string;
+    blend: boolean;
+    color: {
+      light: string;
+      dark: string;
+    };
+    onColor: {
+      light: string;
+      dark: string;
+    };
+    colorContainer: {
+      light: string;
+      dark: string;
+    };
+    onColorContainer: {
+      light: string;
+      dark: string;
+    };
+  }[];
+} {
+  const config: McuConfig = {
+    source,
+    ...options,
+  };
+
+  const { mergedColorsLight, mergedColorsDark, allPalettes } =
+    generateCss(config);
+
+  // Convert ARGB colors to hex
+  const lightColors: Record<string, string> = {};
+  const darkColors: Record<string, string> = {};
+
+  Object.entries(mergedColorsLight).forEach(([name, argb]) => {
+    lightColors[name] = hexFromArgb(argb);
+  });
+
+  Object.entries(mergedColorsDark).forEach(([name, argb]) => {
+    darkColors[name] = hexFromArgb(argb);
+  });
+
+  // Convert palettes to the expected format
+  const palettes: Record<string, { [key: number]: string }> = {};
+  Object.entries(allPalettes).forEach(([name, palette]) => {
+    if (!palette) return; // Skip if palette is undefined
+    const tones: { [key: number]: string } = {};
+    STANDARD_TONES.forEach((tone) => {
+      tones[tone] = hexFromArgb(palette.tone(tone));
+    });
+    palettes[name] = tones;
+  });
+
+  // Extract custom colors information if provided
+  const customColorsArray = options?.customColors;
+  const customColors =
+    customColorsArray && customColorsArray.length > 0
+      ? customColorsArray.map((customColor) => {
+          const name = customColor.name;
+          const capitalizedName = upperFirst(name);
+
+          // Ensure all color values exist before returning
+          const colorLight = lightColors[name];
+          const colorDark = darkColors[name];
+          const onColorLight = lightColors[`on${capitalizedName}`];
+          const onColorDark = darkColors[`on${capitalizedName}`];
+          const containerLight = lightColors[`${name}Container`];
+          const containerDark = darkColors[`${name}Container`];
+          const onContainerLight = lightColors[`on${capitalizedName}Container`];
+          const onContainerDark = darkColors[`on${capitalizedName}Container`];
+
+          if (
+            !colorLight ||
+            !colorDark ||
+            !onColorLight ||
+            !onColorDark ||
+            !containerLight ||
+            !containerDark ||
+            !onContainerLight ||
+            !onContainerDark
+          ) {
+            throw new Error(
+              `Custom color "${name}" is missing required color values`,
+            );
+          }
+
+          return {
+            name,
+            blend: customColor.blend ?? DEFAULT_BLEND,
+            color: {
+              light: colorLight,
+              dark: colorDark,
+            },
+            onColor: {
+              light: onColorLight,
+              dark: onColorDark,
+            },
+            colorContainer: {
+              light: containerLight,
+              dark: containerDark,
+            },
+            onColorContainer: {
+              light: onContainerLight,
+              dark: onContainerDark,
+            },
+          };
+        })
+      : undefined;
+
+  return {
+    schemes: {
+      light: lightColors,
+      dark: darkColors,
+    },
+    palettes,
+    ...(customColors && { customColors }),
+  };
+}
