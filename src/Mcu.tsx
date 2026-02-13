@@ -872,7 +872,6 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
       };
     },
 
-    // Internal data for React component
     mergedColorsLight,
     mergedColorsDark,
     allPalettes,
