@@ -537,7 +537,7 @@ const toCssVars = (mergedColors: Record<string, number>) => {
 /**
  * Builder API - generates Material Design color schemes
  *
- * @param source - Source color in hex format (required)
+ * @param hexSource - Source color in hex format (required)
  * @param options - Configuration options (optional)
  * @returns Object with toCss() and toJson() methods
  *
@@ -561,7 +561,7 @@ const toCssVars = (mergedColors: Record<string, number>) => {
  * ```
  */
 export function builder(
-  source: McuConfig["source"],
+  hexSource: McuConfig["source"],
   {
     scheme = DEFAULT_SCHEME,
     contrast = DEFAULT_CONTRAST,
@@ -576,10 +576,10 @@ export function builder(
     adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
   }: Omit<McuConfig, "source"> = {},
 ) {
-  const sourceArgb = argbFromHex(source);
+  const sourceArgb = argbFromHex(hexSource);
 
   // Determine the effective source for harmonization
-  const effectiveSource = primary || source;
+  const effectiveSource = primary || hexSource;
   const effectiveSourceArgb = argbFromHex(effectiveSource);
   const effectiveSourceForHarmonization = primary
     ? argbFromHex(primary)
