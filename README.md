@@ -91,6 +91,65 @@ return (
 );
 ```
 
+## `builder`
+
+A TypeScript API is available to generate Material Design color schemes as JSON:
+
+```ts
+import { builder } from "react-mcu";
+
+const colors = builder("#6750A4", {
+  scheme: "vibrant",
+  contrast: 0.5,
+  primary: "#FF0000",
+  secondary: "#00FF00",
+  customColors: [
+    { name: "brand", hex: "#FF5733", blend: true },
+    { name: "success", hex: "#28A745", blend: false },
+  ],
+  contrastAllColors: true,
+});
+```
+
+The first argument `source` is required. The second argument is optional and accepts the same options as the `<Mcu>` component props.
+
+**Returns:**
+
+```ts
+{
+  schemes: {
+    light: Record<string, string>,  // All color tokens in hex for light theme
+    dark: Record<string, string>,   // All color tokens in hex for dark theme
+  },
+  palettes: Record<string, { [tone: number]: string }>,  // Tonal palettes for all colors
+  customColors?: Array<{  // Only present if customColors were provided
+    name: string,
+    blend: boolean,
+    color: { light: string, dark: string },
+    onColor: { light: string, dark: string },
+    colorContainer: { light: string, dark: string },
+    onColorContainer: { light: string, dark: string },
+  }>
+}
+```
+
+Example usage:
+
+```ts
+// Minimal usage - only source color required
+const colors = builder("#6750A4");
+
+// Access colors
+console.log(colors.schemes.light.primary); // "#65558f"
+console.log(colors.schemes.dark.primary); // "#cfbdfe"
+
+// Access tonal palettes
+console.log(colors.palettes.primary[50]); // Mid-tone primary color
+
+// Export to JSON
+const json = JSON.stringify(colors, null, 2);
+```
+
 ## Tailwind
 
 Compatible through [theme variables](https://tailwindcss.com/docs/theme):
