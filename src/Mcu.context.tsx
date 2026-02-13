@@ -69,7 +69,7 @@ export const McuProvider = ({
     (colorName: TokenName, theme: string | undefined) => {
       // console.log("getMcuColor", colorName, theme);
       return hexFromArgb(
-        (theme === "light" ? mergedColorsLight : mergedColorsDark)[colorName]!,
+        (theme === "light" ? mergedColorsLight : mergedColorsDark)[colorName],
       );
     },
     [mergedColorsDark, mergedColorsLight],
