@@ -242,13 +242,14 @@ export const tokenNames = [
   "surfaceContainerHigh",
   "surfaceContainerHighest",
   "onSurface",
+  "surfaceVariant",
   "onSurfaceVariant",
   "outline",
   "outlineVariant",
   "inverseSurface",
   "inverseOnSurface",
   "primary",
-  // "primaryDim",
+  "surfaceTint",
   "onPrimary",
   "primaryContainer",
   "onPrimaryContainer",
@@ -257,12 +258,7 @@ export const tokenNames = [
   "onPrimaryFixed",
   "onPrimaryFixedVariant",
   "inversePrimary",
-  "primaryFixed",
-  "primaryFixedDim",
-  "onPrimaryFixed",
-  "onPrimaryFixedVariant",
   "secondary",
-  // "secondaryDim",
   "onSecondary",
   "secondaryContainer",
   "onSecondaryContainer",
@@ -271,7 +267,6 @@ export const tokenNames = [
   "onSecondaryFixed",
   "onSecondaryFixedVariant",
   "tertiary",
-  // "tertiaryDim",
   "onTertiary",
   "tertiaryContainer",
   "onTertiaryContainer",
@@ -280,12 +275,64 @@ export const tokenNames = [
   "onTertiaryFixed",
   "onTertiaryFixedVariant",
   "error",
-  // "errorDim",
   "onError",
   "errorContainer",
   "onErrorContainer",
-  "scrim", // added manually, was missing
-  "shadow", // added manually, was missing
+  "scrim",
+  "shadow",
+] as const;
+
+// Token order matching Material Theme Builder export format
+const fixtureTokenOrder = [
+  "primary",
+  "surfaceTint",
+  "onPrimary",
+  "primaryContainer",
+  "onPrimaryContainer",
+  "secondary",
+  "onSecondary",
+  "secondaryContainer",
+  "onSecondaryContainer",
+  "tertiary",
+  "onTertiary",
+  "tertiaryContainer",
+  "onTertiaryContainer",
+  "error",
+  "onError",
+  "errorContainer",
+  "onErrorContainer",
+  "background",
+  "onBackground",
+  "surface",
+  "onSurface",
+  "surfaceVariant",
+  "onSurfaceVariant",
+  "outline",
+  "outlineVariant",
+  "shadow",
+  "scrim",
+  "inverseSurface",
+  "inverseOnSurface",
+  "inversePrimary",
+  "primaryFixed",
+  "onPrimaryFixed",
+  "primaryFixedDim",
+  "onPrimaryFixedVariant",
+  "secondaryFixed",
+  "onSecondaryFixed",
+  "secondaryFixedDim",
+  "onSecondaryFixedVariant",
+  "tertiaryFixed",
+  "onTertiaryFixed",
+  "tertiaryFixedDim",
+  "onTertiaryFixedVariant",
+  "surfaceDim",
+  "surfaceBright",
+  "surfaceContainerLowest",
+  "surfaceContainerLow",
+  "surfaceContainer",
+  "surfaceContainerHigh",
+  "surfaceContainerHighest",
 ] as const;
 export type TokenName = (typeof tokenNames)[number];
 
@@ -767,31 +814,91 @@ export function builder(
     },
 
     toJson() {
-      // Convert ARGB colors to hex
-      const lightColors: Record<string, string> = {};
-      const darkColors: Record<string, string> = {};
+      // Helper to extract scheme colors in fixture token order
+      const extractSchemeColors = (s: DynamicScheme) => {
+        const colors: Record<string, string> = {};
+        for (const tokenName of fixtureTokenOrder) {
+          const dynamicColor =
+            MaterialDynamicColors[
+              tokenName as keyof typeof MaterialDynamicColors
+            ];
+          if (
+            dynamicColor &&
+            typeof dynamicColor === "object" &&
+            "getArgb" in dynamicColor
+          ) {
+            colors[tokenName] = hexFromArgb(
+              (dynamicColor as DynamicColor).getArgb(s),
+            ).toUpperCase();
+          }
+        }
+        return colors;
+      };
 
-      Object.entries(mergedColorsLight).forEach(([name, argb]) => {
-        lightColors[name] = hexFromArgb(argb);
-      });
+      // Generate all 6 scheme variants using the SchemeClass directly
+      const sourceHct = Hct.fromInt(sourceArgb);
+      const contrastLevels = [
+        { name: "light", isDark: false, contrast: 0 },
+        { name: "light-medium-contrast", isDark: false, contrast: 0.5 },
+        { name: "light-high-contrast", isDark: false, contrast: 1.0 },
+        { name: "dark", isDark: true, contrast: 0 },
+        { name: "dark-medium-contrast", isDark: true, contrast: 0.5 },
+        { name: "dark-high-contrast", isDark: true, contrast: 1.0 },
+      ];
 
-      Object.entries(mergedColorsDark).forEach(([name, argb]) => {
-        darkColors[name] = hexFromArgb(argb);
-      });
+      const schemes: Record<string, Record<string, string>> = {};
+      for (const { name, isDark, contrast: contrastLevel } of contrastLevels) {
+        const s = new SchemeClass(sourceHct, isDark, contrastLevel);
+        schemes[name] = extractSchemeColors(s);
+      }
 
-      // Convert palettes to the expected format
-      const palettes: Record<string, { [key: number]: string }> = {};
-      Object.entries(allPalettes).forEach(([name, palette]) => {
-        if (!palette) return;
-        const tones: { [key: number]: string } = {};
-        STANDARD_TONES.forEach((tone) => {
-          tones[tone] = hexFromArgb(palette.tone(tone));
-        });
-        palettes[name] = tones;
-      });
+      // Generate palettes matching Material Theme Builder format
+      // Primary: TonalPalette.fromInt preserves original hue and chroma
+      // Secondary: sourceHue, sourceChroma / 3
+      // Tertiary: (sourceHue + 60) % 360, sourceChroma / 2
+      // Neutral: sourceHue, sourceChroma / 12
+      // Neutral-Variant: sourceHue, sourceChroma / 6
+      const jsonPrimaryPal = TonalPalette.fromInt(sourceArgb);
+      const jsonSecondaryPal = TonalPalette.fromHueAndChroma(
+        sourceHct.hue,
+        sourceHct.chroma / 3,
+      );
+      const jsonTertiaryPal = TonalPalette.fromHueAndChroma(
+        (sourceHct.hue + 60) % 360,
+        sourceHct.chroma / 2,
+      );
+      const jsonNeutralPal = TonalPalette.fromHueAndChroma(
+        sourceHct.hue,
+        sourceHct.chroma / 12,
+      );
+      const jsonNeutralVariantPal = TonalPalette.fromHueAndChroma(
+        sourceHct.hue,
+        sourceHct.chroma / 6,
+      );
+
+      const jsonPalettes: Record<string, Record<string, string>> = {};
+      const paletteEntries: [string, TonalPalette][] = [
+        ["primary", jsonPrimaryPal],
+        ["secondary", jsonSecondaryPal],
+        ["tertiary", jsonTertiaryPal],
+        ["neutral", jsonNeutralPal],
+        ["neutral-variant", jsonNeutralVariantPal],
+      ];
+
+      for (const [name, palette] of paletteEntries) {
+        const tones: Record<string, string> = {};
+        for (const tone of STANDARD_TONES) {
+          tones[tone.toString()] = hexFromArgb(
+            palette.tone(tone),
+          ).toUpperCase();
+        }
+        jsonPalettes[name] = tones;
+      }
 
       // Extract custom colors information
       const customColorsArray = hexCustomColors;
+      const lightColors = schemes["light"]!;
+      const darkColors = schemes["dark"]!;
       const customColorsFormatted =
         customColorsArray && customColorsArray.length > 0
           ? customColorsArray.map((customColor) => {
@@ -848,11 +955,13 @@ export function builder(
           : undefined;
 
       return {
-        schemes: {
-          light: lightColors,
-          dark: darkColors,
+        seed: hexSource.toUpperCase(),
+        coreColors: {
+          primary: hexSource.toUpperCase(),
         },
-        palettes,
+        extendedColors: [] as unknown[],
+        schemes,
+        palettes: jsonPalettes,
         ...(customColorsFormatted && { customColors: customColorsFormatted }),
       };
     },
