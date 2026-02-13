@@ -592,6 +592,7 @@ export function builder(
 
   // Unified color processing: Combine core colors and custom colors, filter to only those with hex defined
   const allColors: ColorDefinition[] = [
+    // Core colors (hex may be undefined)
     {
       name: "primary",
       hex: primary,
@@ -623,6 +624,9 @@ export function builder(
       core: true,
       chromaSource: "neutralVariant",
     },
+    //
+    // Custom colors
+    //
     ...hexCustomColors.map((c) => ({
       name: c.name,
       hex: c.hex,
@@ -652,7 +656,8 @@ export function builder(
       new DynamicScheme({ ...baseConfig, isDark: true }),
     ] as const;
 
-  // Create schemes with core color palettes
+  // Create schemes with core color palettes (or defaults from baseScheme)
+  // Since source is always required, we always have a base to work from
   const variant = schemeToVariant[scheme];
   const [lightScheme, darkScheme] = createSchemes({
     sourceColorArgb: effectiveSourceArgb,
@@ -666,6 +671,8 @@ export function builder(
       colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
   });
 
+  // Note: DynamicScheme constructor doesn't accept errorPalette as parameter
+  // We need to set it after creation
   const errorPalette = colorPalettes["error"];
   if (errorPalette) {
     lightScheme.errorPalette = errorPalette;
@@ -687,7 +694,6 @@ export function builder(
     colorPalettes,
     contrastAllColors,
   );
-
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
@@ -695,7 +701,7 @@ export function builder(
     contrastAllColors,
   );
 
-  // Create allPalettes
+  // Create allPalettes: merge core palettes (from scheme) and custom palettes
   const allPalettes = {
     primary: lightScheme.primaryPalette,
     secondary: lightScheme.secondaryPalette,
@@ -703,6 +709,7 @@ export function builder(
     error: lightScheme.errorPalette,
     neutral: lightScheme.neutralPalette,
     "neutral-variant": lightScheme.neutralVariantPalette,
+    // Add custom color palettes
     ...colorPalettes,
   };
 
