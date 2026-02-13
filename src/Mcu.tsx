@@ -578,7 +578,7 @@ export function builder(
 ) {
   const sourceArgb = argbFromHex(hexSource);
 
-  // Determine the effective source for harmonization
+  // When primary is defined, it becomes the effective source
   const effectiveSource = primary || hexSource;
   const effectiveSourceArgb = argbFromHex(effectiveSource);
   const effectiveSourceForHarmonization = primary
@@ -590,7 +590,7 @@ export function builder(
   const primaryHct = Hct.fromInt(effectiveSourceArgb);
   const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
-  // Unified color processing
+  // Unified color processing: Combine core colors and custom colors, filter to only those with hex defined
   const allColors: ColorDefinition[] = [
     {
       name: "primary",
