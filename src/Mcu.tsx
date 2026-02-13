@@ -873,8 +873,8 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
     },
 
     // Internal data for React component
-    _mergedColorsLight: mergedColorsLight,
-    _mergedColorsDark: mergedColorsDark,
-    _allPalettes: allPalettes,
+    mergedColorsLight,
+    mergedColorsDark,
+    allPalettes,
   };
 }

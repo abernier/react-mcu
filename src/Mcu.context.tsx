@@ -46,9 +46,9 @@ export const McuProvider = ({
       const b = builder(mcuConfig.source, mcuConfig);
       return {
         css: b.toCss(),
-        mergedColorsLight: b._mergedColorsLight,
-        mergedColorsDark: b._mergedColorsDark,
-        allPalettes: b._allPalettes,
+        mergedColorsLight: b.mergedColorsLight,
+        mergedColorsDark: b.mergedColorsDark,
+        allPalettes: b.allPalettes,
       };
     }, [mcuConfig]);
 
