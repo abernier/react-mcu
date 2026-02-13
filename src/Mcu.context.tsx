@@ -43,13 +43,8 @@ export const McuProvider = ({
 
   const { css, mergedColorsLight, mergedColorsDark, allPalettes } =
     useMemo(() => {
-      const b = builder(mcuConfig.source, mcuConfig);
-      return {
-        css: b.toCss(),
-        mergedColorsLight: b.mergedColorsLight,
-        mergedColorsDark: b.mergedColorsDark,
-        allPalettes: b.allPalettes,
-      };
+      const { toCss, ...rest } = builder(mcuConfig.source, mcuConfig);
+      return { css: toCss(), ...rest };
     }, [mcuConfig]);
 
   //
