@@ -818,8 +818,7 @@ export function builder(
   if (hasOverrides) {
     // When core colors are overridden, create palettes from each overridden color
     // using SchemeClass to get the proper palette generation
-    const overridePrimaryHct = Hct.fromInt(argbFromHex(primary || hexSource));
-    const primaryPalScheme = new SchemeClass(overridePrimaryHct, false, 0);
+    const primaryPalScheme = new SchemeClass(primaryHct, false, 0);
 
     const secondaryPalScheme = secondary
       ? new SchemeClass(Hct.fromInt(argbFromHex(secondary)), false, 0)
@@ -839,7 +838,7 @@ export function builder(
 
     for (const { name, isDark, contrast: contrastLevel } of contrastLevels) {
       const s = new DynamicScheme({
-        sourceColorArgb: argbFromHex(primary || hexSource),
+        sourceColorArgb: effectiveSourceArgb,
         variant: schemeToVariant[scheme],
         contrastLevel,
         isDark,
@@ -852,11 +851,7 @@ export function builder(
       s.errorPalette = errorPalScheme.primaryPalette;
 
       // Background/onBackground use the primary source scheme's neutral palette
-      const bgScheme = new SchemeClass(
-        overridePrimaryHct,
-        isDark,
-        contrastLevel,
-      );
+      const bgScheme = new SchemeClass(primaryHct, isDark, contrastLevel);
       jsonSchemes[name] = extractSchemeColors(s, bgScheme);
     }
   } else {
@@ -877,7 +872,7 @@ export function builder(
 
   if (hasOverrides) {
     // When colors are overridden, use TonalPalette.fromInt for each color
-    jsonPrimaryPal = TonalPalette.fromInt(argbFromHex(primary || hexSource));
+    jsonPrimaryPal = TonalPalette.fromInt(effectiveSourceArgb);
     jsonSecondaryPal = secondary
       ? TonalPalette.fromInt(argbFromHex(secondary))
       : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 3);
