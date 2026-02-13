@@ -91,14 +91,14 @@ return (
 );
 ```
 
-## `builder`
+## `Builder`
 
 A TypeScript API is available to generate Material Design color schemes:
 
 ```ts
-import { builder } from "react-mcu";
+import { Builder } from "react-mcu";
 
-const colors = builder("#6750A4", {
+const colors = new Builder("#6750A4", {
   scheme: "vibrant",
   contrast: 0.5,
   primary: "#FF0000",
@@ -113,14 +113,14 @@ const colors = builder("#6750A4", {
 
 The first argument `source` is required. The second argument is optional and accepts the same options as the `<Mcu>` component props.
 
-The `builder()` function returns a `Builder` instance with two methods:
+The `Builder` class has two methods:
 
 ### `.toJson()`
 
 Returns the color scheme as a JSON object:
 
 ```ts
-const json = builder("#6750A4").toJson();
+const json = new Builder("#6750A4").toJson();
 // {
 //   schemes: {
 //     light: { primary: "#65558f", onPrimary: "#ffffff", ... },
@@ -138,7 +138,7 @@ const json = builder("#6750A4").toJson();
 Returns the color scheme as CSS custom properties:
 
 ```ts
-const css = builder("#6750A4").toCss();
+const css = new Builder("#6750A4").toCss();
 // :root { --mcu-primary: #65558f; --mcu-on-primary: #ffffff; ... }
 // .dark { --mcu-primary: #cfbdfe; --mcu-on-primary: #381e72; ... }
 ```
@@ -147,16 +147,16 @@ Example usage:
 
 ```ts
 // Get as JSON
-const json = builder("#6750A4").toJson();
+const json = new Builder("#6750A4").toJson();
 console.log(json.schemes.light.primary); // "#65558f"
 console.log(json.palettes.primary[50]); // Mid-tone primary color
 
 // Get as CSS
-const css = builder("#6750A4", { scheme: "vibrant" }).toCss();
+const css = new Builder("#6750A4", { scheme: "vibrant" }).toCss();
 document.querySelector("style").textContent = css;
 
 // Export to file
-const jsonString = JSON.stringify(builder("#6750A4").toJson(), null, 2);
+const jsonString = JSON.stringify(new Builder("#6750A4").toJson(), null, 2);
 ```
 
 ## Tailwind

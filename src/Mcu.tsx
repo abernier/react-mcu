@@ -579,8 +579,10 @@ export class Builder {
       adaptiveShades: DEFAULT_ADAPTIVE_SHADES,
       ...options,
     };
-    this._contrastAllColors = this.config.contrastAllColors!;
-    this._adaptiveShades = this.config.adaptiveShades!;
+    this._contrastAllColors =
+      this.config.contrastAllColors ?? DEFAULT_CONTRAST_ALL_COLORS;
+    this._adaptiveShades =
+      this.config.adaptiveShades ?? DEFAULT_ADAPTIVE_SHADES;
   }
 
   private compute() {
@@ -588,15 +590,15 @@ export class Builder {
 
     const {
       source: hexSource,
-      scheme,
-      contrast,
+      scheme = DEFAULT_SCHEME,
+      contrast = DEFAULT_CONTRAST,
       primary,
       secondary,
       tertiary,
       neutral,
       neutralVariant,
       error,
-      customColors: hexCustomColors,
+      customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
     } = this.config;
 
     const sourceArgb = argbFromHex(hexSource);
@@ -609,9 +611,9 @@ export class Builder {
       : sourceArgb;
 
     // Create a base scheme to get the standard chroma values
-    const SchemeClass = schemesMap[scheme!];
+    const SchemeClass = schemesMap[scheme];
     const primaryHct = Hct.fromInt(effectiveSourceArgb);
-    const baseScheme = new SchemeClass(primaryHct, false, contrast!);
+    const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
     // Unified color processing
     const allColors: ColorDefinition[] = [
@@ -646,7 +648,7 @@ export class Builder {
         core: true,
         chromaSource: "neutralVariant",
       },
-      ...hexCustomColors!.map((c) => ({
+      ...hexCustomColors.map((c) => ({
         name: c.name,
         hex: c.hex,
         blend: c.blend,
@@ -671,7 +673,7 @@ export class Builder {
     );
 
     // Create schemes with core color palettes
-    const variant = schemeToVariant[scheme!];
+    const variant = schemeToVariant[scheme];
     const createSchemes = (
       baseConfig: Omit<
         ConstructorParameters<typeof DynamicScheme>[0],
@@ -686,7 +688,7 @@ export class Builder {
     const [lightScheme, darkScheme] = createSchemes({
       sourceColorArgb: effectiveSourceArgb,
       variant,
-      contrastLevel: contrast!,
+      contrastLevel: contrast,
       primaryPalette:
         this._colorPalettes["primary"] || baseScheme.primaryPalette,
       secondaryPalette:
@@ -744,14 +746,64 @@ export class Builder {
     };
   }
 
+  // Helper getters that return non-optional types after compute()
+  private get mergedColorsLight(): Record<string, number> {
+    if (!this._mergedColorsLight) {
+      throw new Error("Builder not computed yet");
+    }
+    return this._mergedColorsLight;
+  }
+
+  private get mergedColorsDark(): Record<string, number> {
+    if (!this._mergedColorsDark) {
+      throw new Error("Builder not computed yet");
+    }
+    return this._mergedColorsDark;
+  }
+
+  private get allPalettes(): Record<string, TonalPalette> {
+    if (!this._allPalettes) {
+      throw new Error("Builder not computed yet");
+    }
+    return this._allPalettes;
+  }
+
+  private get lightScheme(): DynamicScheme {
+    if (!this._lightScheme) {
+      throw new Error("Builder not computed yet");
+    }
+    return this._lightScheme;
+  }
+
+  private get darkScheme(): DynamicScheme {
+    if (!this._darkScheme) {
+      throw new Error("Builder not computed yet");
+    }
+    return this._darkScheme;
+  }
+
+  private get customColors(): CustomColor[] {
+    if (!this._customColors) {
+      throw new Error("Builder not computed yet");
+    }
+    return this._customColors;
+  }
+
+  private get colorPalettes(): Record<string, TonalPalette> {
+    if (!this._colorPalettes) {
+      throw new Error("Builder not computed yet");
+    }
+    return this._colorPalettes;
+  }
+
   /**
    * Generate CSS string with CSS custom properties
    */
   toCss(): string {
     this.compute();
 
-    const lightVars = toCssVars(this._mergedColorsLight!);
-    const darkVars = toCssVars(this._mergedColorsDark!);
+    const lightVars = toCssVars(this.mergedColorsLight);
+    const darkVars = toCssVars(this.mergedColorsDark);
 
     const generateTonalVars = (scheme: DynamicScheme) =>
       [
@@ -797,8 +849,8 @@ export class Builder {
           this._contrastAllColors,
           this._adaptiveShades,
         ),
-        ...this._customColors!.map((customColorObj) => {
-          const palette = getPalette(this._colorPalettes!, customColorObj.name);
+        ...this.customColors.map((customColorObj) => {
+          const palette = getPalette(this.colorPalettes, customColorObj.name);
           return generateTonalPaletteVars(
             kebabCase(customColorObj.name),
             palette,
@@ -809,8 +861,8 @@ export class Builder {
         }),
       ].join(" ");
 
-    const lightTonalVars = generateTonalVars(this._lightScheme!);
-    const darkTonalVars = generateTonalVars(this._darkScheme!);
+    const lightTonalVars = generateTonalVars(this.lightScheme);
+    const darkTonalVars = generateTonalVars(this.darkScheme);
 
     return `
 :root { ${lightVars} ${lightTonalVars} }
@@ -828,17 +880,17 @@ export class Builder {
     const lightColors: Record<string, string> = {};
     const darkColors: Record<string, string> = {};
 
-    Object.entries(this._mergedColorsLight!).forEach(([name, argb]) => {
+    Object.entries(this.mergedColorsLight).forEach(([name, argb]) => {
       lightColors[name] = hexFromArgb(argb);
     });
 
-    Object.entries(this._mergedColorsDark!).forEach(([name, argb]) => {
+    Object.entries(this.mergedColorsDark).forEach(([name, argb]) => {
       darkColors[name] = hexFromArgb(argb);
     });
 
     // Convert palettes to the expected format
     const palettes: Record<string, { [key: number]: string }> = {};
-    Object.entries(this._allPalettes!).forEach(([name, palette]) => {
+    Object.entries(this.allPalettes).forEach(([name, palette]) => {
       if (!palette) return;
       const tones: { [key: number]: string } = {};
       STANDARD_TONES.forEach((tone) => {
@@ -920,46 +972,15 @@ export class Builder {
   _getComputedData() {
     this.compute();
     return {
-      mergedColorsLight: this._mergedColorsLight!,
-      mergedColorsDark: this._mergedColorsDark!,
-      allPalettes: this._allPalettes!,
+      mergedColorsLight: this.mergedColorsLight,
+      mergedColorsDark: this.mergedColorsDark,
+      allPalettes: this.allPalettes,
     };
   }
 }
 
 /**
- * Create a builder instance for generating Material Design color schemes
- *
- * @param source - Source color in hex format (required)
- * @param options - Configuration options (optional)
- * @returns Builder instance with toCss() and toJson() methods
- *
- * @example
- * ```ts
- * import { builder } from "react-mcu"
- *
- * const colors = builder("#6750A4", {
- *   scheme: "vibrant",
- *   contrast: 0.5,
- *   customColors: [
- *     { name: "brand", hex: "#FF5733", blend: true }
- *   ]
- * });
- *
- * // Get as JSON
- * const json = colors.toJson();
- *
- * // Get as CSS
- * const css = colors.toCss();
- * ```
- */
-export function builder(source: string, options?: Omit<McuConfig, "source">) {
-  return new Builder(source, options);
-}
-
-/**
  * Generate CSS for Material Design color scheme
- * @deprecated Use builder(source, options).toCss() instead
  * @internal This function is kept for backward compatibility with Mcu.context.tsx
  */
 export function generateCss(config: McuConfig) {
