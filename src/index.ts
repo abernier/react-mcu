@@ -1,2 +1,2 @@
-export { Builder, Mcu } from "./Mcu";
+export { Mcu, builder } from "./Mcu";
 export { useMcu } from "./Mcu.context";

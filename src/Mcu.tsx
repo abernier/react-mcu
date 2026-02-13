@@ -535,7 +535,11 @@ const toCssVars = (mergedColors: Record<string, number>) => {
 };
 
 /**
- * Builder class - generates Material Design color schemes
+ * Builder API - generates Material Design color schemes
+ *
+ * @param source - Source color in hex format (required)
+ * @param options - Configuration options (optional)
+ * @returns Object with toCss() and toJson() methods
  *
  * @example
  * ```ts
@@ -556,439 +560,350 @@ const toCssVars = (mergedColors: Record<string, number>) => {
  * const css = colors.toCss();
  * ```
  */
-export class Builder {
-  private config: McuConfig;
-  private _mergedColorsLight?: Record<string, number>;
-  private _mergedColorsDark?: Record<string, number>;
-  private _allPalettes?: Record<string, TonalPalette>;
-  private _lightScheme?: DynamicScheme;
-  private _darkScheme?: DynamicScheme;
-  private _customColors?: CustomColor[];
-  private _colorPalettes?: Record<string, TonalPalette>;
-  private _contrastAllColors: boolean;
-  private _adaptiveShades: boolean;
+export function builder(source: string, options?: Omit<McuConfig, "source">) {
+  const config: McuConfig = {
+    source,
+    ...options,
+  };
 
-  constructor(source: string, options?: Omit<McuConfig, "source">) {
-    this.config = {
-      source,
-      scheme: DEFAULT_SCHEME,
-      contrast: DEFAULT_CONTRAST,
-      colorMatch: DEFAULT_COLOR_MATCH,
-      customColors: DEFAULT_CUSTOM_COLORS,
-      contrastAllColors: DEFAULT_CONTRAST_ALL_COLORS,
-      adaptiveShades: DEFAULT_ADAPTIVE_SHADES,
-      ...options,
-    };
-    this._contrastAllColors =
-      this.config.contrastAllColors ?? DEFAULT_CONTRAST_ALL_COLORS;
-    this._adaptiveShades =
-      this.config.adaptiveShades ?? DEFAULT_ADAPTIVE_SHADES;
-  }
+  // Lazy computation cache
+  let computed: ReturnType<typeof generateCss> | null = null;
 
-  private compute() {
-    if (this._mergedColorsLight) return; // Already computed
-
-    const {
-      source: hexSource,
-      scheme = DEFAULT_SCHEME,
-      contrast = DEFAULT_CONTRAST,
-      primary,
-      secondary,
-      tertiary,
-      neutral,
-      neutralVariant,
-      error,
-      customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
-    } = this.config;
-
-    const sourceArgb = argbFromHex(hexSource);
-
-    // Determine the effective source for harmonization
-    const effectiveSource = primary || hexSource;
-    const effectiveSourceArgb = argbFromHex(effectiveSource);
-    const effectiveSourceForHarmonization = primary
-      ? argbFromHex(primary)
-      : sourceArgb;
-
-    // Create a base scheme to get the standard chroma values
-    const SchemeClass = schemesMap[scheme];
-    const primaryHct = Hct.fromInt(effectiveSourceArgb);
-    const baseScheme = new SchemeClass(primaryHct, false, contrast);
-
-    // Unified color processing
-    const allColors: ColorDefinition[] = [
-      {
-        name: "primary",
-        hex: primary,
-        core: true,
-        chromaSource: "primary",
-      },
-      {
-        name: "secondary",
-        hex: secondary,
-        core: true,
-        chromaSource: "primary",
-      },
-      {
-        name: "tertiary",
-        hex: tertiary,
-        core: true,
-        chromaSource: "primary",
-      },
-      { name: "error", hex: error, core: true, chromaSource: "primary" },
-      {
-        name: "neutral",
-        hex: neutral,
-        core: true,
-        chromaSource: "neutral",
-      },
-      {
-        name: "neutralVariant",
-        hex: neutralVariant,
-        core: true,
-        chromaSource: "neutralVariant",
-      },
-      ...hexCustomColors.map((c) => ({
-        name: c.name,
-        hex: c.hex,
-        blend: c.blend,
-        core: false,
-      })),
-    ];
-
-    const definedColors = allColors.filter(
-      (c): c is ColorDefinition & { hex: string } => c.hex !== undefined,
-    );
-
-    // Create palettes for all defined colors
-    this._colorPalettes = Object.fromEntries(
-      definedColors.map((colorDef) => [
-        colorDef.name,
-        createColorPalette(
-          colorDef,
-          baseScheme,
-          effectiveSourceForHarmonization,
-        ),
-      ]),
-    );
-
-    // Create schemes with core color palettes
-    const variant = schemeToVariant[scheme];
-    const createSchemes = (
-      baseConfig: Omit<
-        ConstructorParameters<typeof DynamicScheme>[0],
-        "isDark"
-      >,
-    ) =>
-      [
-        new DynamicScheme({ ...baseConfig, isDark: false }),
-        new DynamicScheme({ ...baseConfig, isDark: true }),
-      ] as const;
-
-    const [lightScheme, darkScheme] = createSchemes({
-      sourceColorArgb: effectiveSourceArgb,
-      variant,
-      contrastLevel: contrast,
-      primaryPalette:
-        this._colorPalettes["primary"] || baseScheme.primaryPalette,
-      secondaryPalette:
-        this._colorPalettes["secondary"] || baseScheme.secondaryPalette,
-      tertiaryPalette:
-        this._colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
-      neutralPalette:
-        this._colorPalettes["neutral"] || baseScheme.neutralPalette,
-      neutralVariantPalette:
-        this._colorPalettes["neutralVariant"] ||
-        baseScheme.neutralVariantPalette,
-    });
-
-    const errorPalette = this._colorPalettes["error"];
-    if (errorPalette) {
-      lightScheme.errorPalette = errorPalette;
-      darkScheme.errorPalette = errorPalette;
+  const compute = () => {
+    if (!computed) {
+      computed = generateCss(config);
     }
+    return computed;
+  };
 
-    this._lightScheme = lightScheme;
-    this._darkScheme = darkScheme;
+  return {
+    toCss() {
+      return compute().css;
+    },
 
-    // Extract custom colors (non-core) for merging
-    this._customColors = definedColors
-      .filter((c) => !c.core)
-      .map((c) => ({
-        name: c.name,
-        blend: c.blend ?? DEFAULT_BLEND,
-        value: argbFromHex(c.hex),
-      }));
+    toJson() {
+      const { mergedColorsLight, mergedColorsDark, allPalettes } = compute();
 
-    this._mergedColorsLight = mergeBaseAndCustomColors(
-      lightScheme,
-      this._customColors,
-      this._colorPalettes,
-      this._contrastAllColors,
-    );
+      // Convert ARGB colors to hex
+      const lightColors: Record<string, string> = {};
+      const darkColors: Record<string, string> = {};
 
-    this._mergedColorsDark = mergeBaseAndCustomColors(
-      darkScheme,
-      this._customColors,
-      this._colorPalettes,
-      this._contrastAllColors,
-    );
-
-    // Create allPalettes
-    this._allPalettes = {
-      primary: lightScheme.primaryPalette,
-      secondary: lightScheme.secondaryPalette,
-      tertiary: lightScheme.tertiaryPalette,
-      error: lightScheme.errorPalette,
-      neutral: lightScheme.neutralPalette,
-      "neutral-variant": lightScheme.neutralVariantPalette,
-      ...this._colorPalettes,
-    };
-  }
-
-  // Helper getters that return non-optional types after compute()
-  private get mergedColorsLight(): Record<string, number> {
-    if (!this._mergedColorsLight) {
-      throw new Error("Builder not computed yet");
-    }
-    return this._mergedColorsLight;
-  }
-
-  private get mergedColorsDark(): Record<string, number> {
-    if (!this._mergedColorsDark) {
-      throw new Error("Builder not computed yet");
-    }
-    return this._mergedColorsDark;
-  }
-
-  private get allPalettes(): Record<string, TonalPalette> {
-    if (!this._allPalettes) {
-      throw new Error("Builder not computed yet");
-    }
-    return this._allPalettes;
-  }
-
-  private get lightScheme(): DynamicScheme {
-    if (!this._lightScheme) {
-      throw new Error("Builder not computed yet");
-    }
-    return this._lightScheme;
-  }
-
-  private get darkScheme(): DynamicScheme {
-    if (!this._darkScheme) {
-      throw new Error("Builder not computed yet");
-    }
-    return this._darkScheme;
-  }
-
-  private get customColors(): CustomColor[] {
-    if (!this._customColors) {
-      throw new Error("Builder not computed yet");
-    }
-    return this._customColors;
-  }
-
-  private get colorPalettes(): Record<string, TonalPalette> {
-    if (!this._colorPalettes) {
-      throw new Error("Builder not computed yet");
-    }
-    return this._colorPalettes;
-  }
-
-  /**
-   * Generate CSS string with CSS custom properties
-   */
-  toCss(): string {
-    this.compute();
-
-    const lightVars = toCssVars(this.mergedColorsLight);
-    const darkVars = toCssVars(this.mergedColorsDark);
-
-    const generateTonalVars = (scheme: DynamicScheme) =>
-      [
-        generateTonalPaletteVars(
-          "primary",
-          scheme.primaryPalette,
-          scheme,
-          this._contrastAllColors,
-          this._adaptiveShades,
-        ),
-        generateTonalPaletteVars(
-          "secondary",
-          scheme.secondaryPalette,
-          scheme,
-          this._contrastAllColors,
-          this._adaptiveShades,
-        ),
-        generateTonalPaletteVars(
-          "tertiary",
-          scheme.tertiaryPalette,
-          scheme,
-          this._contrastAllColors,
-          this._adaptiveShades,
-        ),
-        generateTonalPaletteVars(
-          "error",
-          scheme.errorPalette,
-          scheme,
-          this._contrastAllColors,
-          this._adaptiveShades,
-        ),
-        generateTonalPaletteVars(
-          "neutral",
-          scheme.neutralPalette,
-          scheme,
-          this._contrastAllColors,
-          this._adaptiveShades,
-        ),
-        generateTonalPaletteVars(
-          "neutral-variant",
-          scheme.neutralVariantPalette,
-          scheme,
-          this._contrastAllColors,
-          this._adaptiveShades,
-        ),
-        ...this.customColors.map((customColorObj) => {
-          const palette = getPalette(this.colorPalettes, customColorObj.name);
-          return generateTonalPaletteVars(
-            kebabCase(customColorObj.name),
-            palette,
-            scheme,
-            this._contrastAllColors,
-            this._adaptiveShades,
-          );
-        }),
-      ].join(" ");
-
-    const lightTonalVars = generateTonalVars(this.lightScheme);
-    const darkTonalVars = generateTonalVars(this.darkScheme);
-
-    return `
-:root { ${lightVars} ${lightTonalVars} }
-.dark { ${darkVars} ${this._adaptiveShades ? darkTonalVars : lightTonalVars} }
-`;
-  }
-
-  /**
-   * Generate JSON object with color schemes and palettes
-   */
-  toJson() {
-    this.compute();
-
-    // Convert ARGB colors to hex
-    const lightColors: Record<string, string> = {};
-    const darkColors: Record<string, string> = {};
-
-    Object.entries(this.mergedColorsLight).forEach(([name, argb]) => {
-      lightColors[name] = hexFromArgb(argb);
-    });
-
-    Object.entries(this.mergedColorsDark).forEach(([name, argb]) => {
-      darkColors[name] = hexFromArgb(argb);
-    });
-
-    // Convert palettes to the expected format
-    const palettes: Record<string, { [key: number]: string }> = {};
-    Object.entries(this.allPalettes).forEach(([name, palette]) => {
-      if (!palette) return;
-      const tones: { [key: number]: string } = {};
-      STANDARD_TONES.forEach((tone) => {
-        tones[tone] = hexFromArgb(palette.tone(tone));
+      Object.entries(mergedColorsLight).forEach(([name, argb]) => {
+        lightColors[name] = hexFromArgb(argb);
       });
-      palettes[name] = tones;
-    });
 
-    // Extract custom colors information
-    const customColorsArray = this.config.customColors;
-    const customColors =
-      customColorsArray && customColorsArray.length > 0
-        ? customColorsArray.map((customColor) => {
-            const name = customColor.name;
-            const capitalizedName = upperFirst(name);
+      Object.entries(mergedColorsDark).forEach(([name, argb]) => {
+        darkColors[name] = hexFromArgb(argb);
+      });
 
-            const colorLight = lightColors[name];
-            const colorDark = darkColors[name];
-            const onColorLight = lightColors[`on${capitalizedName}`];
-            const onColorDark = darkColors[`on${capitalizedName}`];
-            const containerLight = lightColors[`${name}Container`];
-            const containerDark = darkColors[`${name}Container`];
-            const onContainerLight =
-              lightColors[`on${capitalizedName}Container`];
-            const onContainerDark = darkColors[`on${capitalizedName}Container`];
+      // Convert palettes to the expected format
+      const palettes: Record<string, { [key: number]: string }> = {};
+      Object.entries(allPalettes).forEach(([name, palette]) => {
+        if (!palette) return;
+        const tones: { [key: number]: string } = {};
+        STANDARD_TONES.forEach((tone) => {
+          tones[tone] = hexFromArgb(palette.tone(tone));
+        });
+        palettes[name] = tones;
+      });
 
-            if (
-              !colorLight ||
-              !colorDark ||
-              !onColorLight ||
-              !onColorDark ||
-              !containerLight ||
-              !containerDark ||
-              !onContainerLight ||
-              !onContainerDark
-            ) {
-              throw new Error(
-                `Custom color "${name}" is missing required color values`,
-              );
-            }
+      // Extract custom colors information
+      const customColorsArray = config.customColors;
+      const customColors =
+        customColorsArray && customColorsArray.length > 0
+          ? customColorsArray.map((customColor) => {
+              const name = customColor.name;
+              const capitalizedName = upperFirst(name);
 
-            return {
-              name,
-              blend: customColor.blend ?? DEFAULT_BLEND,
-              color: {
-                light: colorLight,
-                dark: colorDark,
-              },
-              onColor: {
-                light: onColorLight,
-                dark: onColorDark,
-              },
-              colorContainer: {
-                light: containerLight,
-                dark: containerDark,
-              },
-              onColorContainer: {
-                light: onContainerLight,
-                dark: onContainerDark,
-              },
-            };
-          })
-        : undefined;
+              const colorLight = lightColors[name];
+              const colorDark = darkColors[name];
+              const onColorLight = lightColors[`on${capitalizedName}`];
+              const onColorDark = darkColors[`on${capitalizedName}`];
+              const containerLight = lightColors[`${name}Container`];
+              const containerDark = darkColors[`${name}Container`];
+              const onContainerLight =
+                lightColors[`on${capitalizedName}Container`];
+              const onContainerDark =
+                darkColors[`on${capitalizedName}Container`];
 
-    return {
-      schemes: {
-        light: lightColors,
-        dark: darkColors,
-      },
-      palettes,
-      ...(customColors && { customColors }),
-    };
-  }
+              if (
+                !colorLight ||
+                !colorDark ||
+                !onColorLight ||
+                !onColorDark ||
+                !containerLight ||
+                !containerDark ||
+                !onContainerLight ||
+                !onContainerDark
+              ) {
+                throw new Error(
+                  `Custom color "${name}" is missing required color values`,
+                );
+              }
 
-  /**
-   * Internal method to get computed data for backward compatibility
-   * @internal
-   */
-  _getComputedData() {
-    this.compute();
-    return {
-      mergedColorsLight: this.mergedColorsLight,
-      mergedColorsDark: this.mergedColorsDark,
-      allPalettes: this.allPalettes,
-    };
-  }
+              return {
+                name,
+                blend: customColor.blend ?? DEFAULT_BLEND,
+                color: {
+                  light: colorLight,
+                  dark: colorDark,
+                },
+                onColor: {
+                  light: onColorLight,
+                  dark: onColorDark,
+                },
+                colorContainer: {
+                  light: containerLight,
+                  dark: containerDark,
+                },
+                onColorContainer: {
+                  light: onContainerLight,
+                  dark: onContainerDark,
+                },
+              };
+            })
+          : undefined;
+
+      return {
+        schemes: {
+          light: lightColors,
+          dark: darkColors,
+        },
+        palettes,
+        ...(customColors && { customColors }),
+      };
+    },
+  };
 }
 
-/**
- * Generate CSS for Material Design color scheme
- * @internal This function is kept for backward compatibility with Mcu.context.tsx
- */
-export function generateCss(config: McuConfig) {
-  const builderInstance = new Builder(config.source, config);
-  const css = builderInstance.toCss();
-  const data = builderInstance._getComputedData();
+export function generateCss({
+  source: hexSource,
+  scheme = DEFAULT_SCHEME,
+  contrast = DEFAULT_CONTRAST,
+  primary,
+  secondary,
+  tertiary,
+  neutral,
+  neutralVariant,
+  error,
+  colorMatch = DEFAULT_COLOR_MATCH,
+  customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
+  contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
+  adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
+}: McuConfig) {
+  const sourceArgb = argbFromHex(hexSource);
+
+  // Determine the effective source for harmonization
+  // When primary is defined, it becomes the effective source
+  const effectiveSource = primary || hexSource;
+  const effectiveSourceArgb = argbFromHex(effectiveSource);
+  const effectiveSourceForHarmonization = primary
+    ? argbFromHex(primary)
+    : sourceArgb;
+
+  // Create a base scheme to get the standard chroma values
+  const SchemeClass = schemesMap[scheme];
+  const primaryHct = Hct.fromInt(effectiveSourceArgb);
+  const baseScheme = new SchemeClass(primaryHct, false, contrast);
+
+  // Unified color processing: Combine core colors and custom colors, filter to only those with hex defined
+  const allColors: ColorDefinition[] = [
+    // Core colors (hex may be undefined)
+    {
+      name: "primary",
+      hex: primary,
+      core: true,
+      chromaSource: "primary",
+    },
+    {
+      name: "secondary",
+      hex: secondary,
+      core: true,
+      chromaSource: "primary",
+    },
+    {
+      name: "tertiary",
+      hex: tertiary,
+      core: true,
+      chromaSource: "primary",
+    },
+    { name: "error", hex: error, core: true, chromaSource: "primary" },
+    {
+      name: "neutral",
+      hex: neutral,
+      core: true,
+      chromaSource: "neutral",
+    },
+    {
+      name: "neutralVariant",
+      hex: neutralVariant,
+      core: true,
+      chromaSource: "neutralVariant",
+    },
+    //
+    // Custom colors
+    //
+    ...hexCustomColors.map((c) => ({
+      name: c.name,
+      hex: c.hex,
+      blend: c.blend,
+      core: false,
+    })),
+  ];
+
+  const definedColors = allColors.filter(
+    (c): c is ColorDefinition & { hex: string } => c.hex !== undefined,
+  );
+
+  // Create palettes for all defined colors
+  const colorPalettes = Object.fromEntries(
+    definedColors.map((colorDef) => [
+      colorDef.name,
+      createColorPalette(colorDef, baseScheme, effectiveSourceForHarmonization),
+    ]),
+  );
+
+  // Helper to create both light and dark schemes
+  const createSchemes = (
+    baseConfig: Omit<ConstructorParameters<typeof DynamicScheme>[0], "isDark">,
+  ) =>
+    [
+      new DynamicScheme({ ...baseConfig, isDark: false }),
+      new DynamicScheme({ ...baseConfig, isDark: true }),
+    ] as const;
+
+  // Create schemes with core color palettes (or defaults from baseScheme)
+  // Since source is always required, we always have a base to work from
+  const variant = schemeToVariant[scheme];
+  const [lightScheme, darkScheme] = createSchemes({
+    sourceColorArgb: effectiveSourceArgb,
+    variant,
+    contrastLevel: contrast,
+    primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
+    secondaryPalette: colorPalettes["secondary"] || baseScheme.secondaryPalette,
+    tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
+    neutralPalette: colorPalettes["neutral"] || baseScheme.neutralPalette,
+    neutralVariantPalette:
+      colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
+  });
+
+  // Note: DynamicScheme constructor doesn't accept errorPalette as parameter
+  // We need to set it after creation
+  const errorPalette = colorPalettes["error"];
+  if (errorPalette) {
+    lightScheme.errorPalette = errorPalette;
+    darkScheme.errorPalette = errorPalette;
+  }
+
+  // Extract custom colors (non-core) for merging
+  const customColors = definedColors
+    .filter((c) => !c.core)
+    .map((c) => ({
+      name: c.name,
+      blend: c.blend ?? DEFAULT_BLEND,
+      value: argbFromHex(c.hex),
+    }));
+
+  const mergedColorsLight = mergeBaseAndCustomColors(
+    lightScheme,
+    customColors,
+    colorPalettes,
+    contrastAllColors,
+  );
+  const mergedColorsDark = mergeBaseAndCustomColors(
+    darkScheme,
+    customColors,
+    colorPalettes,
+    contrastAllColors,
+  );
+
+  const lightVars = toCssVars(mergedColorsLight);
+  const darkVars = toCssVars(mergedColorsDark);
+
+  // Generate tonal palette CSS variables for all colors (core + custom)
+  // Use the palettes from both light and dark schemes
+  // When contrastAllColors is enabled, tonal shades adjust based on contrast level
+  // When adaptiveShades is enabled, shades invert in dark mode
+  const generateTonalVars = (scheme: DynamicScheme) =>
+    [
+      // Core colors from the scheme
+      generateTonalPaletteVars(
+        "primary",
+        scheme.primaryPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "secondary",
+        scheme.secondaryPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "tertiary",
+        scheme.tertiaryPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "error",
+        scheme.errorPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "neutral",
+        scheme.neutralPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      generateTonalPaletteVars(
+        "neutral-variant",
+        scheme.neutralVariantPalette,
+        scheme,
+        contrastAllColors,
+        adaptiveShades,
+      ),
+      // Custom colors from our unified palette map
+      ...customColors.map((customColorObj) => {
+        const palette = getPalette(colorPalettes, customColorObj.name);
+        return generateTonalPaletteVars(
+          kebabCase(customColorObj.name),
+          palette,
+          scheme,
+          contrastAllColors,
+          adaptiveShades,
+        );
+      }),
+    ].join(" ");
+
+  const lightTonalVars = generateTonalVars(lightScheme);
+  const darkTonalVars = generateTonalVars(darkScheme);
+
+  // Create allPalettes: merge core palettes (from scheme) and custom palettes
+  const allPalettes = {
+    primary: lightScheme.primaryPalette,
+    secondary: lightScheme.secondaryPalette,
+    tertiary: lightScheme.tertiaryPalette,
+    error: lightScheme.errorPalette,
+    neutral: lightScheme.neutralPalette,
+    "neutral-variant": lightScheme.neutralVariantPalette,
+    // Add custom color palettes
+    ...colorPalettes,
+  };
+
   return {
-    css,
-    ...data,
+    css: `
+:root { ${lightVars} ${lightTonalVars} }
+.dark { ${darkVars} ${adaptiveShades ? darkTonalVars : lightTonalVars} }
+`,
+    mergedColorsLight,
+    mergedColorsDark,
+    allPalettes,
   };
 }
