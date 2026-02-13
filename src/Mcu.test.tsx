@@ -100,8 +100,24 @@ describe("Mcu", () => {
 });
 
 describe("builder", () => {
-  it("should match material theme builder fixture", () => {
+  it("should match material theme builder fixture 1", () => {
     const result = builder("#769CDF").toJson();
+    expect(result).toEqual(fixture);
+  });
+
+  it("should match material theme builder fixture 2", () => {
+    const result = builder("#CAB337", {
+      primary: "#CAB337",
+      secondary: "#B03A3A",
+      tertiary: "#2138D2",
+      error: "#479200",
+      neutral: "#957FF1",
+      neutralVariant: "#007EDF",
+      customColors: [
+        { name: "Custom Color 1", hex: "#00D68A", blend: true },
+        { name: "Custom Color 2", hex: "#FFE16B", blend: true },
+      ],
+    }).toJson();
     expect(result).toEqual(fixture);
   });
 
