@@ -872,15 +872,9 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
       };
     },
 
-    // Internal data accessors for React component
-    get _mergedColorsLight() {
-      return mergedColorsLight;
-    },
-    get _mergedColorsDark() {
-      return mergedColorsDark;
-    },
-    get _allPalettes() {
-      return allPalettes;
-    },
+    // Internal data for React component
+    _mergedColorsLight: mergedColorsLight,
+    _mergedColorsDark: mergedColorsDark,
+    _allPalettes: allPalettes,
   };
 }
