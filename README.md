@@ -175,6 +175,27 @@ Simply override/remap
 > Make sure `:root, .dark { ... }` comes AFTER `.root { ... } .dark { ... }` to
 > take precedence.
 
+## Programmatic API
+
+```ts
+import { builder } from "react-mcu";
+
+const theme = builder("#6750A4", {
+  scheme: "vibrant",
+  contrast: 0.5,
+  primary: "#FF0000",
+  secondary: "#00FF00",
+  customColors: [
+    { name: "brand", hex: "#FF5733", blend: true },
+    { name: "success", hex: "#28A745", blend: false },
+  ],
+  contrastAllColors: true,
+});
+
+theme.toJson();
+theme.toCss();
+```
+
 # Dev
 
 ## INSTALL

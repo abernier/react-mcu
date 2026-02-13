@@ -1,5 +1,3 @@
-"use client";
-
 import {
   hexFromArgb,
   type TonalPalette,
@@ -11,7 +9,7 @@ import React, {
   useState,
 } from "react";
 import { createRequiredContext } from "./lib/createRequiredContext";
-import { generateCss, type McuConfig, type TokenName } from "./Mcu";
+import { builder, type McuConfig, type TokenName } from "./Mcu";
 
 type Api = {
   initials: McuConfig;
@@ -43,10 +41,11 @@ export const McuProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey]);
 
-  const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
-    () => generateCss(mcuConfig),
-    [mcuConfig],
-  );
+  const { css, mergedColorsLight, mergedColorsDark, allPalettes } =
+    useMemo(() => {
+      const { toCss, ...rest } = builder(mcuConfig.source, mcuConfig);
+      return { css: toCss(), ...rest };
+    }, [mcuConfig]);
 
   //
   // <style>

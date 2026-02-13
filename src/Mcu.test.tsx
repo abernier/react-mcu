@@ -1,6 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { Mcu } from "./Mcu.js";
+import { builder, Mcu } from "./Mcu";
+import fixture from "./fixtures/material-theme-builder-CAB337.json";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -95,5 +96,19 @@ describe("Mcu", () => {
     styleContent = styleTag?.textContent || "";
 
     expect(styleContent).not.toContain("--mcu-brand");
+  });
+});
+
+describe("builder", () => {
+  it("should match material theme builder fixture", () => {
+    const result = builder("#CAB337").toJson();
+    expect(result).toEqual(fixture);
+  });
+
+  it("should generate CSS with toCss()", () => {
+    const result = builder("#CAB337").toCss();
+    expect(result).toContain(":root {");
+    expect(result).toContain(".dark {");
+    expect(result).toContain("--mcu-primary");
   });
 });
