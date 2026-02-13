@@ -1,7 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { builder, Mcu } from "./Mcu";
-import fixture from "./fixtures/material-theme-builder-CAB337.json";
+import fixture from "./fixtures/material-theme-builder-769CDF.json";
 
 describe("Mcu", () => {
   afterEach(() => {
@@ -101,12 +101,12 @@ describe("Mcu", () => {
 
 describe("builder", () => {
   it("should match material theme builder fixture", () => {
-    const result = builder("#CAB337").toJson();
+    const result = builder("#769CDF").toJson();
     expect(result).toEqual(fixture);
   });
 
   it("should generate CSS with toCss()", () => {
-    const result = builder("#CAB337").toCss();
+    const result = builder("#769CDF").toCss();
     expect(result).toContain(":root {");
     expect(result).toContain(".dark {");
     expect(result).toContain("--mcu-primary");
