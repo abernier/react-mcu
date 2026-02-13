@@ -872,14 +872,15 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
       };
     },
 
-    // Internal method for backward compatibility with Mcu.context.tsx
-    _getInternalData() {
-      return {
-        css: this.toCss(),
-        mergedColorsLight,
-        mergedColorsDark,
-        allPalettes,
-      };
+    // Internal data accessors for React component
+    get _mergedColorsLight() {
+      return mergedColorsLight;
+    },
+    get _mergedColorsDark() {
+      return mergedColorsDark;
+    },
+    get _allPalettes() {
+      return allPalettes;
     },
   };
 }

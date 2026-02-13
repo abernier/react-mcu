@@ -41,10 +41,16 @@ export const McuProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configKey]);
 
-  const { css, mergedColorsLight, mergedColorsDark, allPalettes } = useMemo(
-    () => builder(mcuConfig.source, mcuConfig)._getInternalData(),
-    [mcuConfig],
-  );
+  const { css, mergedColorsLight, mergedColorsDark, allPalettes } =
+    useMemo(() => {
+      const b = builder(mcuConfig.source, mcuConfig);
+      return {
+        css: b.toCss(),
+        mergedColorsLight: b._mergedColorsLight,
+        mergedColorsDark: b._mergedColorsDark,
+        allPalettes: b._allPalettes,
+      };
+    }, [mcuConfig]);
 
   //
   // <style>
