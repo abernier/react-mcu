@@ -578,6 +578,7 @@ export function builder(
 ) {
   const sourceArgb = argbFromHex(hexSource);
 
+  // Determine the effective source for harmonization
   // When primary is defined, it becomes the effective source
   const effectiveSource = primary || hexSource;
   const effectiveSourceArgb = argbFromHex(effectiveSource);

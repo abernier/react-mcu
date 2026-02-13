@@ -91,74 +91,6 @@ return (
 );
 ```
 
-## `builder`
-
-A TypeScript API is available to generate Material Design color schemes:
-
-```ts
-import { builder } from "react-mcu";
-
-const colors = builder("#6750A4", {
-  scheme: "vibrant",
-  contrast: 0.5,
-  primary: "#FF0000",
-  secondary: "#00FF00",
-  customColors: [
-    { name: "brand", hex: "#FF5733", blend: true },
-    { name: "success", hex: "#28A745", blend: false },
-  ],
-  contrastAllColors: true,
-});
-```
-
-The first argument `source` is required. The second argument is optional and accepts the same options as the `<Mcu>` component props.
-
-The `builder()` function returns an object with two methods:
-
-### `.toJson()`
-
-Returns the color scheme as a JSON object:
-
-```ts
-const json = builder("#6750A4").toJson();
-// {
-//   schemes: {
-//     light: { primary: "#65558f", onPrimary: "#ffffff", ... },
-//     dark: { primary: "#cfbdfe", onPrimary: "#381e72", ... }
-//   },
-//   palettes: {
-//     primary: { 0: "#000000", 10: "#21005d", ..., 100: "#ffffff" },
-//     ...
-//   }
-// }
-```
-
-### `.toCss()`
-
-Returns the color scheme as CSS custom properties:
-
-```ts
-const css = builder("#6750A4").toCss();
-// :root { --mcu-primary: #65558f; --mcu-on-primary: #ffffff; ... }
-// .dark { --mcu-primary: #cfbdfe; --mcu-on-primary: #381e72; ... }
-```
-
-Example usage:
-
-```ts
-// Get as JSON
-const json = builder("#6750A4").toJson();
-console.log(json.schemes.light.primary); // "#65558f"
-console.log(json.palettes.primary[50]); // Mid-tone primary color
-
-// Get as CSS
-const css = builder("#6750A4", { scheme: "vibrant" }).toCss();
-document.querySelector("style").textContent = css;
-
-// Export to file
-const jsonString = JSON.stringify(builder("#6750A4").toJson(), null, 2);
-```
-
 ## Tailwind
 
 Compatible through [theme variables](https://tailwindcss.com/docs/theme):
@@ -242,6 +174,27 @@ Simply override/remap
 >
 > Make sure `:root, .dark { ... }` comes AFTER `.root { ... } .dark { ... }` to
 > take precedence.
+
+## Programmatic API
+
+```ts
+import { builder } from "react-mcu";
+
+const theme = builder("#6750A4", {
+  scheme: "vibrant",
+  contrast: 0.5,
+  primary: "#FF0000",
+  secondary: "#00FF00",
+  customColors: [
+    { name: "brand", hex: "#FF5733", blend: true },
+    { name: "success", hex: "#28A745", blend: false },
+  ],
+  contrastAllColors: true,
+});
+
+theme.toJson();
+theme.toCss();
+```
 
 # Dev
 
