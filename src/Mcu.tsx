@@ -566,196 +566,155 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
     ...options,
   };
 
-  // Lazy computation - only compute once when needed
-  let computed: {
-    mergedColorsLight: Record<string, number>;
-    mergedColorsDark: Record<string, number>;
-    allPalettes: Record<string, TonalPalette>;
-    lightScheme: DynamicScheme;
-    darkScheme: DynamicScheme;
-    colorPalettes: Record<string, TonalPalette>;
-    customColors: CustomColor[];
-    contrastAllColors: boolean;
-    adaptiveShades: boolean;
-  } | null = null;
+  const {
+    source: hexSource,
+    scheme = DEFAULT_SCHEME,
+    contrast = DEFAULT_CONTRAST,
+    primary,
+    secondary,
+    tertiary,
+    neutral,
+    neutralVariant,
+    error,
+    customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
+    contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
+    adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
+  } = config;
 
-  const compute = () => {
-    if (computed) return computed;
+  const sourceArgb = argbFromHex(hexSource);
 
-    const {
-      source: hexSource,
-      scheme = DEFAULT_SCHEME,
-      contrast = DEFAULT_CONTRAST,
-      primary,
-      secondary,
-      tertiary,
-      neutral,
-      neutralVariant,
-      error,
-      customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
-      contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
-      adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
-    } = config;
+  // Determine the effective source for harmonization
+  const effectiveSource = primary || hexSource;
+  const effectiveSourceArgb = argbFromHex(effectiveSource);
+  const effectiveSourceForHarmonization = primary
+    ? argbFromHex(primary)
+    : sourceArgb;
 
-    const sourceArgb = argbFromHex(hexSource);
+  // Create a base scheme to get the standard chroma values
+  const SchemeClass = schemesMap[scheme];
+  const primaryHct = Hct.fromInt(effectiveSourceArgb);
+  const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
-    // Determine the effective source for harmonization
-    const effectiveSource = primary || hexSource;
-    const effectiveSourceArgb = argbFromHex(effectiveSource);
-    const effectiveSourceForHarmonization = primary
-      ? argbFromHex(primary)
-      : sourceArgb;
+  // Unified color processing
+  const allColors: ColorDefinition[] = [
+    {
+      name: "primary",
+      hex: primary,
+      core: true,
+      chromaSource: "primary",
+    },
+    {
+      name: "secondary",
+      hex: secondary,
+      core: true,
+      chromaSource: "primary",
+    },
+    {
+      name: "tertiary",
+      hex: tertiary,
+      core: true,
+      chromaSource: "primary",
+    },
+    { name: "error", hex: error, core: true, chromaSource: "primary" },
+    {
+      name: "neutral",
+      hex: neutral,
+      core: true,
+      chromaSource: "neutral",
+    },
+    {
+      name: "neutralVariant",
+      hex: neutralVariant,
+      core: true,
+      chromaSource: "neutralVariant",
+    },
+    ...hexCustomColors.map((c) => ({
+      name: c.name,
+      hex: c.hex,
+      blend: c.blend,
+      core: false,
+    })),
+  ];
 
-    // Create a base scheme to get the standard chroma values
-    const SchemeClass = schemesMap[scheme];
-    const primaryHct = Hct.fromInt(effectiveSourceArgb);
-    const baseScheme = new SchemeClass(primaryHct, false, contrast);
+  const definedColors = allColors.filter(
+    (c): c is ColorDefinition & { hex: string } => c.hex !== undefined,
+  );
 
-    // Unified color processing
-    const allColors: ColorDefinition[] = [
-      {
-        name: "primary",
-        hex: primary,
-        core: true,
-        chromaSource: "primary",
-      },
-      {
-        name: "secondary",
-        hex: secondary,
-        core: true,
-        chromaSource: "primary",
-      },
-      {
-        name: "tertiary",
-        hex: tertiary,
-        core: true,
-        chromaSource: "primary",
-      },
-      { name: "error", hex: error, core: true, chromaSource: "primary" },
-      {
-        name: "neutral",
-        hex: neutral,
-        core: true,
-        chromaSource: "neutral",
-      },
-      {
-        name: "neutralVariant",
-        hex: neutralVariant,
-        core: true,
-        chromaSource: "neutralVariant",
-      },
-      ...hexCustomColors.map((c) => ({
-        name: c.name,
-        hex: c.hex,
-        blend: c.blend,
-        core: false,
-      })),
-    ];
+  // Create palettes for all defined colors
+  const colorPalettes = Object.fromEntries(
+    definedColors.map((colorDef) => [
+      colorDef.name,
+      createColorPalette(colorDef, baseScheme, effectiveSourceForHarmonization),
+    ]),
+  );
 
-    const definedColors = allColors.filter(
-      (c): c is ColorDefinition & { hex: string } => c.hex !== undefined,
-    );
+  // Helper to create both light and dark schemes
+  const createSchemes = (
+    baseConfig: Omit<ConstructorParameters<typeof DynamicScheme>[0], "isDark">,
+  ) =>
+    [
+      new DynamicScheme({ ...baseConfig, isDark: false }),
+      new DynamicScheme({ ...baseConfig, isDark: true }),
+    ] as const;
 
-    // Create palettes for all defined colors
-    const colorPalettes = Object.fromEntries(
-      definedColors.map((colorDef) => [
-        colorDef.name,
-        createColorPalette(
-          colorDef,
-          baseScheme,
-          effectiveSourceForHarmonization,
-        ),
-      ]),
-    );
+  // Create schemes with core color palettes
+  const variant = schemeToVariant[scheme];
+  const [lightScheme, darkScheme] = createSchemes({
+    sourceColorArgb: effectiveSourceArgb,
+    variant,
+    contrastLevel: contrast,
+    primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
+    secondaryPalette: colorPalettes["secondary"] || baseScheme.secondaryPalette,
+    tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
+    neutralPalette: colorPalettes["neutral"] || baseScheme.neutralPalette,
+    neutralVariantPalette:
+      colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
+  });
 
-    // Helper to create both light and dark schemes
-    const createSchemes = (
-      baseConfig: Omit<
-        ConstructorParameters<typeof DynamicScheme>[0],
-        "isDark"
-      >,
-    ) =>
-      [
-        new DynamicScheme({ ...baseConfig, isDark: false }),
-        new DynamicScheme({ ...baseConfig, isDark: true }),
-      ] as const;
+  const errorPalette = colorPalettes["error"];
+  if (errorPalette) {
+    lightScheme.errorPalette = errorPalette;
+    darkScheme.errorPalette = errorPalette;
+  }
 
-    // Create schemes with core color palettes
-    const variant = schemeToVariant[scheme];
-    const [lightScheme, darkScheme] = createSchemes({
-      sourceColorArgb: effectiveSourceArgb,
-      variant,
-      contrastLevel: contrast,
-      primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
-      secondaryPalette:
-        colorPalettes["secondary"] || baseScheme.secondaryPalette,
-      tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
-      neutralPalette: colorPalettes["neutral"] || baseScheme.neutralPalette,
-      neutralVariantPalette:
-        colorPalettes["neutralVariant"] || baseScheme.neutralVariantPalette,
-    });
+  // Extract custom colors (non-core) for merging
+  const customColors = definedColors
+    .filter((c) => !c.core)
+    .map((c) => ({
+      name: c.name,
+      blend: c.blend ?? DEFAULT_BLEND,
+      value: argbFromHex(c.hex),
+    }));
 
-    const errorPalette = colorPalettes["error"];
-    if (errorPalette) {
-      lightScheme.errorPalette = errorPalette;
-      darkScheme.errorPalette = errorPalette;
-    }
+  const mergedColorsLight = mergeBaseAndCustomColors(
+    lightScheme,
+    customColors,
+    colorPalettes,
+    contrastAllColors,
+  );
 
-    // Extract custom colors (non-core) for merging
-    const customColors = definedColors
-      .filter((c) => !c.core)
-      .map((c) => ({
-        name: c.name,
-        blend: c.blend ?? DEFAULT_BLEND,
-        value: argbFromHex(c.hex),
-      }));
+  const mergedColorsDark = mergeBaseAndCustomColors(
+    darkScheme,
+    customColors,
+    colorPalettes,
+    contrastAllColors,
+  );
 
-    const mergedColorsLight = mergeBaseAndCustomColors(
-      lightScheme,
-      customColors,
-      colorPalettes,
-      contrastAllColors,
-    );
-
-    const mergedColorsDark = mergeBaseAndCustomColors(
-      darkScheme,
-      customColors,
-      colorPalettes,
-      contrastAllColors,
-    );
-
-    // Create allPalettes
-    const allPalettes = {
-      primary: lightScheme.primaryPalette,
-      secondary: lightScheme.secondaryPalette,
-      tertiary: lightScheme.tertiaryPalette,
-      error: lightScheme.errorPalette,
-      neutral: lightScheme.neutralPalette,
-      "neutral-variant": lightScheme.neutralVariantPalette,
-      ...colorPalettes,
-    };
-
-    computed = {
-      mergedColorsLight,
-      mergedColorsDark,
-      allPalettes,
-      lightScheme,
-      darkScheme,
-      colorPalettes,
-      customColors,
-      contrastAllColors,
-      adaptiveShades,
-    };
-
-    return computed;
+  // Create allPalettes
+  const allPalettes = {
+    primary: lightScheme.primaryPalette,
+    secondary: lightScheme.secondaryPalette,
+    tertiary: lightScheme.tertiaryPalette,
+    error: lightScheme.errorPalette,
+    neutral: lightScheme.neutralPalette,
+    "neutral-variant": lightScheme.neutralVariantPalette,
+    ...colorPalettes,
   };
 
   return {
     toCss() {
-      const data = compute();
-
-      const lightVars = toCssVars(data.mergedColorsLight);
-      const darkVars = toCssVars(data.mergedColorsDark);
+      const lightVars = toCssVars(mergedColorsLight);
+      const darkVars = toCssVars(mergedColorsDark);
 
       const generateTonalVars = (scheme: DynamicScheme) =>
         [
@@ -763,68 +722,66 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
             "primary",
             scheme.primaryPalette,
             scheme,
-            data.contrastAllColors,
-            data.adaptiveShades,
+            contrastAllColors,
+            adaptiveShades,
           ),
           generateTonalPaletteVars(
             "secondary",
             scheme.secondaryPalette,
             scheme,
-            data.contrastAllColors,
-            data.adaptiveShades,
+            contrastAllColors,
+            adaptiveShades,
           ),
           generateTonalPaletteVars(
             "tertiary",
             scheme.tertiaryPalette,
             scheme,
-            data.contrastAllColors,
-            data.adaptiveShades,
+            contrastAllColors,
+            adaptiveShades,
           ),
           generateTonalPaletteVars(
             "error",
             scheme.errorPalette,
             scheme,
-            data.contrastAllColors,
-            data.adaptiveShades,
+            contrastAllColors,
+            adaptiveShades,
           ),
           generateTonalPaletteVars(
             "neutral",
             scheme.neutralPalette,
             scheme,
-            data.contrastAllColors,
-            data.adaptiveShades,
+            contrastAllColors,
+            adaptiveShades,
           ),
           generateTonalPaletteVars(
             "neutral-variant",
             scheme.neutralVariantPalette,
             scheme,
-            data.contrastAllColors,
-            data.adaptiveShades,
+            contrastAllColors,
+            adaptiveShades,
           ),
-          ...data.customColors.map((customColorObj) => {
-            const palette = getPalette(data.colorPalettes, customColorObj.name);
+          ...customColors.map((customColorObj) => {
+            const palette = getPalette(colorPalettes, customColorObj.name);
             return generateTonalPaletteVars(
               kebabCase(customColorObj.name),
               palette,
               scheme,
-              data.contrastAllColors,
-              data.adaptiveShades,
+              contrastAllColors,
+              adaptiveShades,
             );
           }),
         ].join(" ");
 
-      const lightTonalVars = generateTonalVars(data.lightScheme);
-      const darkTonalVars = generateTonalVars(data.darkScheme);
+      const lightTonalVars = generateTonalVars(lightScheme);
+      const darkTonalVars = generateTonalVars(darkScheme);
 
       return `
 :root { ${lightVars} ${lightTonalVars} }
-.dark { ${darkVars} ${data.adaptiveShades ? darkTonalVars : lightTonalVars} }
+.dark { ${darkVars} ${adaptiveShades ? darkTonalVars : lightTonalVars} }
 `;
     },
 
     toJson() {
-      const { mergedColorsLight, mergedColorsDark, allPalettes } = compute();
-
       // Convert ARGB colors to hex
       const lightColors: Record<string, string> = {};
       const darkColors: Record<string, string> = {};
@@ -850,7 +807,7 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
 
       // Extract custom colors information
       const customColorsArray = config.customColors;
-      const customColors =
+      const customColorsFormatted =
         customColorsArray && customColorsArray.length > 0
           ? customColorsArray.map((customColor) => {
               const name = customColor.name;
@@ -911,18 +868,17 @@ export function builder(source: string, options?: Omit<McuConfig, "source">) {
           dark: darkColors,
         },
         palettes,
-        ...(customColors && { customColors }),
+        ...(customColorsFormatted && { customColors: customColorsFormatted }),
       };
     },
 
     // Internal method for backward compatibility with Mcu.context.tsx
     _getInternalData() {
-      const data = compute();
       return {
         css: this.toCss(),
-        mergedColorsLight: data.mergedColorsLight,
-        mergedColorsDark: data.mergedColorsDark,
-        allPalettes: data.allPalettes,
+        mergedColorsLight,
+        mergedColorsDark,
+        allPalettes,
       };
     },
   };
