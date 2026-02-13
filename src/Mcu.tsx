@@ -718,6 +718,10 @@ export function builder(
       const lightVars = toCssVars(mergedColorsLight);
       const darkVars = toCssVars(mergedColorsDark);
 
+      // Generate tonal palette CSS variables for all colors (core + custom)
+      // Use the palettes from both light and dark schemes
+      // When contrastAllColors is enabled, tonal shades adjust based on contrast level
+      // When adaptiveShades is enabled, shades invert in dark mode
       const generateTonalVars = (scheme: DynamicScheme) =>
         [
           generateTonalPaletteVars(
@@ -762,6 +766,7 @@ export function builder(
             contrastAllColors,
             adaptiveShades,
           ),
+          // Custom colors from our unified palette map
           ...customColors.map((customColorObj) => {
             const palette = getPalette(colorPalettes, customColorObj.name);
             return generateTonalPaletteVars(
