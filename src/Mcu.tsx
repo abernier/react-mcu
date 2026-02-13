@@ -788,41 +788,7 @@ export function generateCss({
  * })
  * ```
  */
-export function builder(
-  source: string,
-  options?: Omit<McuConfig, "source">,
-): {
-  schemes: {
-    light: Record<string, string>;
-    dark: Record<string, string>;
-  };
-  palettes: Record<
-    string,
-    {
-      [key: number]: string;
-    }
-  >;
-  customColors?: {
-    name: string;
-    blend: boolean;
-    color: {
-      light: string;
-      dark: string;
-    };
-    onColor: {
-      light: string;
-      dark: string;
-    };
-    colorContainer: {
-      light: string;
-      dark: string;
-    };
-    onColorContainer: {
-      light: string;
-      dark: string;
-    };
-  }[];
-} {
+export function builder(source: string, options?: Omit<McuConfig, "source">) {
   const config: McuConfig = {
     source,
     ...options,
