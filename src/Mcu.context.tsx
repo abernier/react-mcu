@@ -69,13 +69,9 @@ export const McuProvider = ({
   const getMcuColor = useCallback(
     (colorName: TokenName, theme: string | undefined) => {
       // console.log("getMcuColor", colorName, theme);
-      const colorValue = (
-        theme === "light" ? mergedColorsLight : mergedColorsDark
-      )[colorName];
-      if (colorValue === undefined) {
-        throw new Error(`Color "${colorName}" not found in the theme`);
-      }
-      return hexFromArgb(colorValue);
+      return hexFromArgb(
+        (theme === "light" ? mergedColorsLight : mergedColorsDark)[colorName]!,
+      );
     },
     [mergedColorsDark, mergedColorsLight],
   );
