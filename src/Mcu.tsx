@@ -941,65 +941,21 @@ export function builder(
       const darkVars = toCssVars(mergedColorsDark);
 
       // Generate tonal palette CSS variables for all colors (core + custom)
-      // Use the palettes from both light and dark schemes
+      // Uses allPalettes (pre-computed in builder) for palette data
       // When contrastAllColors is enabled, tonal shades adjust based on contrast level
       // When adaptiveShades is enabled, shades invert in dark mode
       const generateTonalVars = (s: DynamicScheme) =>
-        [
-          generateTonalPaletteVars(
-            "primary",
-            s.primaryPalette,
-            s,
-            contrastAllColors,
-            adaptiveShades,
-          ),
-          generateTonalPaletteVars(
-            "secondary",
-            s.secondaryPalette,
-            s,
-            contrastAllColors,
-            adaptiveShades,
-          ),
-          generateTonalPaletteVars(
-            "tertiary",
-            s.tertiaryPalette,
-            s,
-            contrastAllColors,
-            adaptiveShades,
-          ),
-          generateTonalPaletteVars(
-            "error",
-            s.errorPalette,
-            s,
-            contrastAllColors,
-            adaptiveShades,
-          ),
-          generateTonalPaletteVars(
-            "neutral",
-            s.neutralPalette,
-            s,
-            contrastAllColors,
-            adaptiveShades,
-          ),
-          generateTonalPaletteVars(
-            "neutral-variant",
-            s.neutralVariantPalette,
-            s,
-            contrastAllColors,
-            adaptiveShades,
-          ),
-          // Custom colors from our unified palette map
-          ...customColors.map((customColorObj) => {
-            const palette = getPalette(colorPalettes, customColorObj.name);
-            return generateTonalPaletteVars(
-              kebabCase(customColorObj.name),
+        Object.entries(allPalettes)
+          .map(([name, palette]) =>
+            generateTonalPaletteVars(
+              kebabCase(name),
               palette,
               s,
               contrastAllColors,
               adaptiveShades,
-            );
-          }),
-        ].join(" ");
+            ),
+          )
+          .join(" ");
 
       const lightTonalVars = generateTonalVars(lightScheme);
       const darkTonalVars = generateTonalVars(darkScheme);
