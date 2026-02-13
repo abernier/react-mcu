@@ -101,7 +101,14 @@ describe("Mcu", () => {
 
 describe("builder", () => {
   it("should match material theme builder fixture", () => {
-    const result = builder("#CAB337");
+    const result = builder("#CAB337").toJson();
     expect(result).toEqual(fixture);
+  });
+
+  it("should generate CSS with toCss()", () => {
+    const result = builder("#CAB337").toCss();
+    expect(result).toContain(":root {");
+    expect(result).toContain(".dark {");
+    expect(result).toContain("--mcu-primary");
   });
 });

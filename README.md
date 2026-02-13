@@ -93,7 +93,7 @@ return (
 
 ## `builder`
 
-A TypeScript API is available to generate Material Design color schemes as JSON:
+A TypeScript API is available to generate Material Design color schemes:
 
 ```ts
 import { builder } from "react-mcu";
@@ -113,41 +113,50 @@ const colors = builder("#6750A4", {
 
 The first argument `source` is required. The second argument is optional and accepts the same options as the `<Mcu>` component props.
 
-**Returns:**
+The `builder()` function returns a `Builder` instance with two methods:
+
+### `.toJson()`
+
+Returns the color scheme as a JSON object:
 
 ```ts
-{
-  schemes: {
-    light: Record<string, string>,  // All color tokens in hex for light theme
-    dark: Record<string, string>,   // All color tokens in hex for dark theme
-  },
-  palettes: Record<string, { [tone: number]: string }>,  // Tonal palettes for all colors
-  customColors?: Array<{  // Only present if customColors were provided
-    name: string,
-    blend: boolean,
-    color: { light: string, dark: string },
-    onColor: { light: string, dark: string },
-    colorContainer: { light: string, dark: string },
-    onColorContainer: { light: string, dark: string },
-  }>
-}
+const json = builder("#6750A4").toJson();
+// {
+//   schemes: {
+//     light: { primary: "#65558f", onPrimary: "#ffffff", ... },
+//     dark: { primary: "#cfbdfe", onPrimary: "#381e72", ... }
+//   },
+//   palettes: {
+//     primary: { 0: "#000000", 10: "#21005d", ..., 100: "#ffffff" },
+//     ...
+//   }
+// }
+```
+
+### `.toCss()`
+
+Returns the color scheme as CSS custom properties:
+
+```ts
+const css = builder("#6750A4").toCss();
+// :root { --mcu-primary: #65558f; --mcu-on-primary: #ffffff; ... }
+// .dark { --mcu-primary: #cfbdfe; --mcu-on-primary: #381e72; ... }
 ```
 
 Example usage:
 
 ```ts
-// Minimal usage - only source color required
-const colors = builder("#6750A4");
+// Get as JSON
+const json = builder("#6750A4").toJson();
+console.log(json.schemes.light.primary); // "#65558f"
+console.log(json.palettes.primary[50]); // Mid-tone primary color
 
-// Access colors
-console.log(colors.schemes.light.primary); // "#65558f"
-console.log(colors.schemes.dark.primary); // "#cfbdfe"
+// Get as CSS
+const css = builder("#6750A4", { scheme: "vibrant" }).toCss();
+document.querySelector("style").textContent = css;
 
-// Access tonal palettes
-console.log(colors.palettes.primary[50]); // Mid-tone primary color
-
-// Export to JSON
-const json = JSON.stringify(colors, null, 2);
+// Export to file
+const jsonString = JSON.stringify(builder("#6750A4").toJson(), null, 2);
 ```
 
 ## Tailwind
