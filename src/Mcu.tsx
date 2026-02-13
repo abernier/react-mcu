@@ -801,7 +801,7 @@ export function builder(
       });
 
       // Extract custom colors information
-      const customColorsArray = customColors;
+      const customColorsArray = hexCustomColors;
       const customColorsFormatted =
         customColorsArray && customColorsArray.length > 0
           ? customColorsArray.map((customColor) => {
