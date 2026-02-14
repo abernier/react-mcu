@@ -17,5 +17,7 @@ export default defineConfig({
   onSuccess: async () => {
     // Copy tailwind.css to dist
     copyFileSync("src/tailwind.css", "dist/tailwind.css");
+    // Copy tailwind-plugin.js to dist
+    copyFileSync("src/tailwind-plugin.js", "dist/tailwind-plugin.js");
   },
 });
