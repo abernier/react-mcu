@@ -26,10 +26,12 @@
   "license": "MIT",
   "files": [
     "dist",
+    "src/cli.ts",
+    "src/Mcu.tsx",
     "src/tailwind.css"
   ],
   "bin": {
-    "react-mcu": "./dist/cli.js"
+    "react-mcu": "./src/cli.ts"
   },
   "type": "module",
   "packageManager": "pnpm@10.27.0",
@@ -97,6 +99,7 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
     "commander": "^14.0.3",
-    "lodash-es": "^4.17.22"
+    "lodash-es": "^4.17.22",
+    "tsx": "^4.21.0"
   }
 }

@@ -1,3 +1,5 @@
+#!/usr/bin/env tsx
+
 import { Command, Option } from "commander";
 import { builder, schemeNames } from "./Mcu";
 
