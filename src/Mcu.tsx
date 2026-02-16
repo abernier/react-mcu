@@ -764,20 +764,20 @@ function buildJsonSchemes({
 
 function createPalettesFromSource(sourceHct: Hct, sourceArgb: number) {
   return {
-    jsonPrimaryPal: TonalPalette.fromInt(sourceArgb),
-    jsonSecondaryPal: TonalPalette.fromHueAndChroma(
+    primary: TonalPalette.fromInt(sourceArgb),
+    secondary: TonalPalette.fromHueAndChroma(
       sourceHct.hue,
       sourceHct.chroma / 3,
     ),
-    jsonTertiaryPal: TonalPalette.fromHueAndChroma(
+    tertiary: TonalPalette.fromHueAndChroma(
       (sourceHct.hue + 60) % 360,
       sourceHct.chroma / 2,
     ),
-    jsonNeutralPal: TonalPalette.fromHueAndChroma(
+    neutral: TonalPalette.fromHueAndChroma(
       sourceHct.hue,
       sourceHct.chroma / 12,
     ),
-    jsonNeutralVariantPal: TonalPalette.fromHueAndChroma(
+    "neutral-variant": TonalPalette.fromHueAndChroma(
       sourceHct.hue,
       sourceHct.chroma / 6,
     ),
@@ -800,20 +800,20 @@ function createPalettesFromOverrides({
   neutralVariant?: string;
 }) {
   return {
-    jsonPrimaryPal: TonalPalette.fromInt(effectiveSourceArgb),
-    jsonSecondaryPal: secondary
+    primary: TonalPalette.fromInt(effectiveSourceArgb),
+    secondary: secondary
       ? TonalPalette.fromInt(argbFromHex(secondary))
       : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 3),
-    jsonTertiaryPal: tertiary
+    tertiary: tertiary
       ? TonalPalette.fromInt(argbFromHex(tertiary))
       : TonalPalette.fromHueAndChroma(
           (sourceHct.hue + 60) % 360,
           sourceHct.chroma / 2,
         ),
-    jsonNeutralPal: neutral
+    neutral: neutral
       ? TonalPalette.fromHueAndChroma(Hct.fromInt(argbFromHex(neutral)).hue, 4)
       : TonalPalette.fromHueAndChroma(sourceHct.hue, sourceHct.chroma / 12),
-    jsonNeutralVariantPal: neutralVariant
+    "neutral-variant": neutralVariant
       ? TonalPalette.fromHueAndChroma(
           Hct.fromInt(argbFromHex(neutralVariant)).hue,
           8,
@@ -822,7 +822,18 @@ function createPalettesFromOverrides({
   };
 }
 
-function buildJsonPalettes({
+// The 5 core palette names used in JSON export (matches Material Theme Builder format)
+const CORE_PALETTE_NAMES = [
+  "primary",
+  "secondary",
+  "tertiary",
+  "neutral",
+  "neutral-variant",
+] as const;
+
+type CorePalettes = Record<(typeof CORE_PALETTE_NAMES)[number], TonalPalette>;
+
+function buildCorePalettes({
   hasOverrides,
   sourceHct,
   sourceArgb,
@@ -840,8 +851,8 @@ function buildJsonPalettes({
   tertiary?: string;
   neutral?: string;
   neutralVariant?: string;
-}) {
-  const paletteSet = hasOverrides
+}): CorePalettes {
+  return hasOverrides
     ? createPalettesFromOverrides({
         sourceHct,
         effectiveSourceArgb,
@@ -851,18 +862,13 @@ function buildJsonPalettes({
         neutralVariant,
       })
     : createPalettesFromSource(sourceHct, sourceArgb);
+}
 
-  const paletteEntries: [string, TonalPalette][] = [
-    ["primary", paletteSet.jsonPrimaryPal],
-    ["secondary", paletteSet.jsonSecondaryPal],
-    ["tertiary", paletteSet.jsonTertiaryPal],
-    ["neutral", paletteSet.jsonNeutralPal],
-    ["neutral-variant", paletteSet.jsonNeutralVariantPal],
-  ];
-
+function corePalettesToJson(corePalettes: CorePalettes) {
   const jsonPalettes: Record<string, Record<string, string>> = {};
 
-  for (const [name, palette] of paletteEntries) {
+  for (const name of CORE_PALETTE_NAMES) {
+    const palette = corePalettes[name];
     const tones: Record<string, string> = {};
     for (const tone of STANDARD_TONES) {
       tones[tone.toString()] = hexFromArgb(palette.tone(tone)).toUpperCase();
@@ -893,6 +899,7 @@ export function builder(
   }: Omit<McuConfig, "source"> = {},
 ) {
   const sourceArgb = argbFromHex(hexSource);
+  const sourceHct = Hct.fromInt(sourceArgb);
 
   // Determine the effective source for harmonization
   // When primary is defined, it becomes the effective source
@@ -901,6 +908,15 @@ export function builder(
   const effectiveSourceForHarmonization = primary
     ? argbFromHex(primary)
     : sourceArgb;
+
+  const hasOverrides = [
+    primary,
+    secondary,
+    tertiary,
+    error,
+    neutral,
+    neutralVariant,
+  ].some(Boolean);
 
   // Create a base scheme to get the standard chroma values
   const SchemeClass = schemesMap[scheme];
@@ -1018,16 +1034,29 @@ export function builder(
     contrastAllColors,
   );
 
-  // Create allPalettes: merge core palettes (from scheme) and custom palettes
-  const allPalettes = {
-    primary: lightScheme.primaryPalette,
-    secondary: lightScheme.secondaryPalette,
-    tertiary: lightScheme.tertiaryPalette,
+  // Create allPalettes: core palettes (Material Theme Builder-compatible) + custom palettes
+  // These are the single source of truth for tonal palette data,
+  // shared by both toCss() and toJson()
+  const corePalettes = buildCorePalettes({
+    hasOverrides,
+    sourceHct,
+    sourceArgb,
+    effectiveSourceArgb,
+    secondary,
+    tertiary,
+    neutral,
+    neutralVariant,
+  });
+
+  const allPalettes: Record<string, TonalPalette> = {
+    ...corePalettes,
     error: lightScheme.errorPalette,
-    neutral: lightScheme.neutralPalette,
-    "neutral-variant": lightScheme.neutralVariantPalette,
     // Add custom color palettes
-    ...colorPalettes,
+    ...Object.fromEntries(
+      definedColors
+        .filter((c) => !c.core)
+        .map((colorDef) => [colorDef.name, colorPalettes[colorDef.name]]),
+    ),
   };
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -1035,19 +1064,16 @@ export function builder(
   // so that formatters contain zero domain logic
   // ──────────────────────────────────────────────────────────────────────────
 
-  const sourceHct = Hct.fromInt(sourceArgb);
-
-  const { hasOverrides, seed, coreColors, extendedColors } =
-    createCoreColorsMetadata({
-      hexSource,
-      primary,
-      secondary,
-      tertiary,
-      neutral,
-      neutralVariant,
-      error,
-      hexCustomColors,
-    });
+  const { seed, coreColors, extendedColors } = createCoreColorsMetadata({
+    hexSource,
+    primary,
+    secondary,
+    tertiary,
+    neutral,
+    neutralVariant,
+    error,
+    hexCustomColors,
+  });
 
   const jsonSchemes = buildJsonSchemes({
     hasOverrides,
@@ -1063,16 +1089,7 @@ export function builder(
     neutralVariant,
   });
 
-  const jsonPalettes = buildJsonPalettes({
-    hasOverrides,
-    sourceHct,
-    sourceArgb,
-    effectiveSourceArgb,
-    secondary,
-    tertiary,
-    neutral,
-    neutralVariant,
-  });
+  const jsonPalettes = corePalettesToJson(corePalettes);
 
   // ──────────────────────────────────────────────────────────────────────────
   // Pure formatters – no domain logic below this line
