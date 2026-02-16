@@ -1,7 +1,13 @@
 #!/usr/bin/env tsx
 
 import { Command, Option } from "commander";
-import { builder, schemeNames } from "./Mcu";
+import {
+  builder,
+  DEFAULT_BLEND,
+  DEFAULT_CONTRAST,
+  DEFAULT_SCHEME,
+  schemeNames,
+} from "./Mcu";
 
 const program = new Command();
 
@@ -14,13 +20,13 @@ program
   .addOption(
     new Option("--scheme <name>", "Color scheme variant")
       .choices(schemeNames)
-      .default("tonalSpot"),
+      .default(DEFAULT_SCHEME),
   )
   .option(
     "--contrast <number>",
     "Contrast level from -1.0 to 1.0",
     parseFloat,
-    0,
+    DEFAULT_CONTRAST,
   )
   .option("--primary <hex>", "Primary color override")
   .option("--secondary <hex>", "Secondary color override")
@@ -45,7 +51,7 @@ program
         customColors = parsed.map((c) => ({
           name: c.name,
           hex: c.hex,
-          blend: c.blend ?? true,
+          blend: c.blend ?? DEFAULT_BLEND,
         }));
       } catch {
         console.error("Error: --custom-colors must be valid JSON");
