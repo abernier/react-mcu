@@ -221,6 +221,12 @@ Pre-requisites:
 $ pnpm i
 ```
 
+## Validation
+
+```sh
+$ pnpm run lgtm
+```
+
 ## CONTRIBUTING
 
 When submitting a pull request, please include a changeset to document your
