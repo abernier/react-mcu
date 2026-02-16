@@ -1,5 +1,11 @@
 #!/usr/bin/env tsx
 
+// @example
+
+// ```sh
+// $ npx tsx src/cli.ts '#6750A4'
+// ```
+
 import { Command, Option } from "commander";
 import {
   builder,
