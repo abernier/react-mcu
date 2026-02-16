@@ -199,35 +199,10 @@ theme.toCss();
 ## CLI
 
 ```sh
-$ npx react-mcu --help
-Usage: react-mcu [options] <source>
-
-Material Color Utilities – generate color themes from a source color
-
-Arguments:
-  source                   Source color in hex format (e.g. #6750A4)
-
-Options:
-  --scheme <name>          Color scheme variant (choices: "tonalSpot", "monochrome", "neutral",
-                           "vibrant", "expressive", "fidelity", "content", default: "tonalSpot")
-  --contrast <number>      Contrast level from -1.0 to 1.0 (default: 0)
-  --primary <hex>          Primary color override
-  --secondary <hex>        Secondary color override
-  --tertiary <hex>         Tertiary color override
-  --neutral <hex>          Neutral color override
-  --neutral-variant <hex>  Neutral variant color override
-  --error <hex>            Error color override
-  --custom-colors <json>   Custom colors as JSON array (e.g.
-                           '[{"name":"brand","hex":"#FF5733","blend":true}]')
-  --format <type>          Output format: json or css (default: "json")
-  -h, --help               display help for command
+$ npx react-mcu "#6750A4"
 ```
 
-Example:
-
-```sh
-$ npx react-mcu "#6750A4" --scheme vibrant --contrast 0.5 --format css
-```
+See `npx react-mcu --help` for all available options.
 
 # Dev
 
