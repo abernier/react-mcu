@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import { Command, Option } from "commander";
 import { builder, schemeNames } from "./Mcu";
 
 const program = new Command();
@@ -9,10 +9,10 @@ program
     "Material Color Utilities – generate color themes from a source color",
   )
   .argument("<source>", "Source color in hex format (e.g. #6750A4)")
-  .option(
-    "--scheme <name>",
-    `Color scheme variant (${schemeNames.join(", ")})`,
-    "tonalSpot",
+  .addOption(
+    new Option("--scheme <name>", "Color scheme variant")
+      .choices(schemeNames)
+      .default("tonalSpot"),
   )
   .option(
     "--contrast <number>",
