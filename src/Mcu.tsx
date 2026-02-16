@@ -809,16 +809,17 @@ export function builder(
               const onContainerDark =
                 darkColors[`on${capitalizedName}Container`];
 
-              if (
-                !colorLight ||
-                !colorDark ||
-                !onColorLight ||
-                !onColorDark ||
-                !containerLight ||
-                !containerDark ||
-                !onContainerLight ||
-                !onContainerDark
-              ) {
+              const requiredColors = [
+                colorLight,
+                colorDark,
+                onColorLight,
+                onColorDark,
+                containerLight,
+                containerDark,
+                onContainerLight,
+                onContainerDark,
+              ];
+              if (requiredColors.some((c) => !c)) {
                 throw new Error(
                   `Custom color "${name}" is missing required color values`,
                 );

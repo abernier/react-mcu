@@ -3,6 +3,7 @@ import {
   Hct,
   hexFromArgb,
 } from "@material/material-color-utilities";
+import type { Color, Lab65 } from "culori";
 import { converter, differenceCiede2000, parseHex } from "culori";
 import { kebabCase } from "lodash-es";
 import { STANDARD_TONES } from "../Mcu";
@@ -17,6 +18,69 @@ export type RecolorizeSvgOptions = {
    */
   tolerance?: number;
 };
+
+type CandidateInfo = {
+  prefix: string;
+  palette: { tone: (t: number) => number };
+  sourceHue: number;
+  isNeutral: boolean;
+};
+
+/**
+ * Score all candidate palettes against a target color using CIEDE2000.
+ * Returns the best matching token and score, or null if no match found.
+ */
+function scoreCandidates(
+  targetHct: Hct,
+  targetLab: Color,
+  candidates: CandidateInfo[],
+  tolerance: number,
+  deltaE: (colorA: Color | string, colorB: Color | string) => number,
+  rgbToLab: (color: Color | string) => Lab65,
+): { token: string; score: number } | null {
+  let bestToken: string | null = null;
+  let bestScore = Infinity;
+  const targetIsNeutral = targetHct.chroma < 8;
+
+  for (const c of candidates) {
+    for (const tone of STANDARD_TONES) {
+      const toneHct = Hct.fromInt(c.palette.tone(tone));
+      const toneDist = Math.abs(targetHct.tone - toneHct.tone);
+      if (toneDist > tolerance) continue;
+
+      const toneHex = hexFromArgb(toneHct.toInt());
+      const toneRgb = parseHex(toneHex)!;
+      const toneLab = rgbToLab(toneRgb);
+      const distance = deltaE(targetLab, toneLab);
+
+      const neutralMultiplier = targetIsNeutral === c.isNeutral ? 0.8 : 1.5;
+      const score = distance * neutralMultiplier;
+
+      if (score < bestScore) {
+        bestScore = score;
+        bestToken = `var(--mcu-${c.prefix}-${tone})`;
+      }
+    }
+  }
+
+  return bestToken ? { token: bestToken, score: bestScore } : null;
+}
+
+/**
+ * Find the closest standard tone to a given target tone value.
+ */
+function findClosestTone(targetTone: number): number {
+  let bestTone = 50;
+  let minToneDist = Infinity;
+  for (const t of STANDARD_TONES) {
+    const dist = Math.abs(targetTone - t);
+    if (dist < minToneDist) {
+      minToneDist = dist;
+      bestTone = t;
+    }
+  }
+  return bestTone;
+}
 
 /**
  * Ultra-optimized SVG recoloring that consumes directly the palettes from the MCU Context.
@@ -96,65 +160,23 @@ export function recolorizeSvg(
       return null;
     }
 
-    // NEW APPROACH: CIEDE2000-based matching for perceptually accurate color matching
-    // We calculate delta-e (color difference) for each candidate and pick the best one
-    let bestToken = null;
-    let bestScore = Infinity;
-
-    // Convert target HCT to RGB color object for culori
+    // CIEDE2000-based matching for perceptually accurate color matching
     const targetHex = hexFromArgb(targetHct.toInt());
-    const targetRgb = parseHex(targetHex)!; // Non-null: hexFromArgb always returns valid hex
+    const targetRgb = parseHex(targetHex)!;
     const targetLab = rgbToLab(targetRgb);
 
-    for (const c of candidates) {
-      // Determine if we should prefer this palette based on chroma similarity
-      const targetIsNeutral = targetHct.chroma < 8;
-      const paletteIsNeutral = c.isNeutral;
-
-      // TONE MATCHING with CIEDE2000 scoring
-      for (const tone of STANDARD_TONES) {
-        const toneHct = Hct.fromInt(c.palette.tone(tone));
-
-        // Check tone distance for early filtering (performance optimization)
-        const toneDist = Math.abs(targetHct.tone - toneHct.tone);
-        if (toneDist > tolerance) continue;
-
-        // Convert palette color to RGB and LAB, then calculate CIEDE2000 distance
-        const toneHex = hexFromArgb(toneHct.toInt());
-        const toneRgb = parseHex(toneHex)!; // Non-null: hexFromArgb always returns valid hex
-        const toneLab = rgbToLab(toneRgb);
-        const distance = deltaE(targetLab, toneLab);
-
-        // Use delta-e as the base score (lower is better)
-        let score = distance;
-
-        // Bonus for matching neutral/colored nature
-        if (targetIsNeutral === paletteIsNeutral) {
-          score *= 0.8; // 20% bonus
-        } else {
-          score *= 1.5; // 50% penalty for mismatched nature
-        }
-
-        if (score < bestScore) {
-          bestScore = score;
-          bestToken = `var(--mcu-${c.prefix}-${tone})`;
-        }
-      }
-    }
-
-    // FALLBACK (If no match found at all, default to neutral-variant)
-    if (!bestToken) {
-      let bestTone = 50;
-      let minToneDist = Infinity;
-      STANDARD_TONES.forEach((t) => {
-        const dist = Math.abs(targetHct.tone - t);
-        if (dist < minToneDist) {
-          minToneDist = dist;
-          bestTone = t;
-        }
-      });
-      bestToken = `var(--mcu-neutral-variant-${bestTone})`;
-    }
+    const match = scoreCandidates(
+      targetHct,
+      targetLab,
+      candidates,
+      tolerance,
+      deltaE,
+      rgbToLab as (color: Color | string) => Lab65,
+    );
+    const bestToken =
+      match?.token ??
+      `var(--mcu-neutral-variant-${findClosestTone(targetHct.tone)})`;
+    const bestScore = match?.score ?? Infinity;
 
     tokenCache.set(hexInput, bestToken);
     console.log("bestToken", { hexInput, bestToken, bestScore });
