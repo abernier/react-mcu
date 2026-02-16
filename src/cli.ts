@@ -7,7 +7,7 @@ import {
   DEFAULT_CONTRAST,
   DEFAULT_SCHEME,
   schemeNames,
-} from "./Mcu";
+} from "react-mcu";
 
 const program = new Command();
 
