@@ -1,3 +1,4 @@
+export { ExportButton } from "./ExportButton";
 export {
   DEFAULT_ADAPTIVE_SHADES,
   DEFAULT_BLEND,
