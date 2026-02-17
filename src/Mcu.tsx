@@ -480,9 +480,14 @@ function createColorPalette(
   return TonalPalette.fromHueAndChroma(hct.hue, targetChroma);
 }
 
-/**
- * Builder API
- */
+//
+// ██████  ██    ██ ██ ██      ██████  ███████ ██████
+// ██   ██ ██    ██ ██ ██      ██   ██ ██      ██   ██
+// ██████  ██    ██ ██ ██      ██   ██ █████   ██████
+// ██   ██ ██    ██ ██ ██      ██   ██ ██      ██   ██
+// ██████   ██████  ██ ███████ ██████  ███████ ██   ██
+//
+
 export function builder(
   hexSource: McuConfig["source"],
   {
@@ -638,10 +643,13 @@ export function builder(
   );
 
   return {
-    // ──────────────────────────────────────────────────────────────────────────
-    // Formatters
-    // ──────────────────────────────────────────────────────────────────────────
-
+    //
+    // ████████  ██████   ██████ ███████ ███████
+    //    ██    ██    ██ ██      ██      ██
+    //    ██    ██    ██ ██      ███████ ███████
+    //    ██    ██    ██ ██           ██      ██
+    //    ██     ██████   ██████ ███████ ███████
+    //
     toCss() {
       function cssVar(colorName: string, colorValue: number) {
         const name = `--mcu-${kebabCase(colorName)}`;
@@ -710,6 +718,13 @@ export function builder(
 `;
     },
 
+    //
+    // ████████  ██████       ██ ███████  ██████  ███    ██
+    //    ██    ██    ██      ██ ██      ██    ██ ████   ██
+    //    ██    ██    ██      ██ ███████ ██    ██ ██ ██  ██
+    //    ██    ██    ██ ██   ██      ██ ██    ██ ██  ██ ██
+    //    ██     ██████   █████  ███████  ██████  ██   ████
+    //
     toJson() {
       // Token order matching Material Theme Builder export format
       const fixtureTokenOrder = [
