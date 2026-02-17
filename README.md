@@ -199,10 +199,11 @@ theme.toCss();
 ## CLI
 
 ```sh
-$ npx react-mcu "#6750A4"
+$ npx react-mcu builder "#6750A4"
+$ npx react-mcu builder "#6750A4" --format css
 ```
 
-See `npx react-mcu --help` for all available options.
+See `npx react-mcu builder --help` for all available options.
 
 # Dev
 

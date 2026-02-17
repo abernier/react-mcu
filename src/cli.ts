@@ -3,8 +3,8 @@
 // @example
 
 // ```sh
-// $ npx tsx src/cli.ts '#6750A4'
-// $ npx tsx src/cli.ts '#6750A4' --format css
+// $ npx tsx src/cli.ts builder '#6750A4'
+// $ npx tsx src/cli.ts builder '#6750A4' --format css
 // ```
 
 import { Command, Option } from "commander";
@@ -18,11 +18,11 @@ import {
 
 const program = new Command();
 
+program.name("react-mcu").description("m3 color system for react");
+
 program
-  .name("react-mcu")
-  .description(
-    "Material Color Utilities – generate color themes from a source color",
-  )
+  .command("builder")
+  .description("Generate a color theme from a source color")
   .argument("<source>", "Source color in hex format (e.g. #6750A4)")
   .addOption(
     new Option("--scheme <name>", "Color scheme variant")
