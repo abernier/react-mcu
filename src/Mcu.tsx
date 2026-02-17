@@ -2,20 +2,14 @@
 
 import { useMemo } from "react";
 import {
-  builder,
   DEFAULT_ADAPTIVE_SHADES,
-  DEFAULT_BLEND,
   DEFAULT_CONTRAST,
   DEFAULT_CONTRAST_ALL_COLORS,
   DEFAULT_CUSTOM_COLORS,
   DEFAULT_SCHEME,
   type McuConfig,
-  schemeNames,
-  STANDARD_TONES,
-  tokenNames,
-  type TokenName,
 } from "./lib/builder";
-import { McuProvider, useMcu } from "./Mcu.context";
+import { McuProvider } from "./Mcu.context";
 
 const mcuStyleId = "mcu-styles";
 const DEFAULT_COLOR_MATCH = false;
@@ -76,4 +70,3 @@ export function Mcu({
     </McuProvider>
   );
 }
-

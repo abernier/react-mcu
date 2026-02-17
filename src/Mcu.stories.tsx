@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo } from "react";
 import { allModes } from "../.storybook/modes";
-import { recolorizeSvg } from "./lib/recolorizeSvg";
 import { type McuConfig, schemeNames } from "./lib/builder";
+import { recolorizeSvg } from "./lib/recolorizeSvg";
 import { Mcu } from "./Mcu";
 import { useMcu } from "./Mcu.context";
 import { Layout, Scheme, Shades, TailwindScheme } from "./Mcu.stories.helpers";
