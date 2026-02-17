@@ -3,5 +3,8 @@ dist
 *storybook.log
 storybook-static
 package-lock.json
+mcu-theme
+src/fixtures/dtcg-schemas
 
 src/stories
+.DS_Store

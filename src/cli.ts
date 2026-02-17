@@ -5,13 +5,19 @@
 // ```sh
 // $ npx tsx src/cli.ts builder '#6750A4'
 // $ npx tsx src/cli.ts builder '#6750A4' --format css
+// $ npx tsx src/cli.ts builder '#6750A4' --adaptive-shades --format figma
 // ```
+
+import * as fs from "node:fs";
+import * as path from "node:path";
 
 import { Command, Option } from "commander";
 import {
   builder,
+  DEFAULT_ADAPTIVE_SHADES,
   DEFAULT_BLEND,
   DEFAULT_CONTRAST,
+  DEFAULT_CONTRAST_ALL_COLORS,
   DEFAULT_SCHEME,
   schemeNames,
 } from "react-mcu";
@@ -45,7 +51,18 @@ program
     "--custom-colors <json>",
     'Custom colors as JSON array (e.g. \'[{"name":"brand","hex":"#FF5733","blend":true}]\')',
   )
-  .option("--format <type>", "Output format: json or css", "json")
+  .option("--format <type>", "Output format: json, css, or figma", "figma")
+  .option("--output <dir>", "Output directory (required for figma format)")
+  .option(
+    "--adaptive-shades",
+    "Adapt tonal palette shades for dark mode",
+    DEFAULT_ADAPTIVE_SHADES,
+  )
+  .option(
+    "--contrast-all-colors",
+    "Apply contrast adjustment to tonal palette shades",
+    DEFAULT_CONTRAST_ALL_COLORS,
+  )
   .action((source: string, opts) => {
     let customColors: { name: string; hex: string; blend: boolean }[] = [];
     if (opts.customColors) {
@@ -76,10 +93,21 @@ program
       neutral: opts.neutral,
       neutralVariant: opts.neutralVariant,
       customColors,
+      adaptiveShades: opts.adaptiveShades,
+      contrastAllColors: opts.contrastAllColors,
     });
 
     if (opts.format === "css") {
       process.stdout.write(result.toCss());
+    } else if (opts.format === "figma") {
+      const outputDir = opts.output ?? "mcu-theme";
+      fs.mkdirSync(outputDir, { recursive: true });
+      const files = result.toFigmaTokens();
+      for (const [filename, content] of Object.entries(files)) {
+        const filePath = path.join(outputDir, filename);
+        fs.writeFileSync(filePath, JSON.stringify(content, null, 2) + "\n");
+        console.error(`wrote ${filePath}`);
+      }
     } else {
       process.stdout.write(JSON.stringify(result.toJson(), null, 2) + "\n");
     }

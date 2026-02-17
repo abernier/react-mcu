@@ -3,12 +3,15 @@
 import {
   argbFromHex,
   Blend,
+  blueFromArgb,
   type CustomColor,
   DynamicColor,
   DynamicScheme,
+  greenFromArgb,
   Hct,
   hexFromArgb,
   MaterialDynamicColors,
+  redFromArgb,
   SchemeContent,
   SchemeExpressive,
   SchemeFidelity,
@@ -18,7 +21,7 @@ import {
   SchemeVibrant,
   TonalPalette,
 } from "@material/material-color-utilities";
-import { kebabCase, upperFirst } from "lodash-es";
+import { kebabCase, startCase, upperFirst } from "lodash-es";
 import { useMemo } from "react";
 import { McuProvider, useMcu } from "./Mcu.context";
 
@@ -644,11 +647,11 @@ export function builder(
 
   return {
     //
-    // ████████  ██████   ██████ ███████ ███████
-    //    ██    ██    ██ ██      ██      ██
-    //    ██    ██    ██ ██      ███████ ███████
-    //    ██    ██    ██ ██           ██      ██
-    //    ██     ██████   ██████ ███████ ███████
+    //  ██████ ███████ ███████
+    // ██      ██      ██
+    // ██      ███████ ███████
+    // ██           ██      ██
+    //  ██████ ███████ ███████
     //
     toCss() {
       function cssVar(colorName: string, colorValue: number) {
@@ -719,11 +722,11 @@ export function builder(
     },
 
     //
-    // ████████  ██████       ██ ███████  ██████  ███    ██
-    //    ██    ██    ██      ██ ██      ██    ██ ████   ██
-    //    ██    ██    ██      ██ ███████ ██    ██ ██ ██  ██
-    //    ██    ██    ██ ██   ██      ██ ██    ██ ██  ██ ██
-    //    ██     ██████   █████  ███████  ██████  ██   ████
+    //      ██ ███████  ██████  ███    ██
+    //      ██ ██      ██    ██ ████   ██
+    //      ██ ███████ ██    ██ ██ ██  ██
+    // ██   ██      ██ ██    ██ ██  ██ ██
+    //  █████  ███████  ██████  ██   ████
     //
     toJson() {
       // Token order matching Material Theme Builder export format
@@ -962,6 +965,102 @@ export function builder(
         extendedColors,
         schemes: buildJsonSchemes(),
         palettes: rawPalettesToJson(),
+      };
+    },
+
+    //
+    // ███████ ██  ██████  ███    ███  █████
+    // ██      ██ ██       ████  ████ ██   ██
+    // █████   ██ ██   ███ ██ ████ ██ ███████
+    // ██      ██ ██    ██ ██  ██  ██ ██   ██
+    // ██      ██  ██████  ██      ██ ██   ██
+    //
+
+    toFigmaTokens() {
+      // Figma Variables compatible format
+      // Produces a map of filename → DTCG token documents with Figma extensions
+      // Each file represents one mode (Light, Dark)
+      // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
+
+      function argbToFigmaColorValue(argb: number) {
+        return {
+          colorSpace: "srgb" as const,
+          components: [
+            redFromArgb(argb) / 255,
+            greenFromArgb(argb) / 255,
+            blueFromArgb(argb) / 255,
+          ],
+          alpha: 1,
+          hex: hexFromArgb(argb).toUpperCase(),
+        };
+      }
+
+      function figmaToken(argb: number) {
+        return {
+          $type: "color" as const,
+          $value: argbToFigmaColorValue(argb),
+          $extensions: {
+            "com.figma.scopes": ["ALL_SCOPES"],
+            "com.figma.isOverride": true,
+          },
+        };
+      }
+
+      function buildFigmaSchemeTokens(mergedColors: Record<string, number>) {
+        const tokens: Record<string, ReturnType<typeof figmaToken>> = {};
+        for (const [name, argb] of Object.entries(mergedColors)) {
+          tokens[startCase(name)] = figmaToken(argb);
+        }
+        return tokens;
+      }
+
+      function buildFigmaPaletteTokens(isDark: boolean) {
+        const palettes: Record<
+          string,
+          Record<string, ReturnType<typeof figmaToken>>
+        > = {};
+
+        for (const [name, palette] of Object.entries(allPalettes)) {
+          const tones: Record<string, ReturnType<typeof figmaToken>> = {};
+
+          for (const tone of STANDARD_TONES) {
+            let toneToUse: number = tone;
+
+            // Invert tones for dark mode when adaptiveShades is enabled
+            if (adaptiveShades && isDark) {
+              toneToUse = 100 - tone;
+            }
+
+            if (contrastAllColors) {
+              toneToUse = adjustToneForContrast(toneToUse, contrast);
+            }
+            const argb = palette.tone(toneToUse);
+            tones[tone.toString()] = figmaToken(argb);
+          }
+
+          palettes[startCase(name)] = tones;
+        }
+
+        return palettes;
+      }
+
+      function buildModeFile(
+        modeName: string,
+        mergedColors: Record<string, number>,
+        isDark: boolean,
+      ) {
+        return {
+          Schemes: buildFigmaSchemeTokens(mergedColors),
+          Palettes: buildFigmaPaletteTokens(isDark),
+          $extensions: {
+            "com.figma.modeName": modeName,
+          },
+        };
+      }
+
+      return {
+        "Light.tokens.json": buildModeFile("Light", mergedColorsLight, false),
+        "Dark.tokens.json": buildModeFile("Dark", mergedColorsDark, true),
       };
     },
 
