@@ -68,9 +68,15 @@ export const McuProvider = ({
   const getMcuColor = useCallback(
     (colorName: TokenName, theme: string | undefined) => {
       // console.log("getMcuColor", colorName, theme);
-      return hexFromArgb(
-        (theme === "light" ? mergedColorsLight : mergedColorsDark)[colorName],
-      );
+      const mergedColors =
+        theme === "light" ? mergedColorsLight : mergedColorsDark;
+      const colorValue = mergedColors[colorName];
+
+      if (colorValue === undefined) {
+        throw new Error(`Unknown MCU token '${colorName}'`);
+      }
+
+      return hexFromArgb(colorValue);
     },
     [mergedColorsDark, mergedColorsLight],
   );

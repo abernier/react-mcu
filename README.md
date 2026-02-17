@@ -196,6 +196,16 @@ theme.toJson();
 theme.toCss();
 ```
 
+## CLI
+
+```sh
+$ npx react-mcu builder "#6750A4"
+```
+
+will generate a `mcu-theme` folder with: `Light.tokens.json` and `Dark.tokens.json` [design-tokens](https://www.designtokens.org/tr/2025.10/) files, you can (both) import into Figma.
+
+See `npx react-mcu builder --help` for all available options.
+
 # Dev
 
 ## INSTALL
