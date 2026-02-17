@@ -4,6 +4,7 @@
 
 // ```sh
 // $ npx tsx src/cli.ts '#6750A4'
+// $ npx tsx src/cli.ts '#6750A4' --format css
 // ```
 
 import { Command, Option } from "commander";
