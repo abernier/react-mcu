@@ -77,6 +77,3 @@ export function Mcu({
   );
 }
 
-// Re-export items from builder for backward compatibility
-export { builder, schemeNames, STANDARD_TONES, tokenNames, type TokenName, type McuConfig, DEFAULT_ADAPTIVE_SHADES, DEFAULT_BLEND, DEFAULT_CONTRAST, DEFAULT_CONTRAST_ALL_COLORS, DEFAULT_SCHEME } from "./lib/builder";
-

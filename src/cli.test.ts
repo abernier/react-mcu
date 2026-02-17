@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { builder } from "./Mcu";
+import { builder } from "./lib/builder";
 import fixture from "./fixtures/material-theme-builder-try1.json";
 
 describe("cli", () => {
