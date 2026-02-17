@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.3.0
+
+### Minor Changes
+
+- d3e99ec: cli
+
 ## 1.2.0
 
 ### Minor Changes
