@@ -38,9 +38,9 @@ program
   .option("--primary <hex>", "Primary color override")
   .option("--secondary <hex>", "Secondary color override")
   .option("--tertiary <hex>", "Tertiary color override")
+  .option("--error <hex>", "Error color override")
   .option("--neutral <hex>", "Neutral color override")
   .option("--neutral-variant <hex>", "Neutral variant color override")
-  .option("--error <hex>", "Error color override")
   .option(
     "--custom-colors <json>",
     'Custom colors as JSON array (e.g. \'[{"name":"brand","hex":"#FF5733","blend":true}]\')',
@@ -72,9 +72,9 @@ program
       primary: opts.primary,
       secondary: opts.secondary,
       tertiary: opts.tertiary,
+      error: opts.error,
       neutral: opts.neutral,
       neutralVariant: opts.neutralVariant,
-      error: opts.error,
       customColors,
     });
 
