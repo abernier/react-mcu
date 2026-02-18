@@ -4,7 +4,7 @@ set -euo pipefail
 # Download DTCG 2025.10 JSON Schemas for validation tests
 # Source: https://www.designtokens.org/schemas/2025.10/
 
-DIR="src/fixtures/dtcg-schemas"
+DIR="src/fixtures/.dtcg-schemas"
 BASE_URL="https://www.designtokens.org/schemas/2025.10"
 
 # Skip if already downloaded

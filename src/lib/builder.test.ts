@@ -84,7 +84,7 @@ describe("builder", () => {
   describe("toFigmaTokens()", () => {
     // DTCG schemas are downloaded by scripts/download-dtcg-schemas.sh (via pretest hook)
     function loadSchema(relativePath: string) {
-      const schemasDir = join(import.meta.dirname, "../fixtures/dtcg-schemas");
+      const schemasDir = join(import.meta.dirname, "../fixtures/.dtcg-schemas");
       return JSON.parse(readFileSync(join(schemasDir, relativePath), "utf-8"));
     }
 

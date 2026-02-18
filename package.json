@@ -90,7 +90,7 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "chromatic --project-token $CHROMATIC_PROJECT_TOKEN",
-    "prepare": "husky",
+    "prepare": "pnpm run pretest && husky",
     "changeset": "pnpm exec changeset"
   },
   "peerDependencies": {
