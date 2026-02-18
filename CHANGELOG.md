@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.3.1
+
+### Patch Changes
+
+- 648f966: fix bin deps
+
 ## 1.3.0
 
 ### Minor Changes
