@@ -3,7 +3,8 @@ import { kebabCase, upperFirst } from "lodash-es";
 import type { ComponentProps } from "react";
 import { ExportButton } from "./ExportButton";
 import { cn } from "./lib/cn";
-import { Mcu, STANDARD_TONES } from "./Mcu";
+import { Mcu } from "./Mcu";
+import { STANDARD_TONES } from "./lib/builder";
 import { useMcu } from "./Mcu.context";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
