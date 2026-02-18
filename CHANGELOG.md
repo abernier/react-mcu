@@ -1,5 +1,11 @@
 # react-mcu
 
+## 1.3.2
+
+### Patch Changes
+
+- b41c145: -tsx
+
 ## 1.3.1
 
 ### Patch Changes
