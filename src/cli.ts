@@ -20,7 +20,7 @@ import {
   DEFAULT_CONTRAST_ALL_COLORS,
   DEFAULT_SCHEME,
   schemeNames,
-} from "react-mcu";
+} from "./lib/builder";
 
 const program = new Command();
 

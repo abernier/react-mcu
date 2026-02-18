@@ -5,12 +5,13 @@ import { cleanup, render } from "@testing-library/react";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { afterEach, describe, expect, it } from "vitest";
-import { builder, Mcu, STANDARD_TONES } from "./Mcu";
 import fixture from "./fixtures/material-theme-builder-try1.json";
 import fixture2 from "./fixtures/material-theme-builder-try2.json";
 import fixture3 from "./fixtures/material-theme-builder-try3.json";
 import fixture4 from "./fixtures/material-theme-builder-try4.json";
 import fixture5 from "./fixtures/material-theme-builder-try5.json";
+import { builder, STANDARD_TONES } from "./lib/builder";
+import { Mcu } from "./Mcu";
 
 describe("Mcu", () => {
   afterEach(() => {
