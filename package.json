@@ -29,7 +29,7 @@
     "src/tailwind.css"
   ],
   "bin": {
-    "react-mcu": "./src/cli.ts"
+    "react-mcu": "./dist/cli.js"
   },
   "type": "module",
   "packageManager": "pnpm@10.27.0",
@@ -100,7 +100,6 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
     "commander": "^14.0.3",
-    "lodash-es": "^4.17.22",
-    "tsx": "^4.21.0"
+    "lodash-es": "^4.17.22"
   }
 }

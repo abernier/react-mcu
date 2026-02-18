@@ -1,11 +1,11 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env node
 
 // @example
 
 // ```sh
-// $ npx tsx src/cli.ts builder '#6750A4'
-// $ npx tsx src/cli.ts builder '#6750A4' --format css
-// $ npx tsx src/cli.ts builder '#6750A4' --adaptive-shades --format figma
+// $ node dist/cli.js builder '#6750A4'
+// $ node dist/cli.js builder '#6750A4' --format css
+// $ node dist/cli.js builder '#6750A4' --adaptive-shades --format figma
 // ```
 
 import * as fs from "node:fs";
