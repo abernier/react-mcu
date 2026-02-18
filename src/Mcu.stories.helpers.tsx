@@ -1,9 +1,11 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { kebabCase, upperFirst } from "lodash-es";
 import type { ComponentProps } from "react";
-import { STANDARD_TONES } from "./lib/builder";
+import { ExportButton } from "./ExportButton";
 import { cn } from "./lib/cn";
 import { Mcu } from "./Mcu";
+import { STANDARD_TONES } from "./lib/builder";
+import { useMcu } from "./Mcu.context";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (
@@ -20,6 +22,8 @@ function FooBottom({ children, ...props }: ComponentProps<"div">) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { initials } = useMcu();
+
   return (
     <div className="flex flex-col gap-6 max-w-208 mx-auto [--gap1:0.75rem] [--gap2:0.25rem]">
       <style>{`
@@ -29,6 +33,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           }
         }
       `}</style>
+      <div className="flex justify-end mb-2">
+        <ExportButton config={initials} />
+      </div>
       {children}
     </div>
   );
