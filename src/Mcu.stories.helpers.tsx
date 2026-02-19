@@ -69,20 +69,26 @@ export function Layout({
   );
 }
 
-const schemeVariants = cva("flex flex-col gap-4", {
-  variants: {
-    theme: {
-      light: "bg-[#ededed] text-(--sb-background)",
-      dark: ["dark", "bg-[#1c1b1f] text-(--sb-foreground)"],
+const schemeVariants = cva(
+  "flex flex-col gap-4 [--mcu-scheme-light:#fbfbfb] [--mcu-scheme-dark:#1c1b1f]",
+  {
+    variants: {
+      theme: {
+        light: "bg-[var(--mcu-scheme-light)] text-[var(--mcu-scheme-dark)]",
+        dark: [
+          "dark",
+          "bg-[var(--mcu-scheme-dark)] text-[var(--mcu-scheme-light)]",
+        ],
+      },
     },
+    compoundVariants: [
+      {
+        theme: ["light", "dark"],
+        className: "p-2 md:p-4",
+      },
+    ],
   },
-  compoundVariants: [
-    {
-      theme: ["light", "dark"],
-      className: "p-2 md:p-4",
-    },
-  ],
-});
+);
 
 export function Scheme({
   theme,

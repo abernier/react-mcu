@@ -126,6 +126,7 @@ export const St2: Story = {
     source: "#769CDF",
     adaptiveShades: true,
     contrastAllColors: true,
+    contrast: 0,
   },
   render: (args) => (
     <Mcu {...args}>

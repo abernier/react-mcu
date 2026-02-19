@@ -1,15 +1,14 @@
-:root {
+html {
   --sb-background: #eee;
   --sb-foreground: black;
 
-  @media (prefers-color-scheme: dark) {
+  &.dark {
     --sb-background: #252525;
     --sb-foreground: white;
   }
 }
 
-body:not(:has(.sbdocs)),
-.docs-story {
+html {
   background: var(--sb-background);
   color: var(--sb-foreground);
 }
