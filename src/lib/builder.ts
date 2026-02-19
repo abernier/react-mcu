@@ -19,7 +19,7 @@ import {
   SchemeVibrant,
   TonalPalette,
 } from "@material/material-color-utilities";
-import { kebabCase, startCase, upperFirst } from "lodash-es";
+import { kebabCase, upperFirst } from "lodash-es";
 
 // Helper function to adjust tone based on contrast level
 // This provides a simple linear adjustment similar to Material Design's approach
@@ -892,9 +892,15 @@ export function builder(
     //
 
     toFigmaTokens() {
-      // Figma Variables compatible format
-      // Produces a map of filename → DTCG token documents with Figma extensions
-      // Each file represents one mode (Light, Dark)
+      // Figma Variables compatible format using M3 token architecture:
+      //   ref.palette.* — Reference Tokens (Tier 1): raw tonal palette values
+      //   sys.color.*   — System Tokens (Tier 2): semantic roles referencing palette tones
+      //
+      // System tokens use DTCG alias syntax {ref.palette.<name>.<tone>} to link
+      // to the reference palette, enabling Figma to create linked variables and
+      // making the relationship between roles and tones explicit for AI/dev tools.
+      //
+      // see: https://m3.material.io/foundations/design-tokens/overview
       // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
 
       // Material Design 3 token metadata: descriptions and CSS variable names
@@ -1145,6 +1151,67 @@ export function builder(
         },
       };
 
+      // Maps each core scheme token to its source palette for alias resolution.
+      // When a scheme hex matches multiple palettes (e.g. #000000 at tone 0),
+      // this ensures the semantically correct palette is preferred.
+      const tokenToPalette: Record<string, string> = {
+        // Primary family
+        primary: "primary",
+        onPrimary: "primary",
+        primaryContainer: "primary",
+        onPrimaryContainer: "primary",
+        primaryFixed: "primary",
+        primaryFixedDim: "primary",
+        onPrimaryFixed: "primary",
+        onPrimaryFixedVariant: "primary",
+        inversePrimary: "primary",
+        surfaceTint: "primary",
+        // Secondary family
+        secondary: "secondary",
+        onSecondary: "secondary",
+        secondaryContainer: "secondary",
+        onSecondaryContainer: "secondary",
+        secondaryFixed: "secondary",
+        secondaryFixedDim: "secondary",
+        onSecondaryFixed: "secondary",
+        onSecondaryFixedVariant: "secondary",
+        // Tertiary family
+        tertiary: "tertiary",
+        onTertiary: "tertiary",
+        tertiaryContainer: "tertiary",
+        onTertiaryContainer: "tertiary",
+        tertiaryFixed: "tertiary",
+        tertiaryFixedDim: "tertiary",
+        onTertiaryFixed: "tertiary",
+        onTertiaryFixedVariant: "tertiary",
+        // Error family
+        error: "error",
+        onError: "error",
+        errorContainer: "error",
+        onErrorContainer: "error",
+        // Neutral family
+        background: "neutral",
+        onBackground: "neutral",
+        surface: "neutral",
+        onSurface: "neutral",
+        surfaceDim: "neutral",
+        surfaceBright: "neutral",
+        surfaceContainer: "neutral",
+        surfaceContainerLow: "neutral",
+        surfaceContainerLowest: "neutral",
+        surfaceContainerHigh: "neutral",
+        surfaceContainerHighest: "neutral",
+        inverseSurface: "neutral",
+        inverseOnSurface: "neutral",
+        scrim: "neutral",
+        shadow: "neutral",
+        // Neutral variant family
+        surfaceVariant: "neutral-variant",
+        onSurfaceVariant: "neutral-variant",
+        outline: "neutral-variant",
+        outlineVariant: "neutral-variant",
+      };
+
       function argbToFigmaColorValue(argb: number) {
         return {
           colorSpace: "srgb" as const,
@@ -1169,38 +1236,9 @@ export function builder(
         };
       }
 
-      function figmaSchemeToken(
-        argb: number,
-        meta?: { description: string; cssVariable: string },
-      ) {
-        const base = figmaToken(argb);
-        return {
-          ...base,
-          ...(meta?.description ? { $description: meta.description } : {}),
-          $extensions: {
-            ...base.$extensions,
-            ...(meta?.cssVariable
-              ? { "reactmcu.cssVariable": meta.cssVariable }
-              : {}),
-          },
-        };
-      }
-
-      function buildFigmaSchemeTokens(mergedColors: Record<string, number>) {
-        const tokens: Record<
-          string,
-          ReturnType<typeof figmaSchemeToken>
-        > = {};
-        for (const [name, argb] of Object.entries(mergedColors)) {
-          tokens[startCase(name)] = figmaSchemeToken(
-            argb,
-            tokenMeta[name],
-          );
-        }
-        return tokens;
-      }
-
-      function buildFigmaPaletteTokens(isDark: boolean) {
+      // Build ref.palette.* — Reference Tokens (Tier 1)
+      // Raw tonal palette values with direct color data (mode-independent)
+      function buildRefPaletteTokens() {
         const palettes: Record<
           string,
           Record<string, ReturnType<typeof figmaToken>>
@@ -1211,12 +1249,6 @@ export function builder(
 
           for (const tone of STANDARD_TONES) {
             let toneToUse: number = tone;
-
-            // Invert tones for dark mode when adaptiveShades is enabled
-            if (adaptiveShades && isDark) {
-              toneToUse = 100 - tone;
-            }
-
             if (contrastAllColors) {
               toneToUse = adjustToneForContrast(toneToUse, contrast);
             }
@@ -1224,29 +1256,141 @@ export function builder(
             tones[tone.toString()] = figmaToken(argb);
           }
 
-          palettes[startCase(name)] = tones;
+          palettes[kebabCase(name)] = tones;
         }
 
         return palettes;
       }
 
-      function buildModeFile(
-        modeName: string,
-        mergedColors: Record<string, number>,
-        isDark: boolean,
-      ) {
-        return {
-          Schemes: buildFigmaSchemeTokens(mergedColors),
-          Palettes: buildFigmaPaletteTokens(isDark),
-          $extensions: {
-            "com.figma.modeName": modeName,
-          },
-        };
+      type RefPalettes = Record<
+        string,
+        Record<string, ReturnType<typeof figmaToken>>
+      >;
+
+      // Find a hex match in a single palette group, returning the alias path
+      function findToneInPalette(
+        hex: string,
+        paletteName: string,
+        tones: Record<string, ReturnType<typeof figmaToken>>,
+      ): string | null {
+        for (const [tone, token] of Object.entries(tones)) {
+          if (token.$value.hex === hex) {
+            return `{ref.palette.${paletteName}.${tone}}`;
+          }
+        }
+        return null;
       }
 
+      // Derive the preferred palette name for a custom color token
+      function deriveCustomPalette(
+        tokenName: string,
+        refPalettes: RefPalettes,
+      ): string | undefined {
+        let baseName = tokenName;
+        if (/^on[A-Z]/.test(baseName) && baseName.length > 2) {
+          baseName = baseName.charAt(2).toLowerCase() + baseName.slice(3);
+        }
+        if (baseName.endsWith("Container")) {
+          baseName = baseName.slice(0, -"Container".length);
+        }
+        const kebab = kebabCase(baseName);
+        return kebab in refPalettes ? kebab : undefined;
+      }
+
+      // Resolve a scheme token's hex to a DTCG alias reference {ref.palette.<name>.<tone>}
+      // Prefers the semantically correct palette via tokenToPalette, falls back to any match
+      function findAlias(
+        hex: string,
+        tokenName: string,
+        refPalettes: RefPalettes,
+      ): string | null {
+        const preferredPalette =
+          tokenToPalette[tokenName] ??
+          deriveCustomPalette(tokenName, refPalettes);
+
+        // Search preferred palette first
+        if (preferredPalette && refPalettes[preferredPalette]) {
+          const match = findToneInPalette(
+            hex,
+            preferredPalette,
+            refPalettes[preferredPalette],
+          );
+          if (match) return match;
+        }
+
+        // Fall back to any palette
+        for (const [palName, tones] of Object.entries(refPalettes)) {
+          const match = findToneInPalette(hex, palName, tones);
+          if (match) return match;
+        }
+
+        return null;
+      }
+
+      // Resolve a mode value: DTCG alias string if a palette match is found,
+      // otherwise falls back to a direct color value object
+      function resolveModeValue(
+        argb: number,
+        tokenName: string,
+        refPalettes: RefPalettes,
+      ): string | ReturnType<typeof argbToFigmaColorValue> {
+        const hex = hexFromArgb(argb).toUpperCase();
+        return findAlias(hex, tokenName, refPalettes) ??
+          argbToFigmaColorValue(argb);
+      }
+
+      // Build sys.color.* — System Tokens (Tier 2)
+      // Semantic role tokens with com.figma.modes for Light/Dark alias references
+      function buildSysColorTokens(
+        refPalettes: RefPalettes,
+      ) {
+        const tokens: Record<string, unknown> = {};
+
+        // Collect all token names from both modes
+        const allTokenNames = new Set([
+          ...Object.keys(mergedColorsLight),
+          ...Object.keys(mergedColorsDark),
+        ]);
+
+        for (const name of allTokenNames) {
+          const lightArgb = mergedColorsLight[name] as number;
+          const darkArgb = mergedColorsDark[name] as number;
+          const meta = tokenMeta[name];
+
+          const lightValue = resolveModeValue(lightArgb, name, refPalettes);
+          const darkValue = resolveModeValue(darkArgb, name, refPalettes);
+
+          tokens[kebabCase(name)] = {
+            $type: "color" as const,
+            // $value defaults to Light mode alias for DTCG compliance
+            $value: lightValue,
+            ...(meta?.description ? { $description: meta.description } : {}),
+            $extensions: {
+              "com.figma.scopes": ["ALL_SCOPES"],
+              ...(meta?.cssVariable
+                ? { "css.variable": meta.cssVariable }
+                : {}),
+              "com.figma.modes": {
+                Light: lightValue,
+                Dark: darkValue,
+              },
+            },
+          };
+        }
+        return tokens;
+      }
+
+      const refPalettes = buildRefPaletteTokens();
+
       return {
-        "Light.tokens.json": buildModeFile("Light", mergedColorsLight, false),
-        "Dark.tokens.json": buildModeFile("Dark", mergedColorsDark, true),
+        "theme.tokens.json": {
+          ref: {
+            palette: refPalettes,
+          },
+          sys: {
+            color: buildSysColorTokens(refPalettes),
+          },
+        },
       };
     },
 
