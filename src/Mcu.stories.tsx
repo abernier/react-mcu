@@ -88,6 +88,30 @@ type Story = StoryObj<typeof meta>;
 const customColor1 = "#00D68A";
 const customColor2 = "#FFE16B";
 
+export const St2: Story = {
+  name: "Minimal",
+  parameters: {
+    // layout: "centered",
+  },
+  args: {
+    source: "#769CDF",
+    adaptiveShades: true,
+    contrastAllColors: true,
+    contrast: 0,
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout notext>
+        <Scheme customColors={args.customColors}>
+          {args.adaptiveShades && (
+            <Shades customColors={args.customColors} noTitle />
+          )}
+        </Scheme>
+      </Layout>
+    </Mcu>
+  ),
+};
+
 export const St1: Story = {
   name: "Default",
   args: {
@@ -112,30 +136,6 @@ export const St1: Story = {
           {args.adaptiveShades && <Shades customColors={args.customColors} />}
         </Scheme>
         {!args.adaptiveShades && <Shades customColors={args.customColors} />}
-      </Layout>
-    </Mcu>
-  ),
-};
-
-export const St2: Story = {
-  name: "Minimal",
-  parameters: {
-    // layout: "centered",
-  },
-  args: {
-    source: "#769CDF",
-    adaptiveShades: true,
-    contrastAllColors: true,
-    contrast: 0,
-  },
-  render: (args) => (
-    <Mcu {...args}>
-      <Layout notext>
-        <Scheme customColors={args.customColors}>
-          {args.adaptiveShades && (
-            <Shades customColors={args.customColors} noTitle />
-          )}
-        </Scheme>
       </Layout>
     </Mcu>
   ),
