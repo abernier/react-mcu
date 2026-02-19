@@ -294,6 +294,44 @@ describe("builder", () => {
       expect(lightTone40.$value.hex).toBe(darkTone40.$value.hex);
     });
 
+    it("should add $description and css.variable to standard M3 scheme tokens", () => {
+      const result = builder("#6750A4").toFigmaTokens();
+      const primaryToken = result["Light.tokens.json"].Schemes.Primary as {
+        $description?: string;
+        $extensions: Record<string, unknown>;
+      };
+      const inverseOnSurfaceToken = result["Light.tokens.json"].Schemes[
+        "Inverse On Surface"
+      ] as {
+        $description?: string;
+        $extensions: Record<string, unknown>;
+      };
+
+      expect(primaryToken.$description).toBeTypeOf("string");
+      expect(primaryToken.$description!.length).toBeGreaterThan(0);
+      expect(primaryToken.$extensions["css.variable"]).toBe(
+        "--md-sys-color-primary",
+      );
+
+      expect(inverseOnSurfaceToken.$description).toBeTypeOf("string");
+      expect(inverseOnSurfaceToken.$extensions["css.variable"]).toBe(
+        "--md-sys-color-inverse-on-surface",
+      );
+    });
+
+    it("should not add $description or css.variable to custom color scheme tokens", () => {
+      const result = builder("#6750A4", {
+        customColors: [{ name: "brand", hex: "#FF5733", blend: true }],
+      }).toFigmaTokens();
+      const brandToken = result["Light.tokens.json"].Schemes.Brand as {
+        $description?: string;
+        $extensions: Record<string, unknown>;
+      };
+
+      expect(brandToken.$description).toBeUndefined();
+      expect(brandToken.$extensions["css.variable"]).toBeUndefined();
+    });
+
     it("should include custom color palettes and scheme tokens", () => {
       const result = builder("#6750A4", {
         customColors: [{ name: "brand", hex: "#FF5733", blend: true }],

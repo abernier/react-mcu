@@ -897,6 +897,97 @@ export function builder(
       // Each file represents one mode (Light, Dark)
       // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
 
+      // M3 semantic descriptions for each system color role.
+      // ref: https://m3.material.io/foundations/design-tokens/overview
+      const TOKEN_DESCRIPTIONS: Partial<Record<TokenName, string>> = {
+        background:
+          "Color applied to content behind scrollable content. Also used for the background of components that have no distinct container, such as Navigation Drawer.",
+        onBackground:
+          "Applied to icons and text placed on top of background.",
+        surface:
+          "Default color for component backgrounds. Also used as default container color for FAB, Chips, and similar elements.",
+        onSurface: "Applied to text and icons on surface.",
+        surfaceVariant:
+          "Alternative container color for lower emphasis compared to surface.",
+        onSurfaceVariant:
+          "Applied to icons and text on top of surfaceVariant. Lower emphasis than onSurface.",
+        surfaceDim: "A surface that always has a dim appearance.",
+        surfaceBright: "A surface that always has a bright appearance.",
+        surfaceContainerLowest:
+          "The lowest-emphasis surface container color.",
+        surfaceContainerLow: "A low-emphasis surface container color.",
+        surfaceContainer: "The default surface container color.",
+        surfaceContainerHigh: "A high-emphasis surface container color.",
+        surfaceContainerHighest:
+          "The highest-emphasis surface container color.",
+        surfaceTint:
+          "Layered at various opacities on top of surfaces to represent elevation.",
+        primary:
+          "Key color used for prominent UI elements such as FABs, filled buttons, and active states.",
+        onPrimary: "Applied to content (icons, text) on top of primary.",
+        primaryContainer:
+          "Softer background color used for components requiring less prominence than primary.",
+        onPrimaryContainer:
+          "Applied to content (icons, text) on top of primaryContainer.",
+        secondary:
+          "Accent color used for components that have less emphasis than primary, such as filter chips.",
+        onSecondary: "Applied to content (icons, text) on top of secondary.",
+        secondaryContainer:
+          "Softer background color used for secondary-role containers.",
+        onSecondaryContainer:
+          "Applied to content (icons, text) on top of secondaryContainer.",
+        tertiary:
+          "Color used to balance primary and secondary colors, or bring attention to specific elements.",
+        onTertiary: "Applied to content (icons, text) on top of tertiary.",
+        tertiaryContainer:
+          "Softer background color used for tertiary-role containers.",
+        onTertiaryContainer:
+          "Applied to content (icons, text) on top of tertiaryContainer.",
+        error:
+          "Indicates errors and warning states in components such as text fields.",
+        onError: "Applied to content (icons, text) on top of error.",
+        errorContainer:
+          "Background color used to display errors with less prominence.",
+        onErrorContainer:
+          "Applied to content (icons, text) on top of errorContainer.",
+        outline:
+          "Utility color for borders, outlines, and dividers that need sufficient contrast.",
+        outlineVariant:
+          "Utility color for decorative elements and dividers that require less emphasis.",
+        shadow: "Color of shadows cast by elevated components.",
+        scrim: "Color of the scrim overlay on screen content to prevent interaction.",
+        inverseSurface:
+          "Background for inverted components, such as SnackBars, that contrast against the regular surface.",
+        inverseOnSurface:
+          "Applied to content on top of inverseSurface.",
+        inversePrimary:
+          "Action-color on inverted containers (e.g. the button on a SnackBar).",
+        primaryFixed:
+          "A primary container color that remains fixed regardless of theme brightness.",
+        onPrimaryFixed:
+          "Applied to high-emphasis content on top of primaryFixed.",
+        primaryFixedDim:
+          "A lower-emphasis primary container color, fixed regardless of theme brightness.",
+        onPrimaryFixedVariant:
+          "Applied to lower-emphasis content on top of primaryFixed or primaryFixedDim.",
+        secondaryFixed:
+          "A secondary container color that remains fixed regardless of theme brightness.",
+        onSecondaryFixed:
+          "Applied to high-emphasis content on top of secondaryFixed.",
+        secondaryFixedDim:
+          "A lower-emphasis secondary container color, fixed regardless of theme brightness.",
+        onSecondaryFixedVariant:
+          "Applied to lower-emphasis content on top of secondaryFixed or secondaryFixedDim.",
+        tertiaryFixed:
+          "A tertiary container color that remains fixed regardless of theme brightness.",
+        onTertiaryFixed:
+          "Applied to high-emphasis content on top of tertiaryFixed.",
+        tertiaryFixedDim:
+          "A lower-emphasis tertiary container color, fixed regardless of theme brightness.",
+        onTertiaryFixedVariant:
+          "Applied to lower-emphasis content on top of tertiaryFixed or tertiaryFixedDim.",
+      };
+
       function argbToFigmaColorValue(argb: number) {
         return {
           colorSpace: "srgb" as const,
@@ -910,13 +1001,20 @@ export function builder(
         };
       }
 
-      function figmaToken(argb: number) {
+      function figmaToken(
+        argb: number,
+        meta?: { description?: string; cssVariable?: string },
+      ) {
         return {
           $type: "color" as const,
           $value: argbToFigmaColorValue(argb),
+          ...(meta?.description ? { $description: meta.description } : {}),
           $extensions: {
             "com.figma.scopes": ["ALL_SCOPES"],
             "com.figma.isOverride": true,
+            ...(meta?.cssVariable
+              ? { "css.variable": meta.cssVariable }
+              : {}),
           },
         };
       }
@@ -924,7 +1022,19 @@ export function builder(
       function buildFigmaSchemeTokens(mergedColors: Record<string, number>) {
         const tokens: Record<string, ReturnType<typeof figmaToken>> = {};
         for (const [name, argb] of Object.entries(mergedColors)) {
-          tokens[startCase(name)] = figmaToken(argb);
+          // Standard M3 tokens get $description and css.variable metadata;
+          // custom colors (not in tokenNames) get neither.
+          const isStandardToken = (tokenNames as readonly string[]).includes(
+            name,
+          );
+          const meta = isStandardToken
+            ? {
+                description:
+                  TOKEN_DESCRIPTIONS[name as TokenName],
+                cssVariable: `--md-sys-color-${kebabCase(name)}`,
+              }
+            : undefined;
+          tokens[startCase(name)] = figmaToken(argb, meta);
         }
         return tokens;
       }
