@@ -110,6 +110,12 @@ export type McuConfig = {
    * When false (default), tonal palette values remain constant across light/dark mode.
    */
   adaptiveShades?: boolean;
+  /**
+   * Material Design specification version to use.
+   * - "2021": Material Design 3 specification (default)
+   * - "2025": Latest specification with improved accessibility and contrast
+   */
+  specVersion?: "2021" | "2025";
 };
 
 type SchemeConstructor = new (
@@ -420,6 +426,7 @@ export function builder(
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
     contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
     adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
+    specVersion,
   }: Omit<McuConfig, "source"> = {},
 ) {
   const sourceArgb = argbFromHex(hexSource);
@@ -502,6 +509,7 @@ export function builder(
     sourceColorHct: primaryHct,
     variant,
     contrastLevel: contrast,
+    ...(specVersion && { specVersion }),
     primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
     secondaryPalette: colorPalettes["secondary"] || baseScheme.secondaryPalette,
     tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
@@ -796,6 +804,7 @@ export function builder(
             variant: schemeToVariant[scheme],
             contrastLevel: contrast,
             isDark,
+            ...(specVersion && { specVersion }),
             primaryPalette: baseScheme.primaryPalette,
             secondaryPalette: secPalette || baseScheme.secondaryPalette,
             tertiaryPalette: terPalette || baseScheme.tertiaryPalette,
