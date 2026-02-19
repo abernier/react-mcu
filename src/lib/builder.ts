@@ -110,6 +110,12 @@ export type McuConfig = {
    * When false (default), tonal palette values remain constant across light/dark mode.
    */
   adaptiveShades?: boolean;
+  /**
+   * Prefix for generated CSS custom properties and Figma token css.variable extensions.
+   * Scheme tokens use `--{prefix}-sys-color-*`, palette tones use `--{prefix}-ref-palette-*`.
+   * Default: "md" (Material Design convention).
+   */
+  prefix?: string;
 };
 
 type SchemeConstructor = new (
@@ -146,6 +152,7 @@ export const DEFAULT_CONTRAST_ALL_COLORS = false;
 export const DEFAULT_ADAPTIVE_SHADES = false;
 export const DEFAULT_BLEND = true;
 export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
+export const DEFAULT_PREFIX = "md";
 
 // The set of standard tone values used in Material You tonal palettes
 export const STANDARD_TONES = [
@@ -420,6 +427,7 @@ export function builder(
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
     contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
     adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
+    prefix = DEFAULT_PREFIX,
   }: Omit<McuConfig, "source"> = {},
 ) {
   const sourceArgb = argbFromHex(hexSource);
@@ -569,11 +577,11 @@ export function builder(
     //  ██████ ███████ ███████
     //
     toCss() {
-      // Scheme tokens: --md-sys-color-<name>
+      // Scheme tokens: --{prefix}-sys-color-<name>
       function sysColorVar(colorName: string, colorValue: number) {
-        const name = `--md-sys-color-${kebabCase(colorName)}`;
+        const name = `--${prefix}-sys-color-${kebabCase(colorName)}`;
         const value = hexFromArgb(colorValue);
-        return `${name}:${value};`; // eg: `--md-sys-color-on-primary:#ffffff;`
+        return `${name}:${value};`;
       }
 
       function toCssVars(mergedColors: Record<string, number>) {
@@ -582,9 +590,9 @@ export function builder(
           .join(" ");
       }
 
-      // Tonal palette tokens: --md-ref-palette-<name>-<tone>
+      // Tonal palette tokens: --{prefix}-ref-palette-<name>-<tone>
       function refPaletteVar(paletteName: string, tone: number, colorValue: number) {
-        const name = `--md-ref-palette-${paletteName}-${tone}`;
+        const name = `--${prefix}-ref-palette-${paletteName}-${tone}`;
         const value = hexFromArgb(colorValue);
         return `${name}:${value};`;
       }
@@ -911,252 +919,107 @@ export function builder(
       // see: https://m3.material.io/foundations/design-tokens/overview
       // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
 
-      // Material Design 3 token metadata: descriptions and CSS variable names
+      // Material Design 3 token metadata: descriptions
       // see: https://m3.material.io/styles/color/the-color-system/color-roles
-      const tokenMeta: Record<
-        string,
-        { description: string; cssVariable: string }
-      > = {
-        background: {
-          description:
-            "Default background color for screens and large surfaces.",
-          cssVariable: "--md-sys-color-background",
-        },
-        error: {
-          description:
-            "Color for error states, used on elements like error text and icons.",
-          cssVariable: "--md-sys-color-error",
-        },
-        errorContainer: {
-          description:
-            "Fill color for error container elements like error banners.",
-          cssVariable: "--md-sys-color-error-container",
-        },
-        inverseOnSurface: {
-          description:
-            "Color for text and icons on inverse surface backgrounds.",
-          cssVariable: "--md-sys-color-inverse-on-surface",
-        },
-        inversePrimary: {
-          description:
-            "Primary color used on inverse surface, e.g. buttons on snackbars.",
-          cssVariable: "--md-sys-color-inverse-primary",
-        },
-        inverseSurface: {
-          description:
-            "Background for elements that require reverse contrast, such as snackbars.",
-          cssVariable: "--md-sys-color-inverse-surface",
-        },
-        onBackground: {
-          description: "Color for text and icons displayed on the background.",
-          cssVariable: "--md-sys-color-on-background",
-        },
-        onError: {
-          description: "Color for text and icons on error-colored elements.",
-          cssVariable: "--md-sys-color-on-error",
-        },
-        onErrorContainer: {
-          description: "Color for text and icons on error container elements.",
-          cssVariable: "--md-sys-color-on-error-container",
-        },
-        onPrimary: {
-          description:
-            "Color for text and icons on primary-colored elements like filled buttons.",
-          cssVariable: "--md-sys-color-on-primary",
-        },
-        onPrimaryContainer: {
-          description:
-            "Color for text and icons on primary container elements like tonal buttons.",
-          cssVariable: "--md-sys-color-on-primary-container",
-        },
-        onPrimaryFixed: {
-          description:
-            "Color for text and icons on primary fixed elements, constant across themes.",
-          cssVariable: "--md-sys-color-on-primary-fixed",
-        },
-        onPrimaryFixedVariant: {
-          description:
-            "Lower-emphasis color for text and icons on primary fixed elements.",
-          cssVariable: "--md-sys-color-on-primary-fixed-variant",
-        },
-        onSecondary: {
-          description: "Color for text and icons on secondary-colored elements.",
-          cssVariable: "--md-sys-color-on-secondary",
-        },
-        onSecondaryContainer: {
-          description:
-            "Color for text and icons on secondary container elements.",
-          cssVariable: "--md-sys-color-on-secondary-container",
-        },
-        onSecondaryFixed: {
-          description:
-            "Color for text and icons on secondary fixed elements, constant across themes.",
-          cssVariable: "--md-sys-color-on-secondary-fixed",
-        },
-        onSecondaryFixedVariant: {
-          description:
-            "Lower-emphasis color for text and icons on secondary fixed elements.",
-          cssVariable: "--md-sys-color-on-secondary-fixed-variant",
-        },
-        onSurface: {
-          description:
-            "High-emphasis color for text and icons on surface backgrounds.",
-          cssVariable: "--md-sys-color-on-surface",
-        },
-        onSurfaceVariant: {
-          description:
-            "Medium-emphasis color for text and icons on surface variant backgrounds.",
-          cssVariable: "--md-sys-color-on-surface-variant",
-        },
-        onTertiary: {
-          description: "Color for text and icons on tertiary-colored elements.",
-          cssVariable: "--md-sys-color-on-tertiary",
-        },
-        onTertiaryContainer: {
-          description:
-            "Color for text and icons on tertiary container elements.",
-          cssVariable: "--md-sys-color-on-tertiary-container",
-        },
-        onTertiaryFixed: {
-          description:
-            "Color for text and icons on tertiary fixed elements, constant across themes.",
-          cssVariable: "--md-sys-color-on-tertiary-fixed",
-        },
-        onTertiaryFixedVariant: {
-          description:
-            "Lower-emphasis color for text and icons on tertiary fixed elements.",
-          cssVariable: "--md-sys-color-on-tertiary-fixed-variant",
-        },
-        outline: {
-          description:
-            "Subtle color for borders and dividers to create visual separation.",
-          cssVariable: "--md-sys-color-outline",
-        },
-        outlineVariant: {
-          description:
-            "Lower-emphasis border color used for decorative dividers.",
-          cssVariable: "--md-sys-color-outline-variant",
-        },
-        primary: {
-          description:
-            "Main brand color, used for key components like filled buttons and active states.",
-          cssVariable: "--md-sys-color-primary",
-        },
-        primaryContainer: {
-          description:
-            "Fill color for large primary elements like cards and tonal buttons.",
-          cssVariable: "--md-sys-color-primary-container",
-        },
-        primaryFixed: {
-          description:
-            "Fixed primary color that stays the same in light and dark themes.",
-          cssVariable: "--md-sys-color-primary-fixed",
-        },
-        primaryFixedDim: {
-          description:
-            "Dimmed variant of the fixed primary color for lower emphasis.",
-          cssVariable: "--md-sys-color-primary-fixed-dim",
-        },
-        scrim: {
-          description:
-            "Color overlay for modals and dialogs to obscure background content.",
-          cssVariable: "--md-sys-color-scrim",
-        },
-        secondary: {
-          description:
-            "Accent color for less prominent elements like filter chips and selections.",
-          cssVariable: "--md-sys-color-secondary",
-        },
-        secondaryContainer: {
-          description:
-            "Fill color for secondary container elements like tonal buttons and input fields.",
-          cssVariable: "--md-sys-color-secondary-container",
-        },
-        secondaryFixed: {
-          description:
-            "Fixed secondary color that stays the same in light and dark themes.",
-          cssVariable: "--md-sys-color-secondary-fixed",
-        },
-        secondaryFixedDim: {
-          description:
-            "Dimmed variant of the fixed secondary color for lower emphasis.",
-          cssVariable: "--md-sys-color-secondary-fixed-dim",
-        },
-        shadow: {
-          description:
-            "Color for elevation shadows applied to surfaces and components.",
-          cssVariable: "--md-sys-color-shadow",
-        },
-        surface: {
-          description:
-            "Default surface color for cards, sheets, and dialogs.",
-          cssVariable: "--md-sys-color-surface",
-        },
-        surfaceBright: {
-          description:
-            "Brightest surface variant, used for elevated surfaces in dark themes.",
-          cssVariable: "--md-sys-color-surface-bright",
-        },
-        surfaceContainer: {
-          description:
-            "Middle-emphasis container color for grouping related content.",
-          cssVariable: "--md-sys-color-surface-container",
-        },
-        surfaceContainerHigh: {
-          description:
-            "Higher-emphasis container color for elements like cards.",
-          cssVariable: "--md-sys-color-surface-container-high",
-        },
-        surfaceContainerHighest: {
-          description:
-            "Highest-emphasis container color for text fields and other input areas.",
-          cssVariable: "--md-sys-color-surface-container-highest",
-        },
-        surfaceContainerLow: {
-          description:
-            "Lower-emphasis container color for subtle surface groupings.",
-          cssVariable: "--md-sys-color-surface-container-low",
-        },
-        surfaceContainerLowest: {
-          description:
-            "Lowest-emphasis container, typically the lightest surface in light theme.",
-          cssVariable: "--md-sys-color-surface-container-lowest",
-        },
-        surfaceDim: {
-          description:
-            "Dimmest surface variant, used for recessed areas or dark theme backgrounds.",
-          cssVariable: "--md-sys-color-surface-dim",
-        },
-        surfaceTint: {
-          description:
-            "Tint color applied to surfaces for subtle primary color elevation overlay.",
-          cssVariable: "--md-sys-color-surface-tint",
-        },
-        surfaceVariant: {
-          description:
-            "Alternative surface color for differentiated areas like sidebar backgrounds.",
-          cssVariable: "--md-sys-color-surface-variant",
-        },
-        tertiary: {
-          description:
-            "Third accent color for complementary elements that balance primary and secondary.",
-          cssVariable: "--md-sys-color-tertiary",
-        },
-        tertiaryContainer: {
-          description:
-            "Fill color for tertiary container elements like complementary cards.",
-          cssVariable: "--md-sys-color-tertiary-container",
-        },
-        tertiaryFixed: {
-          description:
-            "Fixed tertiary color that stays the same in light and dark themes.",
-          cssVariable: "--md-sys-color-tertiary-fixed",
-        },
-        tertiaryFixedDim: {
-          description:
-            "Dimmed variant of the fixed tertiary color for lower emphasis.",
-          cssVariable: "--md-sys-color-tertiary-fixed-dim",
-        },
+      const tokenMeta: Record<string, string> = {
+        background:
+          "Default background color for screens and large surfaces.",
+        error:
+          "Color for error states, used on elements like error text and icons.",
+        errorContainer:
+          "Fill color for error container elements like error banners.",
+        inverseOnSurface:
+          "Color for text and icons on inverse surface backgrounds.",
+        inversePrimary:
+          "Primary color used on inverse surface, e.g. buttons on snackbars.",
+        inverseSurface:
+          "Background for elements that require reverse contrast, such as snackbars.",
+        onBackground:
+          "Color for text and icons displayed on the background.",
+        onError:
+          "Color for text and icons on error-colored elements.",
+        onErrorContainer:
+          "Color for text and icons on error container elements.",
+        onPrimary:
+          "Color for text and icons on primary-colored elements like filled buttons.",
+        onPrimaryContainer:
+          "Color for text and icons on primary container elements like tonal buttons.",
+        onPrimaryFixed:
+          "Color for text and icons on primary fixed elements, constant across themes.",
+        onPrimaryFixedVariant:
+          "Lower-emphasis color for text and icons on primary fixed elements.",
+        onSecondary:
+          "Color for text and icons on secondary-colored elements.",
+        onSecondaryContainer:
+          "Color for text and icons on secondary container elements.",
+        onSecondaryFixed:
+          "Color for text and icons on secondary fixed elements, constant across themes.",
+        onSecondaryFixedVariant:
+          "Lower-emphasis color for text and icons on secondary fixed elements.",
+        onSurface:
+          "High-emphasis color for text and icons on surface backgrounds.",
+        onSurfaceVariant:
+          "Medium-emphasis color for text and icons on surface variant backgrounds.",
+        onTertiary:
+          "Color for text and icons on tertiary-colored elements.",
+        onTertiaryContainer:
+          "Color for text and icons on tertiary container elements.",
+        onTertiaryFixed:
+          "Color for text and icons on tertiary fixed elements, constant across themes.",
+        onTertiaryFixedVariant:
+          "Lower-emphasis color for text and icons on tertiary fixed elements.",
+        outline:
+          "Subtle color for borders and dividers to create visual separation.",
+        outlineVariant:
+          "Lower-emphasis border color used for decorative dividers.",
+        primary:
+          "Main brand color, used for key components like filled buttons and active states.",
+        primaryContainer:
+          "Fill color for large primary elements like cards and tonal buttons.",
+        primaryFixed:
+          "Fixed primary color that stays the same in light and dark themes.",
+        primaryFixedDim:
+          "Dimmed variant of the fixed primary color for lower emphasis.",
+        scrim:
+          "Color overlay for modals and dialogs to obscure background content.",
+        secondary:
+          "Accent color for less prominent elements like filter chips and selections.",
+        secondaryContainer:
+          "Fill color for secondary container elements like tonal buttons and input fields.",
+        secondaryFixed:
+          "Fixed secondary color that stays the same in light and dark themes.",
+        secondaryFixedDim:
+          "Dimmed variant of the fixed secondary color for lower emphasis.",
+        shadow:
+          "Color for elevation shadows applied to surfaces and components.",
+        surface:
+          "Default surface color for cards, sheets, and dialogs.",
+        surfaceBright:
+          "Brightest surface variant, used for elevated surfaces in dark themes.",
+        surfaceContainer:
+          "Middle-emphasis container color for grouping related content.",
+        surfaceContainerHigh:
+          "Higher-emphasis container color for elements like cards.",
+        surfaceContainerHighest:
+          "Highest-emphasis container color for text fields and other input areas.",
+        surfaceContainerLow:
+          "Lower-emphasis container color for subtle surface groupings.",
+        surfaceContainerLowest:
+          "Lowest-emphasis container, typically the lightest surface in light theme.",
+        surfaceDim:
+          "Dimmest surface variant, used for recessed areas or dark theme backgrounds.",
+        surfaceTint:
+          "Tint color applied to surfaces for subtle primary color elevation overlay.",
+        surfaceVariant:
+          "Alternative surface color for differentiated areas like sidebar backgrounds.",
+        tertiary:
+          "Third accent color for complementary elements that balance primary and secondary.",
+        tertiaryContainer:
+          "Fill color for tertiary container elements like complementary cards.",
+        tertiaryFixed:
+          "Fixed tertiary color that stays the same in light and dark themes.",
+        tertiaryFixedDim:
+          "Dimmed variant of the fixed tertiary color for lower emphasis.",
       };
 
       // Maps each core scheme token to its source palette for alias resolution.
@@ -1407,7 +1270,8 @@ export function builder(
         for (const name of allTokenNames) {
           const lightArgb = mergedColorsLight[name] as number;
           const darkArgb = mergedColorsDark[name] as number;
-          const meta = tokenMeta[name];
+          const description = tokenMeta[name];
+          const cssVar = `--${prefix}-sys-color-${kebabCase(name)}`;
 
           const lightValue = resolveModeValue(lightArgb, name, refPalettes);
           const darkValue = resolveModeValue(darkArgb, name, refPalettes);
@@ -1416,12 +1280,10 @@ export function builder(
             $type: "color" as const,
             // $value defaults to Light mode alias for DTCG compliance
             $value: lightValue,
-            ...(meta?.description ? { $description: meta.description } : {}),
+            ...(description ? { $description: description } : {}),
             $extensions: {
               "com.figma.scopes": ["ALL_SCOPES"],
-              ...(meta?.cssVariable
-                ? { "css.variable": meta.cssVariable }
-                : {}),
+              "css.variable": cssVar,
               "com.figma.modes": {
                 Light: lightValue,
                 Dark: darkValue,

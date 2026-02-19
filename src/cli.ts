@@ -18,6 +18,7 @@ import {
   DEFAULT_BLEND,
   DEFAULT_CONTRAST,
   DEFAULT_CONTRAST_ALL_COLORS,
+  DEFAULT_PREFIX,
   DEFAULT_SCHEME,
   schemeNames,
 } from "./lib/builder";
@@ -63,6 +64,11 @@ program
     "Apply contrast adjustment to tonal palette shades",
     DEFAULT_CONTRAST_ALL_COLORS,
   )
+  .option(
+    "--prefix <string>",
+    "CSS variable prefix (e.g. md → --md-sys-color-*, --md-ref-palette-*)",
+    DEFAULT_PREFIX,
+  )
   .action((source: string, opts) => {
     let customColors: { name: string; hex: string; blend: boolean }[] = [];
     if (opts.customColors) {
@@ -95,6 +101,7 @@ program
       customColors,
       adaptiveShades: opts.adaptiveShades,
       contrastAllColors: opts.contrastAllColors,
+      prefix: opts.prefix,
     });
 
     if (opts.format === "css") {
