@@ -980,6 +980,8 @@ export function builder(
       // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
 
       // Maps each core scheme token to its source palette for alias resolution.
+      // Derived from M3 DynamicScheme / MaterialDynamicColors source:
+      // https://github.com/nicklash/material-color-utilities/blob/main/typescript/dynamiccolor/material_dynamic_colors.ts
       // When a scheme hex matches multiple palettes (e.g. #000000 at tone 0),
       // this ensures the semantically correct palette is preferred.
       const tokenToPalette: Record<string, string> = {
