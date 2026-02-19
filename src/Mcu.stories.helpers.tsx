@@ -7,7 +7,11 @@ import { Mcu } from "./Mcu";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (
-    <div {...props} className={cn("grid grid-cols-1 gap-0", props.className)}>
+    <div
+      data-id="Foo"
+      {...props}
+      className={cn("grid grid-cols-1 gap-0", props.className)}
+    >
       {children}
     </div>
   );
@@ -19,13 +23,44 @@ function FooBottom({ children, ...props }: ComponentProps<"div">) {
   return <div {...props}>{children || "FooBottom"}</div>;
 }
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({
+  notext,
+  children,
+}: {
+  notext?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex flex-col gap-6 max-w-208 mx-auto [--gap1:0.75rem] [--gap2:0.25rem]">
+    <div className="flex flex-col gap-6 max-w-208 mx-auto">
       <style>{`
         @scope {
           & {
-            p {all:unset; font-family: sans-serif; font-size: 0.8rem; color:white;mix-blend-mode:difference;}
+            --gap1:0.5rem;
+            --gap2:1px;
+            
+            --fs:${notext ? 0 : ".8rem"};
+            @media (max-width: 768px) {--fs:0;}
+
+            @media (max-width: 768px) {
+              --gap1:2px;
+            }
+
+
+            p {
+              font-family:sans-serif;
+              color:white;mix-blend-mode:difference;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+
+              font-size:var(--fs);
+              margin:.35rem;
+
+            }
+
+            [class*="h-20"],[class*="h-16"] {
+              @media (max-width: 768px) {
+                height:45px;
+              }
+            }
           }
         }
       `}</style>
@@ -34,20 +69,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-const schemeVariants = cva("flex flex-col gap-4", {
-  variants: {
-    theme: {
-      light: "bg-white text-(--sb-background)",
-      dark: ["dark", "bg-[#1c1b1f] text-(--sb-foreground)"],
+const schemeVariants = cva(
+  "flex flex-col gap-4 [--mcu-scheme-light:#fbfbfb] [--mcu-scheme-dark:#1c1b1f]",
+  {
+    variants: {
+      theme: {
+        light: "bg-[var(--mcu-scheme-light)] text-[var(--mcu-scheme-dark)]",
+        dark: [
+          "dark",
+          "bg-[var(--mcu-scheme-dark)] text-[var(--mcu-scheme-light)]",
+        ],
+      },
     },
+    compoundVariants: [
+      {
+        theme: ["light", "dark"],
+        className: "p-2 md:p-4",
+      },
+    ],
   },
-  compoundVariants: [
-    {
-      theme: ["light", "dark"],
-      className: "p-4 rounded-sm",
-    },
-  ],
-});
+);
 
 export function Scheme({
   theme,
@@ -63,14 +104,8 @@ export function Scheme({
   Omit<ComponentProps<"div">, "title">) {
   return (
     <div className={cn(schemeVariants({ theme }), className)} {...props}>
-      <style>{`
-      @scope {
-        & {
-          [style*="background-color"], [class*="bg-"] {padding:.35rem;}
-        }
-      }
-      `}</style>
       {title && <h3 className="font-bold capitalize">{title}</h3>}
+
       <div className="grid grid-cols-[3fr_1fr] gap-(--gap1)">
         {
           //
@@ -84,50 +119,68 @@ export function Scheme({
 
         <div className="grid grid-cols-3 grid-rows-2 gap-(--gap2)">
           <Foo>
-            <FooTop className="h-20 bg-primary">
+            <FooTop className="h-20 bg-primary" title="primary">
               <p>Primary</p>
             </FooTop>
-            <FooBottom className="bg-on-primary">
+            <FooBottom className="bg-on-primary" title="on-primary">
               <p>On Primary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-secondary">
+            <FooTop className="h-20 bg-secondary" title="secondary">
               <p>Secondary</p>
             </FooTop>
-            <FooBottom className="bg-on-secondary">
+            <FooBottom className="bg-on-secondary" title="on-secondary">
               <p>On Secondary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-tertiary">
+            <FooTop className="h-20 bg-tertiary" title="tertiary">
               <p>Tertiary</p>
             </FooTop>
-            <FooBottom className="bg-on-tertiary">
+            <FooBottom className="bg-on-tertiary" title="on-tertiary">
               <p>On Tertiary</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-primary-container">
+            <FooTop
+              className="h-20 bg-primary-container"
+              title="primary-container"
+            >
               <p>Primary Container</p>
             </FooTop>
-            <FooBottom className="bg-on-primary-container">
+            <FooBottom
+              className="bg-on-primary-container"
+              title="on-primary-container"
+            >
               <p>On Primary Container</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-secondary-container">
+            <FooTop
+              className="h-20 bg-secondary-container"
+              title="secondary-container"
+            >
               <p>Secondary Container</p>
             </FooTop>
-            <FooBottom className="bg-on-secondary-container">
+            <FooBottom
+              className="bg-on-secondary-container"
+              title="on-secondary-container"
+            >
               <p>On Secondary Container</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-tertiary-container">
+            <FooTop
+              className="h-20 bg-tertiary-container"
+              title="tertiary-container"
+            >
               <p>Tertiary Container</p>
             </FooTop>
-            <FooBottom className="bg-on-tertiary-container">
+            <FooBottom
+              className="bg-on-tertiary-container"
+              title="on-tertiary-container"
+            >
               <p>On Tertiary Container</p>
             </FooBottom>
           </Foo>
@@ -145,18 +198,21 @@ export function Scheme({
 
         <div className="grid grid-cols-1 grid-rows-2 gap-(--gap2)">
           <Foo>
-            <FooTop className="h-20 bg-error">
+            <FooTop className="h-20 bg-error" title="error">
               <p>Error</p>
             </FooTop>
-            <FooBottom className="bg-on-error">
+            <FooBottom className="bg-on-error" title="on-error">
               <p>On Error</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="h-20 bg-error-container">
+            <FooTop className="h-20 bg-error-container" title="error-container">
               <p>Error Container</p>
             </FooTop>
-            <FooBottom className="bg-on-error-container">
+            <FooBottom
+              className="bg-on-error-container"
+              title="on-error-container"
+            >
               <p>On Error Container</p>
             </FooBottom>
           </Foo>
@@ -175,54 +231,66 @@ export function Scheme({
         <div className="grid grid-cols-3 grid-rows-1 gap-(--gap2)">
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div className="bg-primary-fixed">
+              <div className="bg-primary-fixed" title="primary-fixed">
                 <p>Primary Fixed</p>
               </div>
-              <div className="bg-primary-fixed-dim">
+              <div className="bg-primary-fixed-dim" title="primary-fixed-dim">
                 <p>Primary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div className="bg-on-primary-fixed">
+              <div className="bg-on-primary-fixed" title="on-primary-fixed">
                 <p>On Primary Fixed</p>
               </div>
-              <div className="bg-on-primary-fixed-variant">
+              <div
+                className="bg-on-primary-fixed-variant"
+                title="on-primary-fixed-variant"
+              >
                 <p>On Primary Fixed Variant</p>
               </div>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div className="bg-secondary-fixed">
+              <div className="bg-secondary-fixed" title="secondary-fixed">
                 <p>Secondary Fixed</p>
               </div>
-              <div className="bg-secondary-fixed-dim">
+              <div
+                className="bg-secondary-fixed-dim"
+                title="secondary-fixed-dim"
+              >
                 <p>Secondary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div className="bg-on-secondary-fixed">
+              <div className="bg-on-secondary-fixed" title="on-secondary-fixed">
                 <p>On Secondary Fixed</p>
               </div>
-              <div className="bg-on-secondary-fixed-variant">
+              <div
+                className="bg-on-secondary-fixed-variant"
+                title="on-secondary-fixed-variant"
+              >
                 <p>On Secondary Fixed Variant</p>
               </div>
             </FooBottom>
           </Foo>
           <Foo>
             <FooTop className="h-20 grid grid-cols-2 grid-rows-1">
-              <div className="bg-tertiary-fixed">
+              <div className="bg-tertiary-fixed" title="tertiary-fixed">
                 <p>Tertiary Fixed</p>
               </div>
-              <div className="bg-tertiary-fixed-dim">
+              <div className="bg-tertiary-fixed-dim" title="tertiary-fixed-dim">
                 <p>Tertiary Fixed Dim</p>
               </div>
             </FooTop>
             <FooBottom className="grid grid-cols-1 grid-rows-2">
-              <div className="bg-on-tertiary-fixed">
+              <div className="bg-on-tertiary-fixed" title="on-tertiary-fixed">
                 <p>On Tertiary Fixed</p>
               </div>
-              <div className="bg-on-tertiary-fixed-variant">
+              <div
+                className="bg-on-tertiary-fixed-variant"
+                title="on-tertiary-fixed-variant"
+              >
                 <p>On Tertiary Fixed Variant</p>
               </div>
             </FooBottom>
@@ -253,44 +321,56 @@ export function Scheme({
 
         <div className="grid grid-cols-1 gap-(--gap2)">
           <div className="h-20 grid grid-cols-3 grid-rows-1">
-            <div className="bg-surface-dim">
+            <div className="bg-surface-dim" title="surface-dim">
               <p>Surface Dim</p>
             </div>
-            <div className="bg-surface">
+            <div className="bg-surface" title="surface">
               <p>Surface</p>
             </div>
-            <div className="bg-surface-bright">
+            <div className="bg-surface-bright" title="surface-bright">
               <p>Surface Bright</p>
             </div>
           </div>
           <div className="h-20 grid grid-cols-5 grid-rows-1">
-            <div className="bg-surface-container-lowest">
+            <div
+              className="bg-surface-container-lowest"
+              title="surface-container-lowest"
+            >
               <p>Surface Container Lowest</p>
             </div>
-            <div className="bg-surface-container-low">
+            <div
+              className="bg-surface-container-low"
+              title="surface-container-low"
+            >
               <p>Surface Container Low</p>
             </div>
-            <div className="bg-surface-container">
+            <div className="bg-surface-container" title="surface-container">
               <p>Surface Container</p>
             </div>
-            <div className="bg-surface-container-high">
+            <div
+              className="bg-surface-container-high"
+              title="surface-container-high"
+            >
               <p>Surface Container High</p>
             </div>
-            <div className="bg-surface-container-highest">
+            <div
+              className="bg-surface-container-highest"
+              title="surface-container-highest"
+            >
               <p>Surface Container Highest</p>
             </div>
           </div>
           <div className="grid grid-cols-4 grid-rows-1">
-            <div className="bg-on-surface">
+            <div className="bg-on-surface" title="on-surface">
               <p>On Surface</p>
             </div>
-            <div className="bg-on-surface-variant">
+            <div className="bg-on-surface-variant" title="on-surface-variant">
               <p>On Surface Variant</p>
             </div>
-            <div className="bg-outline">
+            <div className="bg-outline" title="outline">
               <p>Outline</p>
             </div>
-            <div className="bg-outline-variant">
+            <div className="bg-outline-variant" title="outline-variant">
               <p>Outline Variant</p>
             </div>
           </div>
@@ -308,23 +388,26 @@ export function Scheme({
 
         <div className="flex flex-col gap-1">
           <Foo>
-            <FooTop className="h-20 bg-inverse-surface">
+            <FooTop className="h-20 bg-inverse-surface" title="inverse-surface">
               <p>Inverse Surface</p>
             </FooTop>
-            <FooBottom className="bg-inverse-on-surface">
+            <FooBottom
+              className="bg-inverse-on-surface"
+              title="inverse-on-surface"
+            >
               <p>Inverse On Surface</p>
             </FooBottom>
           </Foo>
           <Foo>
-            <FooTop className="bg-inverse-primary">
+            <FooTop className="bg-inverse-primary" title="inverse-primary">
               <p>Inverse Primary</p>
             </FooTop>
           </Foo>
           <div className="grid grid-cols-2 gap-(--gap2)">
-            <div className="bg-scrim">
+            <div className="bg-scrim" title="scrim">
               <p>Scrim</p>
             </div>
-            <div className="bg-shadow">
+            <div className="bg-shadow" title="shadow">
               <p>Shadow</p>
             </div>
           </div>
@@ -345,7 +428,8 @@ export function Scheme({
             <div key={customColor.name} className="grid grid-cols-4">
               <Foo>
                 <FooTop
-                  className="h-16"
+                  title={kebabCase(customColor.name)}
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
                   }}
@@ -355,7 +439,8 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
-                  className="h-16"
+                  title={`on-${kebabCase(customColor.name)}`}
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
                   }}
@@ -365,7 +450,8 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
-                  className="h-16"
+                  title={`${kebabCase(customColor.name)}-container`}
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
                   }}
@@ -375,7 +461,8 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
-                  className="h-16"
+                  title={`on-${kebabCase(customColor.name)}-container`}
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
                   }}
@@ -395,11 +482,13 @@ export function Scheme({
 
 export function Shades({
   customColors,
+  noTitle,
 }: {
+  noTitle?: boolean;
   customColors?: ComponentProps<typeof Mcu>["customColors"];
 }) {
   return (
-    <div>
+    <div className="flex flex-col gap-(--gap2)">
       {[
         ...[
           "primary",
@@ -413,9 +502,12 @@ export function Shades({
           []),
       ].map(({ name, isCustom }) => (
         <div key={name}>
-          <h3 className="font-bold capitalize">
-            {isCustom ? upperFirst(name) : name.replace("-", " ")}
-          </h3>
+          {!noTitle && (
+            <h3 className="font-bold capitalize">
+              {isCustom ? upperFirst(name) : name.replace("-", " ")}
+            </h3>
+          )}
+
           <div
             className="grid"
             style={{
@@ -427,12 +519,13 @@ export function Shades({
               .map((tone) => (
                 <div
                   key={tone}
+                  title={`${isCustom ? kebabCase(name) : name}-${tone}`}
                   className="h-16 flex items-center justify-center"
                   style={{
                     backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
                   }}
                 >
-                  <p className="text-xs">{tone}</p>
+                  <p>{tone}</p>
                 </div>
               ))}
           </div>

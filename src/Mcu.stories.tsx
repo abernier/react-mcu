@@ -88,6 +88,30 @@ type Story = StoryObj<typeof meta>;
 const customColor1 = "#00D68A";
 const customColor2 = "#FFE16B";
 
+export const St2: Story = {
+  name: "Minimal",
+  parameters: {
+    // layout: "centered",
+  },
+  args: {
+    source: "#769CDF",
+    adaptiveShades: true,
+    contrastAllColors: true,
+    contrast: 0,
+  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout notext>
+        <Scheme customColors={args.customColors}>
+          {args.adaptiveShades && (
+            <Shades customColors={args.customColors} noTitle />
+          )}
+        </Scheme>
+      </Layout>
+    </Mcu>
+  ),
+};
+
 export const St1: Story = {
   name: "Default",
   args: {
@@ -882,7 +906,7 @@ function Scene({
   }
 
   return (
-    <Layout>
+    <Layout notext>
       <div className="space-y-4 grid grid-cols-2 gap-2">
         <div>
           <h3 className="text-lg font-bold mb-2">Original SVG</h3>
@@ -898,8 +922,8 @@ function Scene({
         </div>
       </div>
 
-      <Scheme title="Color Scheme" customColors={customColors}>
-        <Shades customColors={customColors} />
+      <Scheme customColors={customColors}>
+        <Shades customColors={customColors} noTitle />
       </Scheme>
     </Layout>
   );
