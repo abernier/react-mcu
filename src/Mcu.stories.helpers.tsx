@@ -7,7 +7,11 @@ import { Mcu } from "./Mcu";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (
-    <div {...props} className={cn("grid grid-cols-1 gap-0", props.className)}>
+    <div
+      data-id="Foo"
+      {...props}
+      className={cn("grid grid-cols-1 gap-0", props.className)}
+    >
       {children}
     </div>
   );
@@ -19,13 +23,44 @@ function FooBottom({ children, ...props }: ComponentProps<"div">) {
   return <div {...props}>{children || "FooBottom"}</div>;
 }
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({
+  notext,
+  children,
+}: {
+  notext?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex flex-col gap-6 max-w-208 mx-auto [--gap1:0.75rem] [--gap2:0.25rem]">
+    <div className="flex flex-col gap-6 max-w-208 mx-auto">
       <style>{`
         @scope {
           & {
-            p {all:unset; font-family: sans-serif; font-size: 0.8rem; color:white;mix-blend-mode:difference;}
+            --gap1:0.5rem;
+            --gap2:1px;
+            
+            --fs:${notext ? 0 : ".8rem"};
+            @media (max-width: 768px) {--fs:0;}
+
+            @media (max-width: 768px) {
+              --gap1:2px;
+            }
+
+
+            p {
+              font-family:sans-serif;
+              color:white;mix-blend-mode:difference;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+
+              font-size:var(--fs);
+              margin:.35rem;
+
+            }
+
+            [class*="h-20"],[class*="h-16"] {
+              @media (max-width: 768px) {
+                height:25px;
+              }
+            }
           }
         }
       `}</style>
@@ -37,14 +72,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 const schemeVariants = cva("flex flex-col gap-4", {
   variants: {
     theme: {
-      light: "bg-white text-(--sb-background)",
+      light: "bg-[#ededed] text-(--sb-background)",
       dark: ["dark", "bg-[#1c1b1f] text-(--sb-foreground)"],
     },
   },
   compoundVariants: [
     {
       theme: ["light", "dark"],
-      className: "p-4 rounded-sm",
+      className: "p-2 md:p-4",
     },
   ],
 });
@@ -63,14 +98,8 @@ export function Scheme({
   Omit<ComponentProps<"div">, "title">) {
   return (
     <div className={cn(schemeVariants({ theme }), className)} {...props}>
-      <style>{`
-      @scope {
-        & {
-          [style*="background-color"], [class*="bg-"] {padding:.35rem;}
-        }
-      }
-      `}</style>
       {title && <h3 className="font-bold capitalize">{title}</h3>}
+
       <div className="grid grid-cols-[3fr_1fr] gap-(--gap1)">
         {
           //
@@ -345,7 +374,7 @@ export function Scheme({
             <div key={customColor.name} className="grid grid-cols-4">
               <Foo>
                 <FooTop
-                  className="h-16"
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
                   }}
@@ -355,7 +384,7 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
-                  className="h-16"
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
                   }}
@@ -365,7 +394,7 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
-                  className="h-16"
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
                   }}
@@ -375,7 +404,7 @@ export function Scheme({
               </Foo>
               <Foo>
                 <FooTop
-                  className="h-16"
+                  className="h-20"
                   style={{
                     backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
                   }}
@@ -395,11 +424,13 @@ export function Scheme({
 
 export function Shades({
   customColors,
+  noTitle,
 }: {
+  noTitle?: boolean;
   customColors?: ComponentProps<typeof Mcu>["customColors"];
 }) {
   return (
-    <div>
+    <div className="flex flex-col gap-(--gap2)">
       {[
         ...[
           "primary",
@@ -413,9 +444,12 @@ export function Shades({
           []),
       ].map(({ name, isCustom }) => (
         <div key={name}>
-          <h3 className="font-bold capitalize">
-            {isCustom ? upperFirst(name) : name.replace("-", " ")}
-          </h3>
+          {!noTitle && (
+            <h3 className="font-bold capitalize">
+              {isCustom ? upperFirst(name) : name.replace("-", " ")}
+            </h3>
+          )}
+
           <div
             className="grid"
             style={{
@@ -432,7 +466,7 @@ export function Shades({
                     backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
                   }}
                 >
-                  <p className="text-xs">{tone}</p>
+                  <p>{tone}</p>
                 </div>
               ))}
           </div>
