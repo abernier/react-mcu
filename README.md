@@ -37,6 +37,8 @@ Extra:
       (not only the core-colors)
 - [x] `adaptiveShades`: shades adapt to the light/dark mode (instead of being
       fixed)
+- [x] `specVersion`: choose Material Design specification version ("2021" or
+      "2025")
 
 # Usage
 
@@ -47,6 +49,7 @@ import { Mcu } from "react-mcu";
   source="#0e1216"
   scheme="vibrant"
   contrast={0.5}
+  specVersion="2025"
   customColors={[
     { name: "myCustomColor1", hex: "#6C8A0C", blend: true },
     { name: "myCustomColor2", hex: "#E126C6", blend: true },
