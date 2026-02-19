@@ -9,7 +9,7 @@ describe("Mcu", () => {
     document.querySelectorAll("#mcu-styles").forEach((el) => el.remove());
   });
 
-  it("should inject style tag with --mcu-* CSS variables", () => {
+  it("should inject style tag with --md-sys-color-* CSS variables", () => {
     render(
       <Mcu source="#6750A4" scheme="tonalSpot" contrast={0} customColors={[]}>
         <div>Test content</div>
@@ -23,10 +23,10 @@ describe("Mcu", () => {
 
     // Check that the style content includes CSS variables
     const styleContent = styleTag?.textContent || "";
-    expect(styleContent).toContain("--mcu-primary");
-    expect(styleContent).toContain("--mcu-on-primary");
-    expect(styleContent).toContain("--mcu-surface");
-    expect(styleContent).toContain("--mcu-background");
+    expect(styleContent).toContain("--md-sys-color-primary");
+    expect(styleContent).toContain("--md-sys-color-on-primary");
+    expect(styleContent).toContain("--md-sys-color-surface");
+    expect(styleContent).toContain("--md-sys-color-background");
   });
 
   it("should remove custom color CSS variables when customColors are removed", () => {
@@ -47,8 +47,8 @@ describe("Mcu", () => {
     let styleTag = document.querySelector("#mcu-styles");
     let styleContent = styleTag?.textContent || "";
 
-    expect(styleContent).toContain("--mcu-brand");
-    expect(styleContent).toContain("--mcu-success");
+    expect(styleContent).toContain("--md-sys-color-brand");
+    expect(styleContent).toContain("--md-sys-color-success");
 
     // Rerender with only one custom color (removing "success")
     rerender(
@@ -65,10 +65,10 @@ describe("Mcu", () => {
     styleContent = styleTag?.textContent || "";
 
     // "brand" should still be there
-    expect(styleContent).toContain("--mcu-brand");
+    expect(styleContent).toContain("--md-sys-color-brand");
 
     // "success" should be gone
-    expect(styleContent).not.toContain("--mcu-success");
+    expect(styleContent).not.toContain("--md-sys-color-success");
 
     // Rerender with no custom colors (empty array)
     rerender(
@@ -81,7 +81,7 @@ describe("Mcu", () => {
     styleTag = document.querySelector("#mcu-styles");
     styleContent = styleTag?.textContent || "";
 
-    expect(styleContent).not.toContain("--mcu-brand");
+    expect(styleContent).not.toContain("--md-sys-color-brand");
 
     // Rerender without customColors prop at all (should use default empty array)
     rerender(
@@ -94,6 +94,6 @@ describe("Mcu", () => {
     styleTag = document.querySelector("#mcu-styles");
     styleContent = styleTag?.textContent || "";
 
-    expect(styleContent).not.toContain("--mcu-brand");
+    expect(styleContent).not.toContain("--md-sys-color-brand");
   });
 });

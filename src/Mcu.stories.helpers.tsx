@@ -431,7 +431,7 @@ export function Scheme({
                   title={kebabCase(customColor.name)}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
+                    backgroundColor: `var(--md-sys-color-${kebabCase(customColor.name)})`,
                   }}
                 >
                   <p>{upperFirst(customColor.name)}</p>
@@ -442,7 +442,7 @@ export function Scheme({
                   title={`on-${kebabCase(customColor.name)}`}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
+                    backgroundColor: `var(--md-sys-color-on-${kebabCase(customColor.name)})`,
                   }}
                 >
                   <p>On {upperFirst(customColor.name)}</p>
@@ -453,7 +453,7 @@ export function Scheme({
                   title={`${kebabCase(customColor.name)}-container`}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
+                    backgroundColor: `var(--md-sys-color-${kebabCase(customColor.name)}-container)`,
                   }}
                 >
                   <p>{upperFirst(customColor.name)} Container</p>
@@ -464,7 +464,7 @@ export function Scheme({
                   title={`on-${kebabCase(customColor.name)}-container`}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
+                    backgroundColor: `var(--md-sys-color-on-${kebabCase(customColor.name)}-container)`,
                   }}
                 >
                   <p>On {upperFirst(customColor.name)} Container</p>
@@ -522,7 +522,7 @@ export function Shades({
                   title={`${isCustom ? kebabCase(name) : name}-${tone}`}
                   className="h-16 flex items-center justify-center"
                   style={{
-                    backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
+                    backgroundColor: `var(--md-ref-palette-${isCustom ? kebabCase(name) : name}-${tone})`,
                   }}
                 >
                   <p>{tone}</p>

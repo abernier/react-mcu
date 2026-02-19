@@ -79,7 +79,7 @@ describe("builder", () => {
     const result = builder("#769CDF").toCss();
     expect(result).toContain(":root {");
     expect(result).toContain(".dark {");
-    expect(result).toContain("--mcu-primary");
+    expect(result).toContain("--md-sys-color-primary");
   });
 
   describe("toFigmaTokens()", () => {

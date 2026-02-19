@@ -569,16 +569,24 @@ export function builder(
     //  ██████ ███████ ███████
     //
     toCss() {
-      function cssVar(colorName: string, colorValue: number) {
-        const name = `--mcu-${kebabCase(colorName)}`;
+      // Scheme tokens: --md-sys-color-<name>
+      function sysColorVar(colorName: string, colorValue: number) {
+        const name = `--md-sys-color-${kebabCase(colorName)}`;
         const value = hexFromArgb(colorValue);
-        return `${name}:${value};`; // eg: `--mcu-on-primary:#ffffff;`
+        return `${name}:${value};`; // eg: `--md-sys-color-on-primary:#ffffff;`
       }
 
       function toCssVars(mergedColors: Record<string, number>) {
         return Object.entries(mergedColors)
-          .map(([name, value]) => cssVar(name, value))
+          .map(([name, value]) => sysColorVar(name, value))
           .join(" ");
+      }
+
+      // Tonal palette tokens: --md-ref-palette-<name>-<tone>
+      function refPaletteVar(paletteName: string, tone: number, colorValue: number) {
+        const name = `--md-ref-palette-${paletteName}-${tone}`;
+        const value = hexFromArgb(colorValue);
+        return `${name}:${value};`;
       }
 
       function generateTonalPaletteVars(
@@ -605,7 +613,7 @@ export function builder(
           }
 
           const color = palette.tone(toneToUse);
-          return cssVar(`${paletteName}-${tone}`, color);
+          return refPaletteVar(paletteName, tone, color);
         }).join(" ");
       }
 

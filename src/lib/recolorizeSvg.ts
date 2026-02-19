@@ -58,7 +58,7 @@ function scoreCandidates(
 
       if (score < bestScore) {
         bestScore = score;
-        bestToken = `var(--mcu-${c.prefix}-${tone})`;
+        bestToken = `var(--md-ref-palette-${c.prefix}-${tone})`;
       }
     }
   }
@@ -175,7 +175,7 @@ export function recolorizeSvg(
     );
     const bestToken =
       match?.token ??
-      `var(--mcu-neutral-variant-${findClosestTone(targetHct.tone)})`;
+      `var(--md-ref-palette-neutral-variant-${findClosestTone(targetHct.tone)})`;
     const bestScore = match?.score ?? Infinity;
 
     tokenCache.set(hexInput, bestToken);
