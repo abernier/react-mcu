@@ -156,6 +156,12 @@ export const DEFAULT_PREFIX = "md";
 
 // The set of standard tone values used in Material You tonal palettes
 export const STANDARD_TONES = [
+  0, 4, 5, 6, 10, 12, 15, 17, 20, 22, 24, 25, 30, 35, 40, 50, 60, 70, 80,
+  87, 90, 92, 94, 95, 96, 98, 99, 100,
+] as const;
+
+// The 18 baseline tones matching Material Theme Builder JSON output
+const MTB_TONES = [
   0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100,
 ] as const;
 
@@ -898,7 +904,7 @@ export function builder(
         for (const name of RAW_PALETTE_NAMES) {
           const palette = rawPalettes[name];
           const tones: Record<string, string> = {};
-          for (const tone of STANDARD_TONES) {
+          for (const tone of MTB_TONES) {
             tones[tone.toString()] = hexFromArgb(
               palette.tone(tone),
             ).toUpperCase();
@@ -1058,62 +1064,18 @@ export function builder(
         };
       }
 
-      // Find the non-standard integer tone (0–100) in a palette that produces the given hex
-      function findNonStandardTone(
-        hex: string,
-        palette: TonalPalette,
-        standardSet: Set<number>,
-      ): number | null {
-        for (let t = 0; t <= 100; t++) {
-          if (standardSet.has(t)) continue;
-          if (hexFromArgb(palette.tone(t)).toUpperCase() === hex) return t;
-        }
-        return null;
-      }
-
-      // Discover non-standard tones used by the scheme (e.g. surface tones 4, 6, 12…)
-      // so they can be included in ref.palette and referenced by aliases
-      function discoverExtraTones(): Map<string, Set<number>> {
-        const extras = new Map<string, Set<number>>();
-        const standardSet = new Set<number>(STANDARD_TONES);
-        const paletteEntries = Object.entries(allPalettes);
-        const allHexes = new Set(
-          [mergedColorsLight, mergedColorsDark]
-            .flatMap((m) => Object.values(m))
-            .map((argb) => hexFromArgb(argb).toUpperCase()),
-        );
-
-        for (const hex of allHexes) {
-          for (const [name, palette] of paletteEntries) {
-            const tone = findNonStandardTone(hex, palette, standardSet);
-            if (tone === null) continue;
-            const key = kebabCase(name);
-            if (!extras.has(key)) extras.set(key, new Set());
-            extras.get(key)!.add(tone);
-          }
-        }
-        return extras;
-      }
-
       // Build ref.palette.* — Reference Tokens (Tier 1)
       // Raw tonal palette values with direct color data (mode-independent)
-      // Includes both standard tones and any extra tones used by the scheme
       function buildRefPaletteTokens() {
         const palettes: Record<
           string,
           Record<string, ReturnType<typeof figmaToken>>
         > = {};
-        const extraTones = discoverExtraTones();
 
         for (const [name, palette] of Object.entries(allPalettes)) {
           const tones: Record<string, ReturnType<typeof figmaToken>> = {};
-          const key = kebabCase(name);
-          const extras = extraTones.get(key);
-          const allTones = extras
-            ? [...STANDARD_TONES, ...extras].sort((a, b) => a - b)
-            : [...STANDARD_TONES];
 
-          for (const tone of allTones) {
+          for (const tone of STANDARD_TONES) {
             let toneToUse: number = tone;
             if (contrastAllColors) {
               toneToUse = adjustToneForContrast(toneToUse, contrast);
@@ -1122,7 +1084,7 @@ export function builder(
             tones[tone.toString()] = figmaToken(argb);
           }
 
-          palettes[key] = tones;
+          palettes[kebabCase(name)] = tones;
         }
 
         return palettes;
