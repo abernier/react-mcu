@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 // @example
-
+//
+// Pre-requisite: `pnpm run build`
+//
 // ```sh
 // $ node dist/cli.js builder '#6750A4'
 // $ node dist/cli.js builder '#6750A4' --format css
