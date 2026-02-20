@@ -692,10 +692,7 @@ export function builder(
       function generateTonalVars() {
         return Object.entries(allPalettes)
           .map(([name, palette]) =>
-            generateTonalPaletteVars(
-              kebabCase(name),
-              palette,
-            ),
+            generateTonalPaletteVars(kebabCase(name), palette),
           )
           .join(" ");
       }
