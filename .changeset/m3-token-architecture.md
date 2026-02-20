@@ -55,3 +55,26 @@ New tones added: 4, 6, 12, 17, 22, 24, 35, 87, 92, 94, 96. This increases the nu
 - Top-level structure changed from `Schemes` / `Palettes` to `ref.palette.*` / `sys.color.*`
 - System tokens now use DTCG alias syntax `{ref.palette.Primary.40}` instead of direct color values
 - System tokens include `$description` and `css.variable` (kebab-case) extensions
+
+#### Removed `contrastAllColors` and `adaptiveShades` options
+
+The `contrastAllColors` and `adaptiveShades` props/options have been removed from the `<Mcu>` component, the `builder()` function, and the CLI.
+
+These experimental features are no longer needed now that `md.sys.*` tokens properly reference `md.ref.*` palette tokens via `var()`.
+
+**Migration:** Simply remove any usage of `contrastAllColors` or `adaptiveShades` from your code:
+
+```diff
+- <Mcu source="#6750A4" contrastAllColors adaptiveShades>
++ <Mcu source="#6750A4">
+```
+
+```diff
+- builder("#6750A4", { contrastAllColors: true, adaptiveShades: true })
++ builder("#6750A4")
+```
+
+```diff
+- react-mcu builder '#6750A4' --contrast-all-colors --adaptive-shades
++ react-mcu builder '#6750A4'
+```

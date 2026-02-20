@@ -297,13 +297,7 @@ describe("builder", () => {
 
     it("should produce mode-independent ref palette tones", () => {
       // ref palette is always the same in both mode files
-      // (adaptiveShades only affects CSS output, not Figma tokens)
-      const result = builder("#6750A4", {
-        adaptiveShades: true,
-      }).toFigmaTokens();
-      const resultNoAdaptive = builder("#6750A4", {
-        adaptiveShades: false,
-      }).toFigmaTokens();
+      const result = builder("#6750A4").toFigmaTokens();
 
       const palette = (
         result["Light.tokens.json"].ref.palette as Record<
@@ -311,17 +305,6 @@ describe("builder", () => {
           Record<string, { $value: { hex: string } }>
         >
       )["Primary"]!;
-      const paletteNoAdaptive = (
-        resultNoAdaptive["Light.tokens.json"].ref.palette as Record<
-          string,
-          Record<string, { $value: { hex: string } }>
-        >
-      )["Primary"]!;
-
-      // Palette tones should be identical regardless of adaptiveShades
-      expect(palette["40"]!.$value.hex).toBe(
-        paletteNoAdaptive["40"]!.$value.hex,
-      );
 
       // Both mode files should share the same ref palette
       const lightPalette = result["Light.tokens.json"].ref.palette;
