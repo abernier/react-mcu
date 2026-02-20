@@ -70,15 +70,12 @@ export function Layout({
 }
 
 const schemeVariants = cva(
-  "flex flex-col gap-4 [--mcu-scheme-light:#fbfbfb] [--mcu-scheme-dark:#1c1b1f]",
+  "flex flex-col gap-4 [--light:#fbfbfb] [--dark:#1c1b1f]",
   {
     variants: {
       theme: {
-        light: "bg-[var(--mcu-scheme-light)] text-[var(--mcu-scheme-dark)]",
-        dark: [
-          "dark",
-          "bg-[var(--mcu-scheme-dark)] text-[var(--mcu-scheme-light)]",
-        ],
+        light: "bg-[var(--light)] text-[var(--dark)]",
+        dark: ["dark", "bg-[var(--dark)] text-[var(--light)]"],
       },
     },
     compoundVariants: [
