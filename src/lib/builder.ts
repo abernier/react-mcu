@@ -631,7 +631,7 @@ export function builder(
         return `${name}:${value};`;
       }
 
-      function toCssVars(mergedColors: Record<string, number>) {
+      function toCssVars(mergedColors: typeof mergedColorsLight) {
         return Object.entries(mergedColors)
           .map(([name, value]) => sysColorVar(name, value))
           .join(" ");
@@ -827,7 +827,7 @@ export function builder(
         function resolveOverridePalette(
           hex: string | undefined,
           role: "primaryPalette" | "neutralPalette" | "neutralVariantPalette",
-        ): TonalPalette | null {
+        ) {
           if (!hex) return null;
           return new SchemeClass(Hct.fromInt(argbFromHex(hex)), false, 0)[role];
         }
@@ -990,13 +990,7 @@ export function builder(
       )) {
         const dc =
           MaterialDynamicColors[propName as keyof typeof MaterialDynamicColors];
-        if (
-          !dc ||
-          typeof dc !== "object" ||
-          !(dc instanceof DynamicColor) ||
-          typeof dc.palette !== "function"
-        )
-          continue;
+        if (!(dc instanceof DynamicColor)) continue;
         const palette = dc.palette(lightScheme);
         for (const [palName, pal] of schemePalettes) {
           if (palette === pal) {
@@ -1066,7 +1060,7 @@ export function builder(
         hex: string,
         paletteName: string,
         tones: Record<string, ReturnType<typeof figmaToken>>,
-      ): string | null {
+      ) {
         for (const [tone, token] of Object.entries(tones)) {
           if (token.$value.hex === hex) {
             return `{ref.palette.${paletteName}.${tone}}`;
@@ -1079,7 +1073,7 @@ export function builder(
       function deriveCustomPalette(
         tokenName: string,
         refPalettes: RefPalettes,
-      ): string | undefined {
+      ) {
         let baseName = tokenName;
         if (/^on[A-Z]/.test(baseName) && baseName.length > 2) {
           baseName = baseName.charAt(2).toLowerCase() + baseName.slice(3);
@@ -1097,7 +1091,7 @@ export function builder(
         hex: string,
         tokenName: string,
         refPalettes: RefPalettes,
-      ): string | null {
+      ) {
         const preferredPalette =
           tokenToPalette[tokenName] ??
           deriveCustomPalette(tokenName, refPalettes);
@@ -1127,7 +1121,7 @@ export function builder(
         argb: number,
         tokenName: string,
         refPalettes: RefPalettes,
-      ): string | ReturnType<typeof argbToFigmaColorValue> {
+      ) {
         const hex = hexFromArgb(argb).toUpperCase();
         return (
           findAlias(hex, tokenName, refPalettes) ?? argbToFigmaColorValue(argb)
@@ -1137,7 +1131,7 @@ export function builder(
       // Build sys.color.* — System Tokens (Tier 2)
       // Semantic role tokens for a single mode (Light or Dark)
       function buildSysColorTokens(
-        mergedColors: Record<string, number>,
+        mergedColors: typeof mergedColorsLight,
         refPalettes: RefPalettes,
       ) {
         const tokens: Record<string, unknown> = {};
@@ -1165,7 +1159,7 @@ export function builder(
 
       function buildModeFile(
         modeName: string,
-        mergedColors: Record<string, number>,
+        mergedColors: typeof mergedColorsLight,
       ) {
         return {
           ref: {
