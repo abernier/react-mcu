@@ -4,7 +4,7 @@ dist
 storybook-static
 package-lock.json
 mcu-theme
-packages/react-mcu/src/fixtures/.dtcg-schemas
+packages/material-theme-builder/src/fixtures/.dtcg-schemas
 
 packages/react-mcu/src/stories
 .DS_Store

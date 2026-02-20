@@ -1,0 +1,53 @@
+{
+  "name": "material-theme-builder",
+  "version": "1.0.0",
+  "description": "Material Design 3 theme builder — generic API and CLI",
+  "keywords": [
+    "material",
+    "theme",
+    "builder",
+    "m3",
+    "color"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "homepage": "https://github.com/abernier/react-mcu/tree/main/packages/material-theme-builder",
+  "bugs": {
+    "url": "https://github.com/abernier/react-mcu/issues"
+  },
+  "author": "abernier",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abernier/react-mcu.git"
+  },
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "bin": {
+    "material-theme-builder": "./dist/cli.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@material/material-color-utilities": "^0.3.0",
+    "commander": "^14.0.3",
+    "lodash-es": "^4.17.22"
+  },
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12",
+    "ajv": "^8.18.0",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.5.4"
+  },
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc",
+    "test": "vitest run",
+    "pretest": "bash scripts/download-dtcg-schemas.sh",
+    "check-exports": "attw --pack . --ignore-rules cjs-resolves-to-esm no-resolution"
+  }
+}

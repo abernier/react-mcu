@@ -7,7 +7,7 @@ import {
   DEFAULT_PREFIX,
   DEFAULT_SCHEME,
   type McuConfig,
-} from "./lib/builder";
+} from "material-theme-builder";
 import { McuProvider } from "./Mcu.context";
 
 const mcuStyleId = "mcu-styles";

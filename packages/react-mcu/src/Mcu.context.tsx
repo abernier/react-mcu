@@ -8,7 +8,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { builder, type McuConfig, type TokenName } from "./lib/builder";
+import { builder, type McuConfig, type TokenName } from "material-theme-builder";
 import { createRequiredContext } from "./lib/createRequiredContext";
 
 type Api = {

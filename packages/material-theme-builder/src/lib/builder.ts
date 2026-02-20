@@ -81,7 +81,7 @@ export const schemeNames = [
   "fidelity",
   "content",
 ] as const;
-type SchemeName = (typeof schemeNames)[number];
+export type SchemeName = (typeof schemeNames)[number];
 
 const schemesMap: Record<SchemeName, SchemeConstructor> = {
   tonalSpot: SchemeTonalSpot,

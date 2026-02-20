@@ -105,7 +105,7 @@ importers:
         specifier: ^4.0.16
         version: 4.0.18(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(yaml@2.8.2)
 
-  packages/react-mcu:
+  packages/material-theme-builder:
     dependencies:
       '@material/material-color-utilities':
         specifier: ^0.3.0
@@ -116,6 +116,25 @@ importers:
       lodash-es:
         specifier: ^4.17.22
         version: 4.17.23
+    devDependencies:
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
+      ajv:
+        specifier: ^8.18.0
+        version: 8.18.0
+      ajv-formats:
+        specifier: ^3.0.1
+        version: 3.0.1(ajv@8.18.0)
+      typescript:
+        specifier: ^5.5.4
+        version: 5.9.3
+
+  packages/react-mcu:
+    dependencies:
+      material-theme-builder:
+        specifier: workspace:*
+        version: link:../material-theme-builder
       react:
         specifier: ^19.2.3
         version: 19.2.4
@@ -123,6 +142,9 @@ importers:
         specifier: ^19.2.3
         version: 19.2.4(react@19.2.4)
     devDependencies:
+      '@material/material-color-utilities':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@types/culori':
         specifier: ^4.0.1
         version: 4.0.1
@@ -135,12 +157,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.14)
-      ajv:
-        specifier: ^8.18.0
-        version: 8.18.0
-      ajv-formats:
-        specifier: ^3.0.1
-        version: 3.0.1(ajv@8.18.0)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -150,6 +166,9 @@ importers:
       culori:
         specifier: ^4.0.2
         version: 4.0.2
+      lodash-es:
+        specifier: ^4.17.22
+        version: 4.17.23
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.5.0
