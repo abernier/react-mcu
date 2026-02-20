@@ -1135,37 +1135,26 @@ export function builder(
       }
 
       // Build sys.color.* — System Tokens (Tier 2)
-      // Semantic role tokens with com.figma.modes for Light/Dark alias references
-      function buildSysColorTokens(refPalettes: RefPalettes) {
+      // Semantic role tokens for a single mode (Light or Dark)
+      function buildSysColorTokens(
+        mergedColors: Record<string, number>,
+        refPalettes: RefPalettes,
+      ) {
         const tokens: Record<string, unknown> = {};
 
-        // Collect all token names from both modes
-        const allTokenNames = new Set([
-          ...Object.keys(mergedColorsLight),
-          ...Object.keys(mergedColorsDark),
-        ]);
-
-        for (const name of allTokenNames) {
-          const lightArgb = mergedColorsLight[name] as number;
-          const darkArgb = mergedColorsDark[name] as number;
+        for (const [name, argb] of Object.entries(mergedColors)) {
           const description = tokenDescriptions[name as TokenName];
           const cssVar = `--${prefix}-sys-color-${kebabCase(name)}`;
 
-          const lightValue = resolveModeValue(lightArgb, name, refPalettes);
-          const darkValue = resolveModeValue(darkArgb, name, refPalettes);
+          const value = resolveModeValue(argb, name, refPalettes);
 
           tokens[kebabCase(name)] = {
             $type: "color" as const,
-            // $value defaults to Light mode alias for DTCG compliance
-            $value: lightValue,
+            $value: value,
             ...(description ? { $description: description } : {}),
             $extensions: {
               "com.figma.scopes": ["ALL_SCOPES"],
               "css.variable": cssVar,
-              "com.figma.modes": {
-                Light: lightValue,
-                Dark: darkValue,
-              },
             },
           };
         }
@@ -1174,15 +1163,26 @@ export function builder(
 
       const refPalettes = buildRefPaletteTokens();
 
-      return {
-        "theme.tokens.json": {
+      function buildModeFile(
+        modeName: string,
+        mergedColors: Record<string, number>,
+      ) {
+        return {
           ref: {
             palette: refPalettes,
           },
           sys: {
-            color: buildSysColorTokens(refPalettes),
+            color: buildSysColorTokens(mergedColors, refPalettes),
           },
-        },
+          $extensions: {
+            "com.figma.modeName": modeName,
+          },
+        };
+      }
+
+      return {
+        "Light.tokens.json": buildModeFile("Light", mergedColorsLight),
+        "Dark.tokens.json": buildModeFile("Dark", mergedColorsDark),
       };
     },
 
