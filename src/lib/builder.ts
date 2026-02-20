@@ -979,68 +979,42 @@ export function builder(
       // see: https://m3.material.io/foundations/design-tokens/overview
       // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
 
-      // Maps each core scheme token to its source palette for alias resolution.
-      // Derived from M3 DynamicScheme / MaterialDynamicColors source:
-      // https://github.com/nicklash/material-color-utilities/blob/main/typescript/dynamiccolor/material_dynamic_colors.ts
-      // When a scheme hex matches multiple palettes (e.g. #000000 at tone 0),
-      // this ensures the semantically correct palette is preferred.
-      const tokenToPalette: Record<string, string> = {
-        // Primary family
-        primary: "primary",
-        onPrimary: "primary",
-        primaryContainer: "primary",
-        onPrimaryContainer: "primary",
-        primaryFixed: "primary",
-        primaryFixedDim: "primary",
-        onPrimaryFixed: "primary",
-        onPrimaryFixedVariant: "primary",
-        inversePrimary: "primary",
-        surfaceTint: "primary",
-        // Secondary family
-        secondary: "secondary",
-        onSecondary: "secondary",
-        secondaryContainer: "secondary",
-        onSecondaryContainer: "secondary",
-        secondaryFixed: "secondary",
-        secondaryFixedDim: "secondary",
-        onSecondaryFixed: "secondary",
-        onSecondaryFixedVariant: "secondary",
-        // Tertiary family
-        tertiary: "tertiary",
-        onTertiary: "tertiary",
-        tertiaryContainer: "tertiary",
-        onTertiaryContainer: "tertiary",
-        tertiaryFixed: "tertiary",
-        tertiaryFixedDim: "tertiary",
-        onTertiaryFixed: "tertiary",
-        onTertiaryFixedVariant: "tertiary",
-        // Error family
-        error: "error",
-        onError: "error",
-        errorContainer: "error",
-        onErrorContainer: "error",
-        // Neutral family
-        background: "neutral",
-        onBackground: "neutral",
-        surface: "neutral",
-        onSurface: "neutral",
-        surfaceDim: "neutral",
-        surfaceBright: "neutral",
-        surfaceContainer: "neutral",
-        surfaceContainerLow: "neutral",
-        surfaceContainerLowest: "neutral",
-        surfaceContainerHigh: "neutral",
-        surfaceContainerHighest: "neutral",
-        inverseSurface: "neutral",
-        inverseOnSurface: "neutral",
-        scrim: "neutral",
-        shadow: "neutral",
-        // Neutral variant family
-        surfaceVariant: "neutral-variant",
-        onSurfaceVariant: "neutral-variant",
-        outline: "neutral-variant",
-        outlineVariant: "neutral-variant",
-      };
+      // Derives each token's source palette by calling the palette() function
+      // on each MaterialDynamicColors DynamicColor with the given scheme, then
+      // comparing the returned TonalPalette by reference to the scheme's known
+      // palettes. This avoids a hardcoded mapping and stays correct as the
+      // library evolves.
+      const schemePalettes: [string, TonalPalette][] = [
+        ["primary", lightScheme.primaryPalette],
+        ["secondary", lightScheme.secondaryPalette],
+        ["tertiary", lightScheme.tertiaryPalette],
+        ["error", lightScheme.errorPalette],
+        ["neutral", lightScheme.neutralPalette],
+        ["neutral-variant", lightScheme.neutralVariantPalette],
+      ];
+
+      const tokenToPalette: Record<string, string> = {};
+      for (const propName of Object.getOwnPropertyNames(
+        MaterialDynamicColors,
+      )) {
+        const dc = MaterialDynamicColors[
+          propName as keyof typeof MaterialDynamicColors
+        ];
+        if (
+          !dc ||
+          typeof dc !== "object" ||
+          !(dc instanceof DynamicColor) ||
+          typeof dc.palette !== "function"
+        )
+          continue;
+        const palette = dc.palette(lightScheme);
+        for (const [palName, pal] of schemePalettes) {
+          if (palette === pal) {
+            tokenToPalette[propName] = palName;
+            break;
+          }
+        }
+      }
 
       function argbToFigmaColorValue(argb: number) {
         return {
