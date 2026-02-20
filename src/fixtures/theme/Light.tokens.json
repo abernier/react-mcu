@@ -1,7 +1,7 @@
 {
   "ref": {
     "palette": {
-      "primary": {
+      "Primary": {
         "0": {
           "$type": "color",
           "$value": {
@@ -401,7 +401,7 @@
           }
         }
       },
-      "secondary": {
+      "Secondary": {
         "0": {
           "$type": "color",
           "$value": {
@@ -807,7 +807,7 @@
           }
         }
       },
-      "tertiary": {
+      "Tertiary": {
         "0": {
           "$type": "color",
           "$value": {
@@ -1207,7 +1207,7 @@
           }
         }
       },
-      "error": {
+      "Error": {
         "0": {
           "$type": "color",
           "$value": {
@@ -1579,7 +1579,7 @@
           }
         }
       },
-      "neutral": {
+      "Neutral": {
         "0": {
           "$type": "color",
           "$value": {
@@ -1991,7 +1991,7 @@
           }
         }
       },
-      "neutral-variant": {
+      "Neutral Variant": {
         "0": {
           "$type": "color",
           "$value": {
@@ -2403,441 +2403,441 @@
   },
   "sys": {
     "color": {
-      "background": {
+      "Background": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.98}",
+        "$value": "{ref.palette.Neutral.98}",
         "$description": "Default background color for screens and large surfaces.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-background"
         }
       },
-      "error": {
+      "Error": {
         "$type": "color",
-        "$value": "{ref.palette.error.40}",
+        "$value": "{ref.palette.Error.40}",
         "$description": "Color for error states, used on elements like error text and icons.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-error"
         }
       },
-      "error-container": {
+      "Error Container": {
         "$type": "color",
-        "$value": "{ref.palette.error.90}",
+        "$value": "{ref.palette.Error.90}",
         "$description": "Fill color for error container elements like error banners.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-error-container"
         }
       },
-      "inverse-on-surface": {
+      "Inverse On Surface": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.95}",
+        "$value": "{ref.palette.Neutral.95}",
         "$description": "Color for text and icons on inverse surface backgrounds.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-inverse-on-surface"
         }
       },
-      "inverse-primary": {
+      "Inverse Primary": {
         "$type": "color",
-        "$value": "{ref.palette.primary.80}",
+        "$value": "{ref.palette.Primary.80}",
         "$description": "Primary color used on inverse surface, e.g. buttons on snackbars.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-inverse-primary"
         }
       },
-      "inverse-surface": {
+      "Inverse Surface": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.20}",
+        "$value": "{ref.palette.Neutral.20}",
         "$description": "Background for elements that require reverse contrast, such as snackbars.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-inverse-surface"
         }
       },
-      "on-background": {
+      "On Background": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.10}",
+        "$value": "{ref.palette.Neutral.10}",
         "$description": "Color for text and icons displayed on the background.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-background"
         }
       },
-      "on-error": {
+      "On Error": {
         "$type": "color",
-        "$value": "{ref.palette.error.100}",
+        "$value": "{ref.palette.Error.100}",
         "$description": "Color for text and icons on error-colored elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-error"
         }
       },
-      "on-error-container": {
+      "On Error Container": {
         "$type": "color",
-        "$value": "{ref.palette.error.30}",
+        "$value": "{ref.palette.Error.30}",
         "$description": "Color for text and icons on error container elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-error-container"
         }
       },
-      "on-primary": {
+      "On Primary": {
         "$type": "color",
-        "$value": "{ref.palette.primary.100}",
+        "$value": "{ref.palette.Primary.100}",
         "$description": "Color for text and icons on primary-colored elements like filled buttons.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-primary"
         }
       },
-      "on-primary-container": {
+      "On Primary Container": {
         "$type": "color",
-        "$value": "{ref.palette.primary.30}",
+        "$value": "{ref.palette.Primary.30}",
         "$description": "Color for text and icons on primary container elements like tonal buttons.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-primary-container"
         }
       },
-      "on-primary-fixed": {
+      "On Primary Fixed": {
         "$type": "color",
-        "$value": "{ref.palette.primary.10}",
+        "$value": "{ref.palette.Primary.10}",
         "$description": "Color for text and icons on primary fixed elements, constant across themes.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-primary-fixed"
         }
       },
-      "on-primary-fixed-variant": {
+      "On Primary Fixed Variant": {
         "$type": "color",
-        "$value": "{ref.palette.primary.30}",
+        "$value": "{ref.palette.Primary.30}",
         "$description": "Lower-emphasis color for text and icons on primary fixed elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-primary-fixed-variant"
         }
       },
-      "on-secondary": {
+      "On Secondary": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.100}",
+        "$value": "{ref.palette.Secondary.100}",
         "$description": "Color for text and icons on secondary-colored elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-secondary"
         }
       },
-      "on-secondary-container": {
+      "On Secondary Container": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.30}",
+        "$value": "{ref.palette.Secondary.30}",
         "$description": "Color for text and icons on secondary container elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-secondary-container"
         }
       },
-      "on-secondary-fixed": {
+      "On Secondary Fixed": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.10}",
+        "$value": "{ref.palette.Secondary.10}",
         "$description": "Color for text and icons on secondary fixed elements, constant across themes.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-secondary-fixed"
         }
       },
-      "on-secondary-fixed-variant": {
+      "On Secondary Fixed Variant": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.30}",
+        "$value": "{ref.palette.Secondary.30}",
         "$description": "Lower-emphasis color for text and icons on secondary fixed elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-secondary-fixed-variant"
         }
       },
-      "on-surface": {
+      "On Surface": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.10}",
+        "$value": "{ref.palette.Neutral.10}",
         "$description": "High-emphasis color for text and icons on surface backgrounds.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-surface"
         }
       },
-      "on-surface-variant": {
+      "On Surface Variant": {
         "$type": "color",
-        "$value": "{ref.palette.neutral-variant.30}",
+        "$value": "{ref.palette.Neutral Variant.30}",
         "$description": "Medium-emphasis color for text and icons on surface variant backgrounds.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-surface-variant"
         }
       },
-      "on-tertiary": {
+      "On Tertiary": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.100}",
+        "$value": "{ref.palette.Tertiary.100}",
         "$description": "Color for text and icons on tertiary-colored elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-tertiary"
         }
       },
-      "on-tertiary-container": {
+      "On Tertiary Container": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.30}",
+        "$value": "{ref.palette.Tertiary.30}",
         "$description": "Color for text and icons on tertiary container elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-tertiary-container"
         }
       },
-      "on-tertiary-fixed": {
+      "On Tertiary Fixed": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.10}",
+        "$value": "{ref.palette.Tertiary.10}",
         "$description": "Color for text and icons on tertiary fixed elements, constant across themes.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-tertiary-fixed"
         }
       },
-      "on-tertiary-fixed-variant": {
+      "On Tertiary Fixed Variant": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.30}",
+        "$value": "{ref.palette.Tertiary.30}",
         "$description": "Lower-emphasis color for text and icons on tertiary fixed elements.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-on-tertiary-fixed-variant"
         }
       },
-      "outline": {
+      "Outline": {
         "$type": "color",
-        "$value": "{ref.palette.neutral-variant.50}",
+        "$value": "{ref.palette.Neutral Variant.50}",
         "$description": "Subtle color for borders and dividers to create visual separation.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-outline"
         }
       },
-      "outline-variant": {
+      "Outline Variant": {
         "$type": "color",
-        "$value": "{ref.palette.neutral-variant.80}",
+        "$value": "{ref.palette.Neutral Variant.80}",
         "$description": "Lower-emphasis border color used for decorative dividers.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-outline-variant"
         }
       },
-      "primary": {
+      "Primary": {
         "$type": "color",
-        "$value": "{ref.palette.primary.40}",
+        "$value": "{ref.palette.Primary.40}",
         "$description": "Main brand color, used for key components like filled buttons and active states.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-primary"
         }
       },
-      "primary-container": {
+      "Primary Container": {
         "$type": "color",
-        "$value": "{ref.palette.primary.90}",
+        "$value": "{ref.palette.Primary.90}",
         "$description": "Fill color for large primary elements like cards and tonal buttons.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-primary-container"
         }
       },
-      "primary-fixed": {
+      "Primary Fixed": {
         "$type": "color",
-        "$value": "{ref.palette.primary.90}",
+        "$value": "{ref.palette.Primary.90}",
         "$description": "Fixed primary color that stays the same in light and dark themes.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-primary-fixed"
         }
       },
-      "primary-fixed-dim": {
+      "Primary Fixed Dim": {
         "$type": "color",
-        "$value": "{ref.palette.primary.80}",
+        "$value": "{ref.palette.Primary.80}",
         "$description": "Dimmed variant of the fixed primary color for lower emphasis.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-primary-fixed-dim"
         }
       },
-      "scrim": {
+      "Scrim": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.0}",
+        "$value": "{ref.palette.Neutral.0}",
         "$description": "Color overlay for modals and dialogs to obscure background content.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-scrim"
         }
       },
-      "secondary": {
+      "Secondary": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.40}",
+        "$value": "{ref.palette.Secondary.40}",
         "$description": "Accent color for less prominent elements like filter chips and selections.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-secondary"
         }
       },
-      "secondary-container": {
+      "Secondary Container": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.90}",
+        "$value": "{ref.palette.Secondary.90}",
         "$description": "Fill color for secondary container elements like tonal buttons and input fields.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-secondary-container"
         }
       },
-      "secondary-fixed": {
+      "Secondary Fixed": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.90}",
+        "$value": "{ref.palette.Secondary.90}",
         "$description": "Fixed secondary color that stays the same in light and dark themes.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-secondary-fixed"
         }
       },
-      "secondary-fixed-dim": {
+      "Secondary Fixed Dim": {
         "$type": "color",
-        "$value": "{ref.palette.secondary.80}",
+        "$value": "{ref.palette.Secondary.80}",
         "$description": "Dimmed variant of the fixed secondary color for lower emphasis.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-secondary-fixed-dim"
         }
       },
-      "shadow": {
+      "Shadow": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.0}",
+        "$value": "{ref.palette.Neutral.0}",
         "$description": "Color for elevation shadows applied to surfaces and components.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-shadow"
         }
       },
-      "surface": {
+      "Surface": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.98}",
+        "$value": "{ref.palette.Neutral.98}",
         "$description": "Default surface color for cards, sheets, and dialogs.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface"
         }
       },
-      "surface-bright": {
+      "Surface Bright": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.98}",
+        "$value": "{ref.palette.Neutral.98}",
         "$description": "Brightest surface variant, used for elevated surfaces in dark themes.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-bright"
         }
       },
-      "surface-container": {
+      "Surface Container": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.94}",
+        "$value": "{ref.palette.Neutral.94}",
         "$description": "Middle-emphasis container color for grouping related content.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-container"
         }
       },
-      "surface-container-high": {
+      "Surface Container High": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.92}",
+        "$value": "{ref.palette.Neutral.92}",
         "$description": "Higher-emphasis container color for elements like cards.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-container-high"
         }
       },
-      "surface-container-highest": {
+      "Surface Container Highest": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.90}",
+        "$value": "{ref.palette.Neutral.90}",
         "$description": "Highest-emphasis container color for text fields and other input areas.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-container-highest"
         }
       },
-      "surface-container-low": {
+      "Surface Container Low": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.96}",
+        "$value": "{ref.palette.Neutral.96}",
         "$description": "Lower-emphasis container color for subtle surface groupings.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-container-low"
         }
       },
-      "surface-container-lowest": {
+      "Surface Container Lowest": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.100}",
+        "$value": "{ref.palette.Neutral.100}",
         "$description": "Lowest-emphasis container, typically the lightest surface in light theme.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-container-lowest"
         }
       },
-      "surface-dim": {
+      "Surface Dim": {
         "$type": "color",
-        "$value": "{ref.palette.neutral.87}",
+        "$value": "{ref.palette.Neutral.87}",
         "$description": "Dimmest surface variant, used for recessed areas or dark theme backgrounds.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-dim"
         }
       },
-      "surface-tint": {
+      "Surface Tint": {
         "$type": "color",
-        "$value": "{ref.palette.primary.40}",
+        "$value": "{ref.palette.Primary.40}",
         "$description": "Tint color applied to surfaces for subtle primary color elevation overlay.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-tint"
         }
       },
-      "surface-variant": {
+      "Surface Variant": {
         "$type": "color",
-        "$value": "{ref.palette.neutral-variant.90}",
+        "$value": "{ref.palette.Neutral Variant.90}",
         "$description": "Alternative surface color for differentiated areas like sidebar backgrounds.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-surface-variant"
         }
       },
-      "tertiary": {
+      "Tertiary": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.40}",
+        "$value": "{ref.palette.Tertiary.40}",
         "$description": "Third accent color for complementary elements that balance primary and secondary.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-tertiary"
         }
       },
-      "tertiary-container": {
+      "Tertiary Container": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.90}",
+        "$value": "{ref.palette.Tertiary.90}",
         "$description": "Fill color for tertiary container elements like complementary cards.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-tertiary-container"
         }
       },
-      "tertiary-fixed": {
+      "Tertiary Fixed": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.90}",
+        "$value": "{ref.palette.Tertiary.90}",
         "$description": "Fixed tertiary color that stays the same in light and dark themes.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],
           "css.variable": "--md-sys-color-tertiary-fixed"
         }
       },
-      "tertiary-fixed-dim": {
+      "Tertiary Fixed Dim": {
         "$type": "color",
-        "$value": "{ref.palette.tertiary.80}",
+        "$value": "{ref.palette.Tertiary.80}",
         "$description": "Dimmed variant of the fixed tertiary color for lower emphasis.",
         "$extensions": {
           "com.figma.scopes": ["ALL_SCOPES"],

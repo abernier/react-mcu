@@ -182,31 +182,32 @@ describe("builder", () => {
       }
     });
 
-    it("should use kebab-case names for scheme tokens", () => {
+    it("should use Title Case names for scheme tokens", () => {
       const result = builder("#6750A4").toFigmaTokens();
       const sysColor = result["Light.tokens.json"].sys.color;
 
-      expect(sysColor).toHaveProperty("primary");
-      expect(sysColor).toHaveProperty("on-primary");
-      expect(sysColor).toHaveProperty("surface-container-high");
+      expect(sysColor).toHaveProperty("Primary");
+      expect(sysColor).toHaveProperty("On Primary");
+      expect(sysColor).toHaveProperty("Surface Container High");
     });
 
-    it("should use kebab-case names for palette groups", () => {
+    it("should use Title Case names for palette groups", () => {
       const result = builder("#6750A4").toFigmaTokens();
       const refPalette = result["Light.tokens.json"].ref.palette;
 
-      expect(refPalette).toHaveProperty("primary");
-      expect(refPalette).toHaveProperty("secondary");
-      expect(refPalette).toHaveProperty("tertiary");
-      expect(refPalette).toHaveProperty("error");
-      expect(refPalette).toHaveProperty("neutral");
-      expect(refPalette).toHaveProperty("neutral-variant");
+      expect(refPalette).toHaveProperty("Primary");
+      expect(refPalette).toHaveProperty("Secondary");
+      expect(refPalette).toHaveProperty("Tertiary");
+      expect(refPalette).toHaveProperty("Error");
+      expect(refPalette).toHaveProperty("Neutral");
+      expect(refPalette).toHaveProperty("Neutral Variant");
     });
 
     it("should include all standard tones in each palette", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const primaryPalette = result["Light.tokens.json"].ref.palette
-        .primary as Record<string, unknown>;
+      const primaryPalette = result["Light.tokens.json"].ref.palette[
+        "Primary"
+      ] as Record<string, unknown>;
 
       for (const tone of STANDARD_TONES) {
         expect(primaryPalette).toHaveProperty(tone.toString());
@@ -215,9 +216,12 @@ describe("builder", () => {
 
     it("should produce Figma-compatible ref palette tokens with color objects", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const tone40 = result["Light.tokens.json"].ref.palette.primary![
-        "40"
-      ]! as {
+      const tone40 = (
+        result["Light.tokens.json"].ref.palette as Record<
+          string,
+          Record<string, unknown>
+        >
+      )["Primary"]!["40"]! as {
         $type: string;
         $value: {
           colorSpace: string;
@@ -241,13 +245,17 @@ describe("builder", () => {
 
     it("should produce sys tokens with alias references in each mode file", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const lightPrimary = result["Light.tokens.json"].sys.color.primary as {
+      const lightPrimary = (
+        result["Light.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
         $type: string;
         $value: string;
         $description: string;
         $extensions: Record<string, unknown>;
       };
-      const darkPrimary = result["Dark.tokens.json"].sys.color.primary as {
+      const darkPrimary = (
+        result["Dark.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
         $type: string;
         $value: string;
         $extensions: Record<string, unknown>;
@@ -272,10 +280,14 @@ describe("builder", () => {
 
     it("should have different aliases for scheme tokens across modes", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const lightPrimary = result["Light.tokens.json"].sys.color.primary as {
+      const lightPrimary = (
+        result["Light.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
         $value: string;
       };
-      const darkPrimary = result["Dark.tokens.json"].sys.color.primary as {
+      const darkPrimary = (
+        result["Dark.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
         $value: string;
       };
 
@@ -293,12 +305,18 @@ describe("builder", () => {
         adaptiveShades: false,
       }).toFigmaTokens();
 
-      const palette = result["Light.tokens.json"].ref.palette.primary as Record<
-        string,
-        { $value: { hex: string } }
-      >;
-      const paletteNoAdaptive = resultNoAdaptive["Light.tokens.json"].ref
-        .palette.primary as Record<string, { $value: { hex: string } }>;
+      const palette = (
+        result["Light.tokens.json"].ref.palette as Record<
+          string,
+          Record<string, { $value: { hex: string } }>
+        >
+      )["Primary"]!;
+      const paletteNoAdaptive = (
+        resultNoAdaptive["Light.tokens.json"].ref.palette as Record<
+          string,
+          Record<string, { $value: { hex: string } }>
+        >
+      )["Primary"]!;
 
       // Palette tones should be identical regardless of adaptiveShades
       expect(palette["40"]!.$value.hex).toBe(
@@ -320,13 +338,13 @@ describe("builder", () => {
         const file = result[key];
 
         // Custom color should appear in ref palette
-        expect(file.ref.palette).toHaveProperty("brand");
+        expect(file.ref.palette).toHaveProperty("Brand");
 
         // Custom color scheme tokens in sys.color
-        expect(file.sys.color).toHaveProperty("brand");
-        expect(file.sys.color).toHaveProperty("on-brand");
-        expect(file.sys.color).toHaveProperty("brand-container");
-        expect(file.sys.color).toHaveProperty("on-brand-container");
+        expect(file.sys.color).toHaveProperty("Brand");
+        expect(file.sys.color).toHaveProperty("On Brand");
+        expect(file.sys.color).toHaveProperty("Brand Container");
+        expect(file.sys.color).toHaveProperty("On Brand Container");
       }
     });
 

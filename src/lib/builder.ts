@@ -19,7 +19,7 @@ import {
   SchemeVibrant,
   TonalPalette,
 } from "@material/material-color-utilities";
-import { kebabCase, upperFirst } from "lodash-es";
+import { kebabCase, startCase, upperFirst } from "lodash-es";
 
 // Helper function to adjust tone based on contrast level
 // This provides a simple linear adjustment similar to Material Design's approach
@@ -1123,7 +1123,7 @@ export function builder(
             tones[tone.toString()] = figmaToken(argb);
           }
 
-          palettes[kebabCase(name)] = tones;
+          palettes[startCase(name)] = tones;
         }
 
         return palettes;
@@ -1157,8 +1157,11 @@ export function builder(
         tokenName: string,
         refPalettes: RefPalettes,
       ) {
-        const preferredPalette =
+        const preferredPaletteKebab =
           tokenToPalette[tokenName] ?? deriveCustomPaletteName(tokenName);
+        const preferredPalette = preferredPaletteKebab
+          ? startCase(preferredPaletteKebab)
+          : undefined;
 
         // Search preferred palette first
         if (preferredPalette && refPalettes[preferredPalette]) {
@@ -1206,7 +1209,7 @@ export function builder(
 
           const value = resolveModeValue(argb, name, refPalettes);
 
-          tokens[kebabCase(name)] = {
+          tokens[startCase(name)] = {
             $type: "color" as const,
             $value: value,
             ...(description ? { $description: description } : {}),
