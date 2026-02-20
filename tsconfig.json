@@ -18,6 +18,11 @@
     "moduleResolution": "bundler",
     "lib": ["es2022", "DOM"],
     "jsx": "react-jsx",
-    "noEmit": true
+    "noEmit": true,
+    "paths": {
+      "material-theme-builder": [
+        "./packages/material-theme-builder/src/index.ts"
+      ]
+    }
   }
 }
