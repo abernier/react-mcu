@@ -19,8 +19,13 @@ export default defineConfig([
       try {
         // Copy tailwind.css to dist (for packages that have it)
         copyFileSync("src/tailwind.css", "dist/tailwind.css");
-      } catch {
-        // Skip if file doesn't exist
+      } catch (e: unknown) {
+        // Skip if file doesn't exist, re-throw other errors
+        if (
+          !(e instanceof Error && "code" in e && e.code === "ENOENT")
+        ) {
+          throw e;
+        }
       }
     },
   },
