@@ -156,8 +156,8 @@ export const DEFAULT_PREFIX = "md";
 
 // The set of standard tone values used in Material You tonal palettes
 export const STANDARD_TONES = [
-  0, 4, 5, 6, 10, 12, 15, 17, 20, 22, 24, 25, 30, 35, 40, 50, 60, 70, 80,
-  87, 90, 92, 94, 95, 96, 98, 99, 100,
+  0, 4, 5, 6, 10, 12, 15, 17, 20, 22, 24, 25, 30, 35, 40, 50, 60, 70, 80, 87,
+  90, 92, 94, 95, 96, 98, 99, 100,
 ] as const;
 
 // The 18 baseline tones matching Material Theme Builder JSON output
@@ -192,24 +192,17 @@ const schemeToVariant: Record<SchemeName, number> = {
 // Centralizes both the canonical list of scheme tokens and their M3 color role semantics.
 // see: https://m3.material.io/styles/color/the-color-system/color-roles
 export const tokenDescriptions = {
-  background:
-    "Default background color for screens and large surfaces.",
-  error:
-    "Color for error states, used on elements like error text and icons.",
-  errorContainer:
-    "Fill color for error container elements like error banners.",
-  inverseOnSurface:
-    "Color for text and icons on inverse surface backgrounds.",
+  background: "Default background color for screens and large surfaces.",
+  error: "Color for error states, used on elements like error text and icons.",
+  errorContainer: "Fill color for error container elements like error banners.",
+  inverseOnSurface: "Color for text and icons on inverse surface backgrounds.",
   inversePrimary:
     "Primary color used on inverse surface, e.g. buttons on snackbars.",
   inverseSurface:
     "Background for elements that require reverse contrast, such as snackbars.",
-  onBackground:
-    "Color for text and icons displayed on the background.",
-  onError:
-    "Color for text and icons on error-colored elements.",
-  onErrorContainer:
-    "Color for text and icons on error container elements.",
+  onBackground: "Color for text and icons displayed on the background.",
+  onError: "Color for text and icons on error-colored elements.",
+  onErrorContainer: "Color for text and icons on error container elements.",
   onPrimary:
     "Color for text and icons on primary-colored elements like filled buttons.",
   onPrimaryContainer:
@@ -218,30 +211,25 @@ export const tokenDescriptions = {
     "Color for text and icons on primary fixed elements, constant across themes.",
   onPrimaryFixedVariant:
     "Lower-emphasis color for text and icons on primary fixed elements.",
-  onSecondary:
-    "Color for text and icons on secondary-colored elements.",
+  onSecondary: "Color for text and icons on secondary-colored elements.",
   onSecondaryContainer:
     "Color for text and icons on secondary container elements.",
   onSecondaryFixed:
     "Color for text and icons on secondary fixed elements, constant across themes.",
   onSecondaryFixedVariant:
     "Lower-emphasis color for text and icons on secondary fixed elements.",
-  onSurface:
-    "High-emphasis color for text and icons on surface backgrounds.",
+  onSurface: "High-emphasis color for text and icons on surface backgrounds.",
   onSurfaceVariant:
     "Medium-emphasis color for text and icons on surface variant backgrounds.",
-  onTertiary:
-    "Color for text and icons on tertiary-colored elements.",
+  onTertiary: "Color for text and icons on tertiary-colored elements.",
   onTertiaryContainer:
     "Color for text and icons on tertiary container elements.",
   onTertiaryFixed:
     "Color for text and icons on tertiary fixed elements, constant across themes.",
   onTertiaryFixedVariant:
     "Lower-emphasis color for text and icons on tertiary fixed elements.",
-  outline:
-    "Subtle color for borders and dividers to create visual separation.",
-  outlineVariant:
-    "Lower-emphasis border color used for decorative dividers.",
+  outline: "Subtle color for borders and dividers to create visual separation.",
+  outlineVariant: "Lower-emphasis border color used for decorative dividers.",
   primary:
     "Main brand color, used for key components like filled buttons and active states.",
   primaryContainer:
@@ -250,8 +238,7 @@ export const tokenDescriptions = {
     "Fixed primary color that stays the same in light and dark themes.",
   primaryFixedDim:
     "Dimmed variant of the fixed primary color for lower emphasis.",
-  scrim:
-    "Color overlay for modals and dialogs to obscure background content.",
+  scrim: "Color overlay for modals and dialogs to obscure background content.",
   secondary:
     "Accent color for less prominent elements like filter chips and selections.",
   secondaryContainer:
@@ -260,10 +247,8 @@ export const tokenDescriptions = {
     "Fixed secondary color that stays the same in light and dark themes.",
   secondaryFixedDim:
     "Dimmed variant of the fixed secondary color for lower emphasis.",
-  shadow:
-    "Color for elevation shadows applied to surfaces and components.",
-  surface:
-    "Default surface color for cards, sheets, and dialogs.",
+  shadow: "Color for elevation shadows applied to surfaces and components.",
+  surface: "Default surface color for cards, sheets, and dialogs.",
   surfaceBright:
     "Brightest surface variant, used for elevated surfaces in dark themes.",
   surfaceContainer:
@@ -292,7 +277,9 @@ export const tokenDescriptions = {
     "Dimmed variant of the fixed tertiary color for lower emphasis.",
 } as const;
 
-export const tokenNames = Object.keys(tokenDescriptions) as (keyof typeof tokenDescriptions)[];
+export const tokenNames = Object.keys(
+  tokenDescriptions,
+) as (keyof typeof tokenDescriptions)[];
 
 export type TokenName = keyof typeof tokenDescriptions;
 
@@ -651,7 +638,11 @@ export function builder(
       }
 
       // Tonal palette tokens: --{prefix}-ref-palette-<name>-<tone>
-      function refPaletteVar(paletteName: string, tone: number, colorValue: number) {
+      function refPaletteVar(
+        paletteName: string,
+        tone: number,
+        colorValue: number,
+      ) {
         const name = `--${prefix}-ref-palette-${paletteName}-${tone}`;
         const value = hexFromArgb(colorValue);
         return `${name}:${value};`;
@@ -997,9 +988,8 @@ export function builder(
       for (const propName of Object.getOwnPropertyNames(
         MaterialDynamicColors,
       )) {
-        const dc = MaterialDynamicColors[
-          propName as keyof typeof MaterialDynamicColors
-        ];
+        const dc =
+          MaterialDynamicColors[propName as keyof typeof MaterialDynamicColors];
         if (
           !dc ||
           typeof dc !== "object" ||
@@ -1139,15 +1129,14 @@ export function builder(
         refPalettes: RefPalettes,
       ): string | ReturnType<typeof argbToFigmaColorValue> {
         const hex = hexFromArgb(argb).toUpperCase();
-        return findAlias(hex, tokenName, refPalettes) ??
-          argbToFigmaColorValue(argb);
+        return (
+          findAlias(hex, tokenName, refPalettes) ?? argbToFigmaColorValue(argb)
+        );
       }
 
       // Build sys.color.* — System Tokens (Tier 2)
       // Semantic role tokens with com.figma.modes for Light/Dark alias references
-      function buildSysColorTokens(
-        refPalettes: RefPalettes,
-      ) {
+      function buildSysColorTokens(refPalettes: RefPalettes) {
         const tokens: Record<string, unknown> = {};
 
         // Collect all token names from both modes

@@ -208,9 +208,9 @@ describe("builder", () => {
 
     it("should produce Figma-compatible ref palette tokens with color objects", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const tone40 = result["theme.tokens.json"].ref.palette.primary[
+      const tone40 = result["theme.tokens.json"].ref.palette.primary![
         "40"
-      ] as {
+      ]! as {
         $type: string;
         $value: {
           colorSpace: string;
@@ -224,9 +224,9 @@ describe("builder", () => {
       expect(tone40.$type).toBe("color");
       expect(tone40.$value.colorSpace).toBe("srgb");
       expect(tone40.$value.components).toHaveLength(3);
-      expect(
-        tone40.$value.components.every((c) => c >= 0 && c <= 1),
-      ).toBe(true);
+      expect(tone40.$value.components.every((c) => c >= 0 && c <= 1)).toBe(
+        true,
+      );
       expect(tone40.$value.alpha).toBe(1);
       expect(tone40.$value.hex).toMatch(/^#[0-9A-F]{6}$/);
       expect(tone40.$extensions["com.figma.scopes"]).toEqual(["ALL_SCOPES"]);
@@ -293,7 +293,9 @@ describe("builder", () => {
         .palette.primary as Record<string, { $value: { hex: string } }>;
 
       // Palette tones should be identical regardless of adaptiveShades
-      expect(palette["40"].$value.hex).toBe(paletteNoAdaptive["40"].$value.hex);
+      expect(palette["40"]!.$value.hex).toBe(
+        paletteNoAdaptive["40"]!.$value.hex,
+      );
     });
 
     it("should include custom color palettes and scheme tokens", () => {

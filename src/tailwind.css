@@ -6,11 +6,15 @@
   --color-surface: var(--md-sys-color-surface);
   --color-surface-dim: var(--md-sys-color-surface-dim);
   --color-surface-bright: var(--md-sys-color-surface-bright);
-  --color-surface-container-lowest: var(--md-sys-color-surface-container-lowest);
+  --color-surface-container-lowest: var(
+    --md-sys-color-surface-container-lowest
+  );
   --color-surface-container-low: var(--md-sys-color-surface-container-low);
   --color-surface-container: var(--md-sys-color-surface-container);
   --color-surface-container-high: var(--md-sys-color-surface-container-high);
-  --color-surface-container-highest: var(--md-sys-color-surface-container-highest);
+  --color-surface-container-highest: var(
+    --md-sys-color-surface-container-highest
+  );
   --color-on-surface: var(--md-sys-color-on-surface);
   --color-on-surface-variant: var(--md-sys-color-on-surface-variant);
   --color-outline: var(--md-sys-color-outline);
@@ -24,7 +28,9 @@
   --color-primary-fixed: var(--md-sys-color-primary-fixed);
   --color-primary-fixed-dim: var(--md-sys-color-primary-fixed-dim);
   --color-on-primary-fixed: var(--md-sys-color-on-primary-fixed);
-  --color-on-primary-fixed-variant: var(--md-sys-color-on-primary-fixed-variant);
+  --color-on-primary-fixed-variant: var(
+    --md-sys-color-on-primary-fixed-variant
+  );
   --color-inverse-primary: var(--md-sys-color-inverse-primary);
   --color-secondary: var(--md-sys-color-secondary);
   --color-on-secondary: var(--md-sys-color-on-secondary);
@@ -33,7 +39,9 @@
   --color-secondary-fixed: var(--md-sys-color-secondary-fixed);
   --color-secondary-fixed-dim: var(--md-sys-color-secondary-fixed-dim);
   --color-on-secondary-fixed: var(--md-sys-color-on-secondary-fixed);
-  --color-on-secondary-fixed-variant: var(--md-sys-color-on-secondary-fixed-variant);
+  --color-on-secondary-fixed-variant: var(
+    --md-sys-color-on-secondary-fixed-variant
+  );
   --color-tertiary: var(--md-sys-color-tertiary);
   --color-on-tertiary: var(--md-sys-color-on-tertiary);
   --color-tertiary-container: var(--md-sys-color-tertiary-container);
@@ -41,7 +49,9 @@
   --color-tertiary-fixed: var(--md-sys-color-tertiary-fixed);
   --color-tertiary-fixed-dim: var(--md-sys-color-tertiary-fixed-dim);
   --color-on-tertiary-fixed: var(--md-sys-color-on-tertiary-fixed);
-  --color-on-tertiary-fixed-variant: var(--md-sys-color-on-tertiary-fixed-variant);
+  --color-on-tertiary-fixed-variant: var(
+    --md-sys-color-on-tertiary-fixed-variant
+  );
   --color-error: var(--md-sys-color-error);
   --color-on-error: var(--md-sys-color-on-error);
   --color-error-container: var(--md-sys-color-error-container);
@@ -129,7 +139,9 @@
 
   --color-myCustomColor1: var(--md-sys-color-my-custom-color-1);
   --color-on-myCustomColor1: var(--md-sys-color-on-my-custom-color-1);
-  --color-myCustomColor1-container: var(--md-sys-color-my-custom-color-1-container);
+  --color-myCustomColor1-container: var(
+    --md-sys-color-my-custom-color-1-container
+  );
   --color-on-myCustomColor1-container: var(
     --md-sys-color-on-my-custom-color-1-container
   );
@@ -148,7 +160,9 @@
 
   --color-myCustomColor2: var(--md-sys-color-my-custom-color-2);
   --color-on-myCustomColor2: var(--md-sys-color-on-my-custom-color-2);
-  --color-myCustomColor2-container: var(--md-sys-color-my-custom-color-2-container);
+  --color-myCustomColor2-container: var(
+    --md-sys-color-my-custom-color-2-container
+  );
   --color-on-myCustomColor2-container: var(
     --md-sys-color-on-my-custom-color-2-container
   );
