@@ -1,4 +1,4 @@
-# react-mcu
+# material-theme-builder
 
 ## 1.3.2
 

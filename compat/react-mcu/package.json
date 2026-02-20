@@ -1,0 +1,43 @@
+{
+  "name": "react-mcu",
+  "version": "2.0.0",
+  "description": "⚠️ DEPRECATED — this package has been renamed to material-theme-builder",
+  "keywords": [
+    "material-design",
+    "material-theme",
+    "color",
+    "design-tokens",
+    "react",
+    "typescript"
+  ],
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    },
+    "./tailwind.css": {
+      "import": "material-theme-builder/tailwind.css"
+    }
+  },
+  "homepage": "https://github.com/abernier/react-mcu",
+  "bugs": {
+    "url": "https://github.com/abernier/react-mcu/issues"
+  },
+  "author": "abernier",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abernier/react-mcu.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "react-mcu": "./cli.js"
+  },
+  "dependencies": {
+    "material-theme-builder": "^2.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}
