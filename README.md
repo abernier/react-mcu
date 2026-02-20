@@ -5,7 +5,7 @@
 [Material Design colors](https://m3.material.io/styles/color/system/overview)
 for React.
 
-It injects `--mcu-*` CSS variables into the page.
+It injects `--md-sys-color-*` and `--md-ref-palette-*` CSS variables into the page (prefix is [configurable](#programmatic-api)).
 
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
@@ -54,12 +54,12 @@ import { Mcu } from "react-mcu";
   ]}
 >
   <p style={{
-    backgroundColor: "var(--mcu-surface)",
-    color: "var(--mcu-on-surface)",
+    backgroundColor: "var(--md-sys-color-surface)",
+    color: "var(--md-sys-color-on-surface)",
   }}>
     Hello, MCU <span style={{
-      backgroundColor: "var(--mcu-my-custom-color-1)",
-      color: "var(--mcu-on-my-custom-color-1)",
+      backgroundColor: "var(--md-sys-color-my-custom-color-1)",
+      color: "var(--md-sys-color-on-my-custom-color-1)",
     }}>colors<span>!
   </p>
 </Mcu>
@@ -72,8 +72,8 @@ import { Mcu } from "react-mcu";
 
 > [!NOTE]
 >
-> CSS varnames are always kebab-cased, `myCustomColor1` →
-> `--mcu-my-custom-color-1`
+> CSS varnames are always kebab-cased, e.g. `myCustomColor1` →
+> `--md-sys-color-my-custom-color-1` / `--md-ref-palette-my-custom-color-1-<tone>`
 
 ## `useMcu`
 
@@ -128,37 +128,37 @@ Simply override/remap
 
 :root,
 .dark {
-  --background: var(--mcu-surface);
-  --foreground: var(--mcu-on-surface);
-  --card: var(--mcu-surface-container-low);
-  --card-foreground: var(--mcu-on-surface);
-  --popover: var(--mcu-surface-container-high);
-  --popover-foreground: var(--mcu-on-surface);
-  --primary: var(--mcu-primary);
-  --primary-foreground: var(--mcu-on-primary);
-  --secondary: var(--mcu-secondary-container);
-  --secondary-foreground: var(--mcu-on-secondary-container);
-  --muted: var(--mcu-surface-container-highest);
-  --muted-foreground: var(--mcu-on-surface-variant);
-  --accent: var(--mcu-secondary-container);
-  --accent-foreground: var(--mcu-on-secondary-container);
-  --destructive: var(--mcu-error);
-  --border: var(--mcu-outline-variant);
-  --input: var(--mcu-outline);
-  --ring: var(--mcu-primary);
-  --chart-1: var(--mcu-primary-fixed);
-  --chart-2: var(--mcu-secondary-fixed);
-  --chart-3: var(--mcu-tertiary-fixed);
-  --chart-4: var(--mcu-primary-fixed-dim);
-  --chart-5: var(--mcu-secondary-fixed-dim);
-  --sidebar: var(--mcu-surface-container-low);
-  --sidebar-foreground: var(--mcu-on-surface);
-  --sidebar-primary: var(--mcu-primary);
-  --sidebar-primary-foreground: var(--mcu-on-primary);
-  --sidebar-accent: var(--mcu-secondary-container);
-  --sidebar-accent-foreground: var(--mcu-on-secondary-container);
-  --sidebar-border: var(--mcu-outline-variant);
-  --sidebar-ring: var(--mcu-primary);
+  --background: var(--md-sys-color-surface);
+  --foreground: var(--md-sys-color-on-surface);
+  --card: var(--md-sys-color-surface-container-low);
+  --card-foreground: var(--md-sys-color-on-surface);
+  --popover: var(--md-sys-color-surface-container-high);
+  --popover-foreground: var(--md-sys-color-on-surface);
+  --primary: var(--md-sys-color-primary);
+  --primary-foreground: var(--md-sys-color-on-primary);
+  --secondary: var(--md-sys-color-secondary-container);
+  --secondary-foreground: var(--md-sys-color-on-secondary-container);
+  --muted: var(--md-sys-color-surface-container-highest);
+  --muted-foreground: var(--md-sys-color-on-surface-variant);
+  --accent: var(--md-sys-color-secondary-container);
+  --accent-foreground: var(--md-sys-color-on-secondary-container);
+  --destructive: var(--md-sys-color-error);
+  --border: var(--md-sys-color-outline-variant);
+  --input: var(--md-sys-color-outline);
+  --ring: var(--md-sys-color-primary);
+  --chart-1: var(--md-sys-color-primary-fixed);
+  --chart-2: var(--md-sys-color-secondary-fixed);
+  --chart-3: var(--md-sys-color-tertiary-fixed);
+  --chart-4: var(--md-sys-color-primary-fixed-dim);
+  --chart-5: var(--md-sys-color-secondary-fixed-dim);
+  --sidebar: var(--md-sys-color-surface-container-low);
+  --sidebar-foreground: var(--md-sys-color-on-surface);
+  --sidebar-primary: var(--md-sys-color-primary);
+  --sidebar-primary-foreground: var(--md-sys-color-on-primary);
+  --sidebar-accent: var(--md-sys-color-secondary-container);
+  --sidebar-accent-foreground: var(--md-sys-color-on-secondary-container);
+  --sidebar-border: var(--md-sys-color-outline-variant);
+  --sidebar-ring: var(--md-sys-color-primary);
 }
 ```
 

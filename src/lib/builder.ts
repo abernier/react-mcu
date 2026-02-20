@@ -110,6 +110,12 @@ export type McuConfig = {
    * When false (default), tonal palette values remain constant across light/dark mode.
    */
   adaptiveShades?: boolean;
+  /**
+   * Prefix for generated CSS custom properties and Figma token css.variable extensions.
+   * Scheme tokens use `--{prefix}-sys-color-*`, palette tones use `--{prefix}-ref-palette-*`.
+   * Default: "md" (Material Design convention).
+   */
+  prefix?: string;
 };
 
 type SchemeConstructor = new (
@@ -146,9 +152,16 @@ export const DEFAULT_CONTRAST_ALL_COLORS = false;
 export const DEFAULT_ADAPTIVE_SHADES = false;
 export const DEFAULT_BLEND = true;
 export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
+export const DEFAULT_PREFIX = "md";
 
 // The set of standard tone values used in Material You tonal palettes
 export const STANDARD_TONES = [
+  0, 4, 5, 6, 10, 12, 15, 17, 20, 22, 24, 25, 30, 35, 40, 50, 60, 70, 80, 87,
+  90, 92, 94, 95, 96, 98, 99, 100,
+] as const;
+
+// The 18 baseline tones matching Material Theme Builder JSON output
+const MTB_TONES = [
   0, 5, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 95, 98, 99, 100,
 ] as const;
 
@@ -175,59 +188,100 @@ const schemeToVariant: Record<SchemeName, number> = {
   content: Variant.CONTENT,
 };
 
-export const tokenNames = [
-  "background",
-  "error",
-  "errorContainer",
-  "inverseOnSurface",
-  "inversePrimary",
-  "inverseSurface",
-  "onBackground",
-  "onError",
-  "onErrorContainer",
-  "onPrimary",
-  "onPrimaryContainer",
-  "onPrimaryFixed",
-  "onPrimaryFixedVariant",
-  "onSecondary",
-  "onSecondaryContainer",
-  "onSecondaryFixed",
-  "onSecondaryFixedVariant",
-  "onSurface",
-  "onSurfaceVariant",
-  "onTertiary",
-  "onTertiaryContainer",
-  "onTertiaryFixed",
-  "onTertiaryFixedVariant",
-  "outline",
-  "outlineVariant",
-  "primary",
-  "primaryContainer",
-  "primaryFixed",
-  "primaryFixedDim",
-  "scrim",
-  "secondary",
-  "secondaryContainer",
-  "secondaryFixed",
-  "secondaryFixedDim",
-  "shadow",
-  "surface",
-  "surfaceBright",
-  "surfaceContainer",
-  "surfaceContainerHigh",
-  "surfaceContainerHighest",
-  "surfaceContainerLow",
-  "surfaceContainerLowest",
-  "surfaceDim",
-  "surfaceTint",
-  "surfaceVariant",
-  "tertiary",
-  "tertiaryContainer",
-  "tertiaryFixed",
-  "tertiaryFixedDim",
-] as const;
+// Material Design 3 token names and their descriptions.
+// Centralizes both the canonical list of scheme tokens and their M3 color role semantics.
+// see: https://m3.material.io/styles/color/the-color-system/color-roles
+export const tokenDescriptions = {
+  background: "Default background color for screens and large surfaces.",
+  error: "Color for error states, used on elements like error text and icons.",
+  errorContainer: "Fill color for error container elements like error banners.",
+  inverseOnSurface: "Color for text and icons on inverse surface backgrounds.",
+  inversePrimary:
+    "Primary color used on inverse surface, e.g. buttons on snackbars.",
+  inverseSurface:
+    "Background for elements that require reverse contrast, such as snackbars.",
+  onBackground: "Color for text and icons displayed on the background.",
+  onError: "Color for text and icons on error-colored elements.",
+  onErrorContainer: "Color for text and icons on error container elements.",
+  onPrimary:
+    "Color for text and icons on primary-colored elements like filled buttons.",
+  onPrimaryContainer:
+    "Color for text and icons on primary container elements like tonal buttons.",
+  onPrimaryFixed:
+    "Color for text and icons on primary fixed elements, constant across themes.",
+  onPrimaryFixedVariant:
+    "Lower-emphasis color for text and icons on primary fixed elements.",
+  onSecondary: "Color for text and icons on secondary-colored elements.",
+  onSecondaryContainer:
+    "Color for text and icons on secondary container elements.",
+  onSecondaryFixed:
+    "Color for text and icons on secondary fixed elements, constant across themes.",
+  onSecondaryFixedVariant:
+    "Lower-emphasis color for text and icons on secondary fixed elements.",
+  onSurface: "High-emphasis color for text and icons on surface backgrounds.",
+  onSurfaceVariant:
+    "Medium-emphasis color for text and icons on surface variant backgrounds.",
+  onTertiary: "Color for text and icons on tertiary-colored elements.",
+  onTertiaryContainer:
+    "Color for text and icons on tertiary container elements.",
+  onTertiaryFixed:
+    "Color for text and icons on tertiary fixed elements, constant across themes.",
+  onTertiaryFixedVariant:
+    "Lower-emphasis color for text and icons on tertiary fixed elements.",
+  outline: "Subtle color for borders and dividers to create visual separation.",
+  outlineVariant: "Lower-emphasis border color used for decorative dividers.",
+  primary:
+    "Main brand color, used for key components like filled buttons and active states.",
+  primaryContainer:
+    "Fill color for large primary elements like cards and tonal buttons.",
+  primaryFixed:
+    "Fixed primary color that stays the same in light and dark themes.",
+  primaryFixedDim:
+    "Dimmed variant of the fixed primary color for lower emphasis.",
+  scrim: "Color overlay for modals and dialogs to obscure background content.",
+  secondary:
+    "Accent color for less prominent elements like filter chips and selections.",
+  secondaryContainer:
+    "Fill color for secondary container elements like tonal buttons and input fields.",
+  secondaryFixed:
+    "Fixed secondary color that stays the same in light and dark themes.",
+  secondaryFixedDim:
+    "Dimmed variant of the fixed secondary color for lower emphasis.",
+  shadow: "Color for elevation shadows applied to surfaces and components.",
+  surface: "Default surface color for cards, sheets, and dialogs.",
+  surfaceBright:
+    "Brightest surface variant, used for elevated surfaces in dark themes.",
+  surfaceContainer:
+    "Middle-emphasis container color for grouping related content.",
+  surfaceContainerHigh:
+    "Higher-emphasis container color for elements like cards.",
+  surfaceContainerHighest:
+    "Highest-emphasis container color for text fields and other input areas.",
+  surfaceContainerLow:
+    "Lower-emphasis container color for subtle surface groupings.",
+  surfaceContainerLowest:
+    "Lowest-emphasis container, typically the lightest surface in light theme.",
+  surfaceDim:
+    "Dimmest surface variant, used for recessed areas or dark theme backgrounds.",
+  surfaceTint:
+    "Tint color applied to surfaces for subtle primary color elevation overlay.",
+  surfaceVariant:
+    "Alternative surface color for differentiated areas like sidebar backgrounds.",
+  tertiary:
+    "Third accent color for complementary elements that balance primary and secondary.",
+  tertiaryContainer:
+    "Fill color for tertiary container elements like complementary cards.",
+  tertiaryFixed:
+    "Fixed tertiary color that stays the same in light and dark themes.",
+  tertiaryFixedDim:
+    "Dimmed variant of the fixed tertiary color for lower emphasis.",
+} as const;
 
-export type TokenName = (typeof tokenNames)[number];
+export const tokenNames = Object.keys(
+  tokenDescriptions,
+) as (keyof typeof tokenDescriptions)[];
+
+export type TokenName = keyof typeof tokenDescriptions;
 
 // Helper to transform array to record
 function toRecord<T, K extends string, V>(
@@ -420,6 +474,7 @@ export function builder(
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
     contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
     adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
+    prefix = DEFAULT_PREFIX,
   }: Omit<McuConfig, "source"> = {},
 ) {
   const sourceArgb = argbFromHex(hexSource);
@@ -560,6 +615,57 @@ export function builder(
     contrastAllColors,
   );
 
+  // ── Shared token→palette mapping ──────────────────────────────────────
+  // Maps each MaterialDynamicColors token to its source palette name.
+  // Shared by toCss() (for var() references) and toFigmaTokens() (for DTCG aliases).
+  const schemePalettes: [string, TonalPalette][] = [
+    ["primary", lightScheme.primaryPalette],
+    ["secondary", lightScheme.secondaryPalette],
+    ["tertiary", lightScheme.tertiaryPalette],
+    ["error", lightScheme.errorPalette],
+    ["neutral", lightScheme.neutralPalette],
+    ["neutral-variant", lightScheme.neutralVariantPalette],
+  ];
+
+  // Maps each MaterialDynamicColors property to its source palette name
+  // by comparing palette references from the scheme.
+  function buildTokenToPaletteMap(
+    schemePalettes: [string, TonalPalette][],
+    scheme: DynamicScheme,
+  ) {
+    const result: Record<string, string> = {};
+    for (const propName of Object.getOwnPropertyNames(MaterialDynamicColors)) {
+      const dc =
+        MaterialDynamicColors[propName as keyof typeof MaterialDynamicColors];
+      if (!(dc instanceof DynamicColor)) continue;
+      const palette = dc.palette(scheme);
+      for (const [palName, pal] of schemePalettes) {
+        if (palette === pal) {
+          result[propName] = palName;
+          break;
+        }
+      }
+    }
+    return result;
+  }
+  const tokenToPalette = buildTokenToPaletteMap(schemePalettes, lightScheme);
+
+  // Set of kebab-cased palette names for custom color token resolution
+  const allPaletteNamesKebab = new Set(Object.keys(allPalettes).map(kebabCase));
+
+  // Derive the preferred palette name for a custom color token
+  function deriveCustomPaletteName(tokenName: string): string | undefined {
+    let baseName = tokenName;
+    if (/^on[A-Z]/.test(baseName) && baseName.length > 2) {
+      baseName = baseName.charAt(2).toLowerCase() + baseName.slice(3);
+    }
+    if (baseName.endsWith("Container")) {
+      baseName = baseName.slice(0, -"Container".length);
+    }
+    const kebab = kebabCase(baseName);
+    return allPaletteNamesKebab.has(kebab) ? kebab : undefined;
+  }
+
   return {
     //
     //  ██████ ███████ ███████
@@ -569,16 +675,75 @@ export function builder(
     //  ██████ ███████ ███████
     //
     toCss() {
-      function cssVar(colorName: string, colorValue: number) {
-        const name = `--mcu-${kebabCase(colorName)}`;
-        const value = hexFromArgb(colorValue);
-        return `${name}:${value};`; // eg: `--mcu-on-primary:#ffffff;`
+      // Build a lookup: hex → array of {paletteName, tone}
+      // Uses the same tone computation as generateTonalPaletteVars so that
+      // var() references resolve to the correct palette variable in each CSS rule.
+      function buildRefPaletteLookup(s: DynamicScheme) {
+        const lookup: Record<string, { paletteName: string; tone: number }[]> =
+          {};
+        for (const [name, palette] of Object.entries(allPalettes)) {
+          const paletteName = kebabCase(name);
+          for (const tone of STANDARD_TONES) {
+            let toneToUse: number = tone;
+            if (adaptiveShades && s.isDark) {
+              toneToUse = 100 - tone;
+            }
+            if (contrastAllColors) {
+              toneToUse = adjustToneForContrast(toneToUse, s.contrastLevel);
+            }
+            const hex = hexFromArgb(palette.tone(toneToUse));
+            if (!lookup[hex]) lookup[hex] = [];
+            lookup[hex].push({ paletteName, tone });
+          }
+        }
+        return lookup;
       }
 
-      function toCssVars(mergedColors: Record<string, number>) {
+      type RefPaletteLookup = ReturnType<typeof buildRefPaletteLookup>;
+
+      // Scheme tokens: --{prefix}-sys-color-<name>
+      // Resolves to var(--{prefix}-ref-palette-<palette>-<tone>) when a
+      // matching tonal-palette variable exists; falls back to raw hex.
+      function sysColorVar(
+        colorName: string,
+        colorValue: number,
+        lookup: RefPaletteLookup,
+      ) {
+        const name = `--${prefix}-sys-color-${kebabCase(colorName)}`;
+        const hex = hexFromArgb(colorValue);
+        const matches = lookup[hex];
+        if (matches && matches.length > 0) {
+          // Prefer the semantically correct palette via tokenToPalette,
+          // fall back to custom color palette derivation, then first match
+          const preferred =
+            tokenToPalette[colorName] ?? deriveCustomPaletteName(colorName);
+          const match =
+            (preferred
+              ? matches.find((m) => m.paletteName === preferred)
+              : undefined) ?? matches[0]!;
+          return `${name}:var(--${prefix}-ref-palette-${match.paletteName}-${match.tone});`;
+        }
+        return `${name}:${hex};`;
+      }
+
+      function toCssVars(
+        mergedColors: typeof mergedColorsLight,
+        lookup: RefPaletteLookup,
+      ) {
         return Object.entries(mergedColors)
-          .map(([name, value]) => cssVar(name, value))
+          .map(([name, value]) => sysColorVar(name, value, lookup))
           .join(" ");
+      }
+
+      // Tonal palette tokens: --{prefix}-ref-palette-<name>-<tone>
+      function refPaletteVar(
+        paletteName: string,
+        tone: number,
+        colorValue: number,
+      ) {
+        const name = `--${prefix}-ref-palette-${paletteName}-${tone}`;
+        const value = hexFromArgb(colorValue);
+        return `${name}:${value};`;
       }
 
       function generateTonalPaletteVars(
@@ -605,7 +770,7 @@ export function builder(
           }
 
           const color = palette.tone(toneToUse);
-          return cssVar(`${paletteName}-${tone}`, color);
+          return refPaletteVar(paletteName, tone, color);
         }).join(" ");
       }
 
@@ -624,8 +789,16 @@ export function builder(
           .join(" ");
       }
 
-      const lightVars = toCssVars(mergedColorsLight);
-      const darkVars = toCssVars(mergedColorsDark);
+      // Build per-mode lookups matching what's actually in each CSS rule
+      const lightLookup = buildRefPaletteLookup(lightScheme);
+      // Dark: use dark scheme lookup only when adaptive tonal vars differ;
+      // otherwise dark system tokens resolve against the same (light) tonal vars.
+      const darkLookup = adaptiveShades
+        ? buildRefPaletteLookup(darkScheme)
+        : lightLookup;
+
+      const lightVars = toCssVars(mergedColorsLight, lightLookup);
+      const darkVars = toCssVars(mergedColorsDark, darkLookup);
 
       const lightTonalVars = generateTonalVars(lightScheme);
       const darkTonalVars = generateTonalVars(darkScheme);
@@ -760,7 +933,7 @@ export function builder(
         function resolveOverridePalette(
           hex: string | undefined,
           role: "primaryPalette" | "neutralPalette" | "neutralVariantPalette",
-        ): TonalPalette | null {
+        ) {
           if (!hex) return null;
           return new SchemeClass(Hct.fromInt(argbFromHex(hex)), false, 0)[role];
         }
@@ -828,7 +1001,7 @@ export function builder(
         for (const name of RAW_PALETTE_NAMES) {
           const palette = rawPalettes[name];
           const tones: Record<string, string> = {};
-          for (const tone of STANDARD_TONES) {
+          for (const tone of MTB_TONES) {
             tones[tone.toString()] = hexFromArgb(
               palette.tone(tone),
             ).toUpperCase();
@@ -892,10 +1065,19 @@ export function builder(
     //
 
     toFigmaTokens() {
-      // Figma Variables compatible format
-      // Produces a map of filename → DTCG token documents with Figma extensions
-      // Each file represents one mode (Light, Dark)
+      // Figma Variables compatible format using M3 token architecture:
+      //   ref.palette.* — Reference Tokens (Tier 1): raw tonal palette values
+      //   sys.color.*   — System Tokens (Tier 2): semantic roles referencing palette tones
+      //
+      // System tokens use DTCG alias syntax {ref.palette.<name>.<tone>} to link
+      // to the reference palette, enabling Figma to create linked variables and
+      // making the relationship between roles and tones explicit for AI/dev tools.
+      //
+      // see: https://m3.material.io/foundations/design-tokens/overview
       // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
+
+      // tokenToPalette and schemePalettes are defined at builder scope
+      // and shared with toCss() for var() resolution.
 
       function argbToFigmaColorValue(argb: number) {
         return {
@@ -921,15 +1103,9 @@ export function builder(
         };
       }
 
-      function buildFigmaSchemeTokens(mergedColors: Record<string, number>) {
-        const tokens: Record<string, ReturnType<typeof figmaToken>> = {};
-        for (const [name, argb] of Object.entries(mergedColors)) {
-          tokens[startCase(name)] = figmaToken(argb);
-        }
-        return tokens;
-      }
-
-      function buildFigmaPaletteTokens(isDark: boolean) {
+      // Build ref.palette.* — Reference Tokens (Tier 1)
+      // Raw tonal palette values with direct color data (mode-independent)
+      function buildRefPaletteTokens() {
         const palettes: Record<
           string,
           Record<string, ReturnType<typeof figmaToken>>
@@ -940,12 +1116,6 @@ export function builder(
 
           for (const tone of STANDARD_TONES) {
             let toneToUse: number = tone;
-
-            // Invert tones for dark mode when adaptiveShades is enabled
-            if (adaptiveShades && isDark) {
-              toneToUse = 100 - tone;
-            }
-
             if (contrastAllColors) {
               toneToUse = adjustToneForContrast(toneToUse, contrast);
             }
@@ -959,14 +1129,112 @@ export function builder(
         return palettes;
       }
 
+      type RefPalettes = Record<
+        string,
+        Record<string, ReturnType<typeof figmaToken>>
+      >;
+
+      // Find a hex match in a single palette group, returning the alias path
+      function findToneInPalette(
+        hex: string,
+        paletteName: string,
+        tones: Record<string, ReturnType<typeof figmaToken>>,
+      ) {
+        for (const [tone, token] of Object.entries(tones)) {
+          if (token.$value.hex === hex) {
+            return `{ref.palette.${paletteName}.${tone}}`;
+          }
+        }
+        return null;
+      }
+
+      // deriveCustomPaletteName is defined at builder scope
+
+      // Resolve a scheme token's hex to a DTCG alias reference {ref.palette.<name>.<tone>}
+      // Prefers the semantically correct palette via tokenToPalette, falls back to any match
+      function findAlias(
+        hex: string,
+        tokenName: string,
+        refPalettes: RefPalettes,
+      ) {
+        const preferredPaletteKebab =
+          tokenToPalette[tokenName] ?? deriveCustomPaletteName(tokenName);
+        const preferredPalette = preferredPaletteKebab
+          ? startCase(preferredPaletteKebab)
+          : undefined;
+
+        // Search preferred palette first
+        if (preferredPalette && refPalettes[preferredPalette]) {
+          const match = findToneInPalette(
+            hex,
+            preferredPalette,
+            refPalettes[preferredPalette],
+          );
+          if (match) return match;
+        }
+
+        // Fall back to any palette
+        for (const [palName, tones] of Object.entries(refPalettes)) {
+          const match = findToneInPalette(hex, palName, tones);
+          if (match) return match;
+        }
+
+        return null;
+      }
+
+      // Resolve a mode value: DTCG alias string if a palette match is found,
+      // otherwise falls back to a direct color value object
+      function resolveModeValue(
+        argb: number,
+        tokenName: string,
+        refPalettes: RefPalettes,
+      ) {
+        const hex = hexFromArgb(argb).toUpperCase();
+        return (
+          findAlias(hex, tokenName, refPalettes) ?? argbToFigmaColorValue(argb)
+        );
+      }
+
+      // Build sys.color.* — System Tokens (Tier 2)
+      // Semantic role tokens for a single mode (Light or Dark)
+      function buildSysColorTokens(
+        mergedColors: typeof mergedColorsLight,
+        refPalettes: RefPalettes,
+      ) {
+        const tokens: Record<string, unknown> = {};
+
+        for (const [name, argb] of Object.entries(mergedColors)) {
+          const description = tokenDescriptions[name as TokenName];
+          const cssVar = `--${prefix}-sys-color-${kebabCase(name)}`;
+
+          const value = resolveModeValue(argb, name, refPalettes);
+
+          tokens[startCase(name)] = {
+            $type: "color" as const,
+            $value: value,
+            ...(description ? { $description: description } : {}),
+            $extensions: {
+              "com.figma.scopes": ["ALL_SCOPES"],
+              "css.variable": cssVar,
+            },
+          };
+        }
+        return tokens;
+      }
+
+      const refPalettes = buildRefPaletteTokens();
+
       function buildModeFile(
         modeName: string,
-        mergedColors: Record<string, number>,
-        isDark: boolean,
+        mergedColors: typeof mergedColorsLight,
       ) {
         return {
-          Schemes: buildFigmaSchemeTokens(mergedColors),
-          Palettes: buildFigmaPaletteTokens(isDark),
+          ref: {
+            palette: refPalettes,
+          },
+          sys: {
+            color: buildSysColorTokens(mergedColors, refPalettes),
+          },
           $extensions: {
             "com.figma.modeName": modeName,
           },
@@ -974,8 +1242,8 @@ export function builder(
       }
 
       return {
-        "Light.tokens.json": buildModeFile("Light", mergedColorsLight, false),
-        "Dark.tokens.json": buildModeFile("Dark", mergedColorsDark, true),
+        "Light.tokens.json": buildModeFile("Light", mergedColorsLight),
+        "Dark.tokens.json": buildModeFile("Dark", mergedColorsDark),
       };
     },
 

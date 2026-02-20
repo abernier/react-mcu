@@ -80,7 +80,9 @@ describe("builder", () => {
     const result = builder("#769CDF").toCss();
     expect(result).toContain(":root {");
     expect(result).toContain(".dark {");
-    expect(result).toContain("--mcu-primary");
+    expect(result).toContain(
+      "--md-sys-color-primary:var(--md-ref-palette-primary-",
+    );
   });
 
   describe("toFigmaTokens()", () => {
@@ -168,60 +170,58 @@ describe("builder", () => {
       expect(Object.keys(result)).toHaveLength(2);
     });
 
-    it("should include com.figma.modeName extension on each file", () => {
+    it("should contain ref.palette and sys.color groups in each mode file", () => {
       const result = builder("#6750A4").toFigmaTokens();
 
-      expect(
-        result["Light.tokens.json"].$extensions["com.figma.modeName"],
-      ).toBe("Light");
-      expect(result["Dark.tokens.json"].$extensions["com.figma.modeName"]).toBe(
-        "Dark",
-      );
-    });
-
-    it("should contain Schemes and Palettes groups in each mode", () => {
-      const result = builder("#6750A4").toFigmaTokens();
-
-      for (const file of Object.values(result)) {
-        expect(file).toHaveProperty("Schemes");
-        expect(file).toHaveProperty("Palettes");
+      for (const key of ["Light.tokens.json", "Dark.tokens.json"] as const) {
+        const file = result[key];
+        expect(file).toHaveProperty("ref");
+        expect(file.ref).toHaveProperty("palette");
+        expect(file).toHaveProperty("sys");
+        expect(file.sys).toHaveProperty("color");
       }
     });
 
     it("should use Title Case names for scheme tokens", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const lightSchemes = result["Light.tokens.json"].Schemes;
+      const sysColor = result["Light.tokens.json"].sys.color;
 
-      expect(lightSchemes).toHaveProperty("Primary");
-      expect(lightSchemes).toHaveProperty("On Primary");
-      expect(lightSchemes).toHaveProperty("Surface Container High");
+      expect(sysColor).toHaveProperty("Primary");
+      expect(sysColor).toHaveProperty("On Primary");
+      expect(sysColor).toHaveProperty("Surface Container High");
     });
 
     it("should use Title Case names for palette groups", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const lightPalettes = result["Light.tokens.json"].Palettes;
+      const refPalette = result["Light.tokens.json"].ref.palette;
 
-      expect(lightPalettes).toHaveProperty("Primary");
-      expect(lightPalettes).toHaveProperty("Secondary");
-      expect(lightPalettes).toHaveProperty("Tertiary");
-      expect(lightPalettes).toHaveProperty("Error");
-      expect(lightPalettes).toHaveProperty("Neutral");
-      expect(lightPalettes).toHaveProperty("Neutral Variant");
+      expect(refPalette).toHaveProperty("Primary");
+      expect(refPalette).toHaveProperty("Secondary");
+      expect(refPalette).toHaveProperty("Tertiary");
+      expect(refPalette).toHaveProperty("Error");
+      expect(refPalette).toHaveProperty("Neutral");
+      expect(refPalette).toHaveProperty("Neutral Variant");
     });
 
     it("should include all standard tones in each palette", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const primaryPalette = result["Light.tokens.json"].Palettes
-        .Primary as Record<string, unknown>;
+      const primaryPalette = result["Light.tokens.json"].ref.palette[
+        "Primary"
+      ] as Record<string, unknown>;
 
       for (const tone of STANDARD_TONES) {
         expect(primaryPalette).toHaveProperty(tone.toString());
       }
     });
 
-    it("should produce Figma-compatible color tokens with scopes and alpha", () => {
+    it("should produce Figma-compatible ref palette tokens with color objects", () => {
       const result = builder("#6750A4").toFigmaTokens();
-      const primaryToken = result["Light.tokens.json"].Schemes.Primary as {
+      const tone40 = (
+        result["Light.tokens.json"].ref.palette as Record<
+          string,
+          Record<string, unknown>
+        >
+      )["Primary"]!["40"]! as {
         $type: string;
         $value: {
           colorSpace: string;
@@ -232,66 +232,101 @@ describe("builder", () => {
         $extensions: Record<string, unknown>;
       };
 
-      expect(primaryToken.$type).toBe("color");
-      expect(primaryToken.$value.colorSpace).toBe("srgb");
-      expect(primaryToken.$value.components).toHaveLength(3);
-      expect(
-        primaryToken.$value.components.every((c) => c >= 0 && c <= 1),
-      ).toBe(true);
-      expect(primaryToken.$value.alpha).toBe(1);
-      expect(primaryToken.$value.hex).toMatch(/^#[0-9A-F]{6}$/);
-      expect(primaryToken.$extensions["com.figma.scopes"]).toEqual([
+      expect(tone40.$type).toBe("color");
+      expect(tone40.$value.colorSpace).toBe("srgb");
+      expect(tone40.$value.components).toHaveLength(3);
+      expect(tone40.$value.components.every((c) => c >= 0 && c <= 1)).toBe(
+        true,
+      );
+      expect(tone40.$value.alpha).toBe(1);
+      expect(tone40.$value.hex).toMatch(/^#[0-9A-F]{6}$/);
+      expect(tone40.$extensions["com.figma.scopes"]).toEqual(["ALL_SCOPES"]);
+    });
+
+    it("should produce sys tokens with alias references in each mode file", () => {
+      const result = builder("#6750A4").toFigmaTokens();
+      const lightPrimary = (
+        result["Light.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
+        $type: string;
+        $value: string;
+        $description: string;
+        $extensions: Record<string, unknown>;
+      };
+      const darkPrimary = (
+        result["Dark.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
+        $type: string;
+        $value: string;
+        $extensions: Record<string, unknown>;
+      };
+
+      expect(lightPrimary.$type).toBe("color");
+      expect(lightPrimary.$value).toMatch(/^\{ref\.palette\..+\}$/);
+      expect(lightPrimary.$description).toBeDefined();
+      expect(lightPrimary.$extensions["com.figma.scopes"]).toEqual([
         "ALL_SCOPES",
       ]);
-      expect(primaryToken.$extensions["com.figma.isOverride"]).toBe(true);
+      expect(lightPrimary.$extensions["css.variable"]).toBe(
+        "--md-sys-color-primary",
+      );
+
+      expect(darkPrimary.$type).toBe("color");
+      expect(darkPrimary.$value).toMatch(/^\{ref\.palette\..+\}$/);
+
+      // Light and Dark should reference different tones
+      expect(lightPrimary.$value).not.toBe(darkPrimary.$value);
     });
 
-    it("should have different scheme values between Light and Dark", () => {
+    it("should have different aliases for scheme tokens across modes", () => {
       const result = builder("#6750A4").toFigmaTokens();
-
-      const lightPrimary = result["Light.tokens.json"].Schemes.Primary as {
-        $value: { hex: string };
+      const lightPrimary = (
+        result["Light.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
+        $value: string;
       };
-      const darkPrimary = result["Dark.tokens.json"].Schemes.Primary as {
-        $value: { hex: string };
+      const darkPrimary = (
+        result["Dark.tokens.json"].sys.color as Record<string, unknown>
+      )["Primary"] as {
+        $value: string;
       };
 
-      expect(lightPrimary.$value.hex).not.toBe(darkPrimary.$value.hex);
+      // Primary is tone 40 in Light, tone 80 in Dark
+      expect(lightPrimary.$value).not.toBe(darkPrimary.$value);
     });
 
-    it("should produce different palette tones for dark mode when adaptiveShades is enabled", () => {
+    it("should produce mode-independent ref palette tones", () => {
+      // ref palette is always the same in both mode files
+      // (adaptiveShades only affects CSS output, not Figma tokens)
       const result = builder("#6750A4", {
         adaptiveShades: true,
       }).toFigmaTokens();
-
-      const lightTone40 = result["Light.tokens.json"].Palettes.Primary![
-        "40"
-      ] as {
-        $value: { hex: string };
-      };
-      const darkTone40 = result["Dark.tokens.json"].Palettes.Primary!["40"] as {
-        $value: { hex: string };
-      };
-
-      // With adaptiveShades, dark tone 40 should map to tone 60 (100 - 40)
-      expect(lightTone40.$value.hex).not.toBe(darkTone40.$value.hex);
-    });
-
-    it("should produce identical palette tones for dark/light when adaptiveShades is disabled", () => {
-      const result = builder("#6750A4", {
+      const resultNoAdaptive = builder("#6750A4", {
         adaptiveShades: false,
       }).toFigmaTokens();
 
-      const lightTone40 = result["Light.tokens.json"].Palettes.Primary![
-        "40"
-      ] as {
-        $value: { hex: string };
-      };
-      const darkTone40 = result["Dark.tokens.json"].Palettes.Primary!["40"] as {
-        $value: { hex: string };
-      };
+      const palette = (
+        result["Light.tokens.json"].ref.palette as Record<
+          string,
+          Record<string, { $value: { hex: string } }>
+        >
+      )["Primary"]!;
+      const paletteNoAdaptive = (
+        resultNoAdaptive["Light.tokens.json"].ref.palette as Record<
+          string,
+          Record<string, { $value: { hex: string } }>
+        >
+      )["Primary"]!;
 
-      expect(lightTone40.$value.hex).toBe(darkTone40.$value.hex);
+      // Palette tones should be identical regardless of adaptiveShades
+      expect(palette["40"]!.$value.hex).toBe(
+        paletteNoAdaptive["40"]!.$value.hex,
+      );
+
+      // Both mode files should share the same ref palette
+      const lightPalette = result["Light.tokens.json"].ref.palette;
+      const darkPalette = result["Dark.tokens.json"].ref.palette;
+      expect(lightPalette).toEqual(darkPalette);
     });
 
     it("should include custom color palettes and scheme tokens", () => {
@@ -299,28 +334,33 @@ describe("builder", () => {
         customColors: [{ name: "brand", hex: "#FF5733", blend: true }],
       }).toFigmaTokens();
 
-      // Custom color should appear in palettes
-      expect(result["Light.tokens.json"].Palettes).toHaveProperty("Brand");
-      expect(result["Dark.tokens.json"].Palettes).toHaveProperty("Brand");
+      for (const key of ["Light.tokens.json", "Dark.tokens.json"] as const) {
+        const file = result[key];
 
-      // Custom color scheme tokens
-      expect(result["Light.tokens.json"].Schemes).toHaveProperty("Brand");
-      expect(result["Light.tokens.json"].Schemes).toHaveProperty("On Brand");
-      expect(result["Light.tokens.json"].Schemes).toHaveProperty(
-        "Brand Container",
-      );
-      expect(result["Light.tokens.json"].Schemes).toHaveProperty(
-        "On Brand Container",
-      );
+        // Custom color should appear in ref palette
+        expect(file.ref.palette).toHaveProperty("Brand");
 
-      expect(result["Dark.tokens.json"].Schemes).toHaveProperty("Brand");
-      expect(result["Dark.tokens.json"].Schemes).toHaveProperty("On Brand");
-      expect(result["Dark.tokens.json"].Schemes).toHaveProperty(
-        "Brand Container",
-      );
-      expect(result["Dark.tokens.json"].Schemes).toHaveProperty(
-        "On Brand Container",
-      );
+        // Custom color scheme tokens in sys.color
+        expect(file.sys.color).toHaveProperty("Brand");
+        expect(file.sys.color).toHaveProperty("On Brand");
+        expect(file.sys.color).toHaveProperty("Brand Container");
+        expect(file.sys.color).toHaveProperty("On Brand Container");
+      }
+    });
+
+    it("should contain com.figma.modeName in each mode file", () => {
+      const result = builder("#6750A4").toFigmaTokens();
+
+      const lightExt = result["Light.tokens.json"].$extensions as Record<
+        string,
+        unknown
+      >;
+      const darkExt = result["Dark.tokens.json"].$extensions as Record<
+        string,
+        unknown
+      >;
+      expect(lightExt["com.figma.modeName"]).toBe("Light");
+      expect(darkExt["com.figma.modeName"]).toBe("Dark");
     });
   });
 });
