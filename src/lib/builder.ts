@@ -615,6 +615,57 @@ export function builder(
     contrastAllColors,
   );
 
+  // ── Shared token→palette mapping ──────────────────────────────────────
+  // Maps each MaterialDynamicColors token to its source palette name.
+  // Shared by toCss() (for var() references) and toFigmaTokens() (for DTCG aliases).
+  const schemePalettes: [string, TonalPalette][] = [
+    ["primary", lightScheme.primaryPalette],
+    ["secondary", lightScheme.secondaryPalette],
+    ["tertiary", lightScheme.tertiaryPalette],
+    ["error", lightScheme.errorPalette],
+    ["neutral", lightScheme.neutralPalette],
+    ["neutral-variant", lightScheme.neutralVariantPalette],
+  ];
+
+  // Maps each MaterialDynamicColors property to its source palette name
+  // by comparing palette references from the scheme.
+  function buildTokenToPaletteMap(
+    schemePalettes: [string, TonalPalette][],
+    scheme: DynamicScheme,
+  ) {
+    const result: Record<string, string> = {};
+    for (const propName of Object.getOwnPropertyNames(MaterialDynamicColors)) {
+      const dc =
+        MaterialDynamicColors[propName as keyof typeof MaterialDynamicColors];
+      if (!(dc instanceof DynamicColor)) continue;
+      const palette = dc.palette(scheme);
+      for (const [palName, pal] of schemePalettes) {
+        if (palette === pal) {
+          result[propName] = palName;
+          break;
+        }
+      }
+    }
+    return result;
+  }
+  const tokenToPalette = buildTokenToPaletteMap(schemePalettes, lightScheme);
+
+  // Set of kebab-cased palette names for custom color token resolution
+  const allPaletteNamesKebab = new Set(Object.keys(allPalettes).map(kebabCase));
+
+  // Derive the preferred palette name for a custom color token
+  function deriveCustomPaletteName(tokenName: string): string | undefined {
+    let baseName = tokenName;
+    if (/^on[A-Z]/.test(baseName) && baseName.length > 2) {
+      baseName = baseName.charAt(2).toLowerCase() + baseName.slice(3);
+    }
+    if (baseName.endsWith("Container")) {
+      baseName = baseName.slice(0, -"Container".length);
+    }
+    const kebab = kebabCase(baseName);
+    return allPaletteNamesKebab.has(kebab) ? kebab : undefined;
+  }
+
   return {
     //
     //  ██████ ███████ ███████
@@ -624,16 +675,63 @@ export function builder(
     //  ██████ ███████ ███████
     //
     toCss() {
-      // Scheme tokens: --{prefix}-sys-color-<name>
-      function sysColorVar(colorName: string, colorValue: number) {
-        const name = `--${prefix}-sys-color-${kebabCase(colorName)}`;
-        const value = hexFromArgb(colorValue);
-        return `${name}:${value};`;
+      // Build a lookup: hex → array of {paletteName, tone}
+      // Uses the same tone computation as generateTonalPaletteVars so that
+      // var() references resolve to the correct palette variable in each CSS rule.
+      function buildRefPaletteLookup(s: DynamicScheme) {
+        const lookup: Record<string, { paletteName: string; tone: number }[]> =
+          {};
+        for (const [name, palette] of Object.entries(allPalettes)) {
+          const paletteName = kebabCase(name);
+          for (const tone of STANDARD_TONES) {
+            let toneToUse: number = tone;
+            if (adaptiveShades && s.isDark) {
+              toneToUse = 100 - tone;
+            }
+            if (contrastAllColors) {
+              toneToUse = adjustToneForContrast(toneToUse, s.contrastLevel);
+            }
+            const hex = hexFromArgb(palette.tone(toneToUse));
+            if (!lookup[hex]) lookup[hex] = [];
+            lookup[hex].push({ paletteName, tone });
+          }
+        }
+        return lookup;
       }
 
-      function toCssVars(mergedColors: typeof mergedColorsLight) {
+      type RefPaletteLookup = ReturnType<typeof buildRefPaletteLookup>;
+
+      // Scheme tokens: --{prefix}-sys-color-<name>
+      // Resolves to var(--{prefix}-ref-palette-<palette>-<tone>) when a
+      // matching tonal-palette variable exists; falls back to raw hex.
+      function sysColorVar(
+        colorName: string,
+        colorValue: number,
+        lookup: RefPaletteLookup,
+      ) {
+        const name = `--${prefix}-sys-color-${kebabCase(colorName)}`;
+        const hex = hexFromArgb(colorValue);
+        const matches = lookup[hex];
+        if (matches && matches.length > 0) {
+          // Prefer the semantically correct palette via tokenToPalette,
+          // fall back to custom color palette derivation, then first match
+          const preferred =
+            tokenToPalette[colorName] ?? deriveCustomPaletteName(colorName);
+          const match =
+            (preferred
+              ? matches.find((m) => m.paletteName === preferred)
+              : undefined) ?? matches[0]!;
+          return `${name}:var(--${prefix}-ref-palette-${match.paletteName}-${match.tone});`;
+        }
+        return `${name}:${hex};`;
+      }
+
+      function toCssVars(
+        mergedColors: typeof mergedColorsLight,
+        lookup: RefPaletteLookup,
+      ) {
         return Object.entries(mergedColors)
-          .map(([name, value]) => sysColorVar(name, value))
+          .map(([name, value]) => sysColorVar(name, value, lookup))
           .join(" ");
       }
 
@@ -691,8 +789,16 @@ export function builder(
           .join(" ");
       }
 
-      const lightVars = toCssVars(mergedColorsLight);
-      const darkVars = toCssVars(mergedColorsDark);
+      // Build per-mode lookups matching what's actually in each CSS rule
+      const lightLookup = buildRefPaletteLookup(lightScheme);
+      // Dark: use dark scheme lookup only when adaptive tonal vars differ;
+      // otherwise dark system tokens resolve against the same (light) tonal vars.
+      const darkLookup = adaptiveShades
+        ? buildRefPaletteLookup(darkScheme)
+        : lightLookup;
+
+      const lightVars = toCssVars(mergedColorsLight, lightLookup);
+      const darkVars = toCssVars(mergedColorsDark, darkLookup);
 
       const lightTonalVars = generateTonalVars(lightScheme);
       const darkTonalVars = generateTonalVars(darkScheme);
@@ -970,35 +1076,8 @@ export function builder(
       // see: https://m3.material.io/foundations/design-tokens/overview
       // see: https://www.figma.com/plugin-docs/api/properties/variables-importVariablesByKeyAsync/
 
-      // Derives each token's source palette by calling the palette() function
-      // on each MaterialDynamicColors DynamicColor with the given scheme, then
-      // comparing the returned TonalPalette by reference to the scheme's known
-      // palettes. This avoids a hardcoded mapping and stays correct as the
-      // library evolves.
-      const schemePalettes: [string, TonalPalette][] = [
-        ["primary", lightScheme.primaryPalette],
-        ["secondary", lightScheme.secondaryPalette],
-        ["tertiary", lightScheme.tertiaryPalette],
-        ["error", lightScheme.errorPalette],
-        ["neutral", lightScheme.neutralPalette],
-        ["neutral-variant", lightScheme.neutralVariantPalette],
-      ];
-
-      const tokenToPalette: Record<string, string> = {};
-      for (const propName of Object.getOwnPropertyNames(
-        MaterialDynamicColors,
-      )) {
-        const dc =
-          MaterialDynamicColors[propName as keyof typeof MaterialDynamicColors];
-        if (!(dc instanceof DynamicColor)) continue;
-        const palette = dc.palette(lightScheme);
-        for (const [palName, pal] of schemePalettes) {
-          if (palette === pal) {
-            tokenToPalette[propName] = palName;
-            break;
-          }
-        }
-      }
+      // tokenToPalette and schemePalettes are defined at builder scope
+      // and shared with toCss() for var() resolution.
 
       function argbToFigmaColorValue(argb: number) {
         return {
@@ -1069,21 +1148,7 @@ export function builder(
         return null;
       }
 
-      // Derive the preferred palette name for a custom color token
-      function deriveCustomPalette(
-        tokenName: string,
-        refPalettes: RefPalettes,
-      ) {
-        let baseName = tokenName;
-        if (/^on[A-Z]/.test(baseName) && baseName.length > 2) {
-          baseName = baseName.charAt(2).toLowerCase() + baseName.slice(3);
-        }
-        if (baseName.endsWith("Container")) {
-          baseName = baseName.slice(0, -"Container".length);
-        }
-        const kebab = kebabCase(baseName);
-        return kebab in refPalettes ? kebab : undefined;
-      }
+      // deriveCustomPaletteName is defined at builder scope
 
       // Resolve a scheme token's hex to a DTCG alias reference {ref.palette.<name>.<tone>}
       // Prefers the semantically correct palette via tokenToPalette, falls back to any match
@@ -1093,8 +1158,7 @@ export function builder(
         refPalettes: RefPalettes,
       ) {
         const preferredPalette =
-          tokenToPalette[tokenName] ??
-          deriveCustomPalette(tokenName, refPalettes);
+          tokenToPalette[tokenName] ?? deriveCustomPaletteName(tokenName);
 
         // Search preferred palette first
         if (preferredPalette && refPalettes[preferredPalette]) {
