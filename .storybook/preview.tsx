@@ -1,5 +1,5 @@
 import type { Preview } from "@storybook/react-vite";
-import "../src/tailwind.css";
+import "../packages/react-mcu/src/tailwind.css";
 import "./preview.css";
 
 import { withThemeByClassName } from "@storybook/addon-themes";

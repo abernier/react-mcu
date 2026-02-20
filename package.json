@@ -1,36 +1,6 @@
 {
-  "name": "react-mcu",
-  "version": "1.3.2",
-  "description": "A React component library",
-  "keywords": [
-    "react",
-    "component",
-    "typescript"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./tailwind.css": "./dist/tailwind.css"
-  },
-  "homepage": "https://github.com/abernier/react-mcu",
-  "bugs": {
-    "url": "https://github.com/abernier/react-mcu/issues"
-  },
-  "author": "abernier",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/abernier/react-mcu.git"
-  },
-  "license": "MIT",
-  "files": [
-    "dist",
-    "src/tailwind.css"
-  ],
-  "bin": {
-    "react-mcu": "./dist/cli.js"
-  },
+  "name": "material-theme-builder",
+  "private": true,
   "type": "module",
   "packageManager": "pnpm@10.27.0",
   "devDependencies": {
@@ -44,17 +14,10 @@
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.1",
-    "@types/culori": "^4.0.1",
-    "@types/lodash-es": "^4.17.12",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
-    "ajv": "^8.18.0",
-    "ajv-formats": "^3.0.1",
     "chromatic": "^15.1.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "culori": "^4.0.2",
     "eslint": "^10.0.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-sonarjs": "^3.0.7",
@@ -68,7 +31,6 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "storybook": "^10.1.11",
-    "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
     "tsup": "^8.2.4",
     "typescript": "^5.5.4",
@@ -76,30 +38,20 @@
     "vitest": "^4.0.16"
   },
   "scripts": {
-    "build": "tsup",
-    "lint": "eslint .",
+    "build": "pnpm --filter \"./packages/*\" run build",
+    "lint": "pnpm --filter \"./packages/*\" run lint",
     "lgtm": "pnpm run build && pnpm run lint && pnpm run check-format && pnpm run check-exports && pnpm run typecheck && pnpm run test",
-    "typecheck": "tsc",
-    "test": "vitest run",
-    "pretest": "bash scripts/download-dtcg-schemas.sh",
+    "typecheck": "pnpm --filter \"./packages/*\" run typecheck",
+    "test": "pnpm --filter \"./packages/*\" run test",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "check-exports": "attw --pack . --ignore-rules cjs-resolves-to-esm no-resolution",
+    "check-exports": "pnpm --filter \"./packages/*\" run check-exports",
     "release": "pnpm run build && changeset publish",
     "local-release": "pnpm run lgtm && changeset version && changeset publish",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "chromatic --project-token $CHROMATIC_PROJECT_TOKEN",
-    "prepare": "pnpm run pretest && husky",
+    "prepare": "husky",
     "changeset": "pnpm exec changeset"
-  },
-  "peerDependencies": {
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3"
-  },
-  "dependencies": {
-    "@material/material-color-utilities": "^0.3.0",
-    "commander": "^14.0.3",
-    "lodash-es": "^4.17.22"
   }
 }

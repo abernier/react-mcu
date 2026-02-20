@@ -16,8 +16,12 @@ export default defineConfig([
       options.jsx = "automatic";
     },
     onSuccess: async () => {
-      // Copy tailwind.css to dist
-      copyFileSync("src/tailwind.css", "dist/tailwind.css");
+      try {
+        // Copy tailwind.css to dist (for packages that have it)
+        copyFileSync("src/tailwind.css", "dist/tailwind.css");
+      } catch {
+        // Skip if file doesn't exist
+      }
     },
   },
   {

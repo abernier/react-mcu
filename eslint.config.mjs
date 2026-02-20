@@ -5,14 +5,14 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig([
   {
-    ignores: ["dist/**", "storybook-static/**", "node_modules/**"],
+    ignores: ["**/dist/**", "storybook-static/**", "**/node_modules/**"],
   },
   {
     ...reactHooks.configs.flat.recommended,
-    files: ["src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}"],
+    files: ["packages/**/src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}"],
   },
   {
-    files: ["src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}"],
+    files: ["packages/**/src/**/*.{ts,tsx}", ".storybook/**/*.{ts,tsx}"],
     languageOptions: {
       parser: tseslint.parser,
     },
