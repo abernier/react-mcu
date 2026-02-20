@@ -6,8 +6,8 @@ import {
 import type { Color, Lab65 } from "culori";
 import { converter, differenceCiede2000, parseHex } from "culori";
 import { kebabCase } from "lodash-es";
-import type { useMcu } from "../Mcu.context";
 import { STANDARD_TONES } from "material-theme-builder";
+import type { useMcu } from "../Mcu.context";
 
 /**
  * Options for recolorizeSvg

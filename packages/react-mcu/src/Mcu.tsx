@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import {
   DEFAULT_CONTRAST,
   DEFAULT_CUSTOM_COLORS,
@@ -8,6 +7,7 @@ import {
   DEFAULT_SCHEME,
   type McuConfig,
 } from "material-theme-builder";
+import { useMemo } from "react";
 import { McuProvider } from "./Mcu.context";
 
 const mcuStyleId = "mcu-styles";

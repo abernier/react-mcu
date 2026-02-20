@@ -2,13 +2,17 @@ import {
   hexFromArgb,
   type TonalPalette,
 } from "@material/material-color-utilities";
+import {
+  builder,
+  type McuConfig,
+  type TokenName,
+} from "material-theme-builder";
 import React, {
   useCallback,
   useInsertionEffect,
   useMemo,
   useState,
 } from "react";
-import { builder, type McuConfig, type TokenName } from "material-theme-builder";
 import { createRequiredContext } from "./lib/createRequiredContext";
 
 type Api = {

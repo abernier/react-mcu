@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { kebabCase, upperFirst } from "lodash-es";
-import type { ComponentProps } from "react";
 import { STANDARD_TONES } from "material-theme-builder";
+import type { ComponentProps } from "react";
 import { cn } from "./lib/cn";
 import { Mcu } from "./Mcu";
 
