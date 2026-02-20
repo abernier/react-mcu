@@ -7,7 +7,6 @@
 // ```sh
 // $ node dist/cli.js builder '#6750A4'
 // $ node dist/cli.js builder '#6750A4' --format css
-// $ node dist/cli.js builder '#6750A4' --adaptive-shades --format figma
 // ```
 
 import * as fs from "node:fs";
@@ -16,10 +15,8 @@ import * as path from "node:path";
 import { Command, Option } from "commander";
 import {
   builder,
-  DEFAULT_ADAPTIVE_SHADES,
   DEFAULT_BLEND,
   DEFAULT_CONTRAST,
-  DEFAULT_CONTRAST_ALL_COLORS,
   DEFAULT_PREFIX,
   DEFAULT_SCHEME,
   schemeNames,
@@ -57,16 +54,6 @@ program
   .option("--format <type>", "Output format: json, css, or figma", "figma")
   .option("--output <dir>", "Output directory (required for figma format)")
   .option(
-    "--adaptive-shades",
-    "Adapt tonal palette shades for dark mode",
-    DEFAULT_ADAPTIVE_SHADES,
-  )
-  .option(
-    "--contrast-all-colors",
-    "Apply contrast adjustment to tonal palette shades",
-    DEFAULT_CONTRAST_ALL_COLORS,
-  )
-  .option(
     "--prefix <string>",
     "CSS variable prefix (e.g. md → --md-sys-color-*, --md-ref-palette-*)",
     DEFAULT_PREFIX,
@@ -101,8 +88,6 @@ program
       neutral: opts.neutral,
       neutralVariant: opts.neutralVariant,
       customColors,
-      adaptiveShades: opts.adaptiveShades,
-      contrastAllColors: opts.contrastAllColors,
       prefix: opts.prefix,
     });
 

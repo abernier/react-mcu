@@ -21,45 +21,6 @@ import {
 } from "@material/material-color-utilities";
 import { kebabCase, startCase, upperFirst } from "lodash-es";
 
-// Helper function to adjust tone based on contrast level
-// This provides a simple linear adjustment similar to Material Design's approach
-// The adjustment factor controls how much the tone shifts per contrast level
-// - At contrast=1.0: tones shift by 20% of their distance from center (50) toward extremes
-// - At contrast=-1.0: tones shift by 20% toward the middle (50)
-// The logic is universal: it moves away from the gray middle (50)
-// - If tone > 50, it pushes toward 100 (lighter)
-// - If tone < 50, it pushes toward 0 (darker)
-// Returns a clamped value between 0 and 100
-function adjustToneForContrast(
-  baseTone: number,
-  contrastLevel: number,
-  adjustmentFactor: number = DEFAULT_CONTRAST_ADJUSTMENT_FACTOR,
-) {
-  if (contrastLevel === 0) return baseTone;
-
-  // Calculate the distance from the center (50)
-  // Ex: Tone 90 -> distance +40
-  // Ex: Tone 10 -> distance -40
-  const distanceToCenter = baseTone - 50;
-
-  // If contrastLevel is positive (ex: 1.0), amplify this distance
-  // If contrastLevel is negative (ex: -1.0), reduce this distance
-  // The change is proportional to the current distance from center
-  const delta = distanceToCenter * contrastLevel * adjustmentFactor;
-
-  // Example: Tone 90 (Light), Contrast 1.0
-  // delta = 40 * 1 * 0.2 = 8
-  // Result = 90 + 8 = 98 (Lighter -> Correct)
-
-  // Example: Tone 10 (Dark), Contrast 1.0
-  // delta = -40 * 1 * 0.2 = -8
-  // Result = 10 + (-8) = 2 (Darker -> Correct)
-
-  const adjustedTone = baseTone + delta;
-
-  return Math.max(0, Math.min(100, adjustedTone));
-}
-
 type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
@@ -98,19 +59,6 @@ export type McuConfig = {
    */
   customColors?: HexCustomColor[];
   /**
-   * Apply contrast adjustment to tonal palette shades when true.
-   * When true, all tonal palette shades are adjusted based on the contrast level.
-   * When false (default), contrast adjustments only apply to core Material Design tokens.
-   */
-  contrastAllColors?: boolean;
-  /**
-   * Adapt tonal palette shades for dark mode.
-   * When true, tonal palette shades automatically invert for dark mode
-   * (high values become dark, low values become light).
-   * When false (default), tonal palette values remain constant across light/dark mode.
-   */
-  adaptiveShades?: boolean;
-  /**
    * Prefix for generated CSS custom properties and Figma token css.variable extensions.
    * Scheme tokens use `--{prefix}-sys-color-*`, palette tones use `--{prefix}-ref-palette-*`.
    * Default: "md" (Material Design convention).
@@ -148,10 +96,7 @@ const schemesMap: Record<SchemeName, SchemeConstructor> = {
 export const DEFAULT_SCHEME: SchemeName = "tonalSpot";
 export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
-export const DEFAULT_CONTRAST_ALL_COLORS = false;
-export const DEFAULT_ADAPTIVE_SHADES = false;
 export const DEFAULT_BLEND = true;
-export const DEFAULT_CONTRAST_ADJUSTMENT_FACTOR = 0.2;
 export const DEFAULT_PREFIX = "md";
 
 // The set of standard tone values used in Material You tonal palettes
@@ -337,7 +282,6 @@ function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
   colorPalettes: ColorPalettes,
-  contrastAllColors: boolean,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -370,10 +314,9 @@ function mergeBaseAndCustomColors(
     const getPaletteForColor = (s: DynamicScheme) =>
       getPalette(colorPalettes, colorname);
 
-    // Helper to get tone with optional contrast adjustment
-    const getTone = (baseTone: number) => (s: DynamicScheme) => {
-      if (!contrastAllColors) return baseTone;
-      return adjustToneForContrast(baseTone, s.contrastLevel);
+    // Helper to get tone for this color
+    const getTone = (baseTone: number) => (_s: DynamicScheme) => {
+      return baseTone;
     };
 
     // Create DynamicColor objects for all 4 color roles
@@ -472,8 +415,6 @@ export function builder(
     neutralVariant,
     error,
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
-    contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
-    adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
     prefix = DEFAULT_PREFIX,
   }: Omit<McuConfig, "source"> = {},
 ) {
@@ -606,13 +547,11 @@ export function builder(
     lightScheme,
     customColors,
     colorPalettes,
-    contrastAllColors,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
     colorPalettes,
-    contrastAllColors,
   );
 
   // ── Shared token→palette mapping ──────────────────────────────────────
@@ -678,20 +617,13 @@ export function builder(
       // Build a lookup: hex → array of {paletteName, tone}
       // Uses the same tone computation as generateTonalPaletteVars so that
       // var() references resolve to the correct palette variable in each CSS rule.
-      function buildRefPaletteLookup(s: DynamicScheme) {
+      function buildRefPaletteLookup() {
         const lookup: Record<string, { paletteName: string; tone: number }[]> =
           {};
         for (const [name, palette] of Object.entries(allPalettes)) {
           const paletteName = kebabCase(name);
           for (const tone of STANDARD_TONES) {
-            let toneToUse: number = tone;
-            if (adaptiveShades && s.isDark) {
-              toneToUse = 100 - tone;
-            }
-            if (contrastAllColors) {
-              toneToUse = adjustToneForContrast(toneToUse, s.contrastLevel);
-            }
-            const hex = hexFromArgb(palette.tone(toneToUse));
+            const hex = hexFromArgb(palette.tone(tone));
             if (!lookup[hex]) lookup[hex] = [];
             lookup[hex].push({ paletteName, tone });
           }
@@ -749,63 +681,33 @@ export function builder(
       function generateTonalPaletteVars(
         paletteName: string,
         palette: TonalPalette,
-        scheme: DynamicScheme,
-        applyContrast: boolean,
-        adaptiveShades: boolean,
       ) {
         return STANDARD_TONES.map((tone) => {
-          let toneToUse: number = tone;
-
-          // In dark mode, invert the tone values so that high tone numbers
-          // (which represent light colors) map to low tone values (dark colors)
-          // This makes shades adapt naturally to the theme like core colors do
-          // Only applies when adaptiveShades is enabled
-          if (adaptiveShades && scheme.isDark) {
-            toneToUse = 100 - tone;
-          }
-
-          // Apply contrast adjustment to tonal shades when requested
-          if (applyContrast) {
-            toneToUse = adjustToneForContrast(toneToUse, scheme.contrastLevel);
-          }
-
-          const color = palette.tone(toneToUse);
+          const color = palette.tone(tone);
           return refPaletteVar(paletteName, tone, color);
         }).join(" ");
       }
 
       // Generate tonal palette CSS variables for all colors (core + custom)
-      function generateTonalVars(s: DynamicScheme) {
+      function generateTonalVars() {
         return Object.entries(allPalettes)
           .map(([name, palette]) =>
-            generateTonalPaletteVars(
-              kebabCase(name),
-              palette,
-              s,
-              contrastAllColors,
-              adaptiveShades,
-            ),
+            generateTonalPaletteVars(kebabCase(name), palette),
           )
           .join(" ");
       }
 
-      // Build per-mode lookups matching what's actually in each CSS rule
-      const lightLookup = buildRefPaletteLookup(lightScheme);
-      // Dark: use dark scheme lookup only when adaptive tonal vars differ;
-      // otherwise dark system tokens resolve against the same (light) tonal vars.
-      const darkLookup = adaptiveShades
-        ? buildRefPaletteLookup(darkScheme)
-        : lightLookup;
+      // Build ref palette lookup (mode-independent since tonal values are constant)
+      const refPaletteLookup = buildRefPaletteLookup();
 
-      const lightVars = toCssVars(mergedColorsLight, lightLookup);
-      const darkVars = toCssVars(mergedColorsDark, darkLookup);
+      const lightVars = toCssVars(mergedColorsLight, refPaletteLookup);
+      const darkVars = toCssVars(mergedColorsDark, refPaletteLookup);
 
-      const lightTonalVars = generateTonalVars(lightScheme);
-      const darkTonalVars = generateTonalVars(darkScheme);
+      const tonalVars = generateTonalVars();
 
       return `
-:root { ${lightVars} ${lightTonalVars} }
-.dark { ${darkVars} ${adaptiveShades ? darkTonalVars : lightTonalVars} }
+:root { ${lightVars} ${tonalVars} }
+.dark { ${darkVars} ${tonalVars} }
 `;
     },
 
@@ -1115,11 +1017,7 @@ export function builder(
           const tones: Record<string, ReturnType<typeof figmaToken>> = {};
 
           for (const tone of STANDARD_TONES) {
-            let toneToUse: number = tone;
-            if (contrastAllColors) {
-              toneToUse = adjustToneForContrast(toneToUse, contrast);
-            }
-            const argb = palette.tone(toneToUse);
+            const argb = palette.tone(tone);
             tones[tone.toString()] = figmaToken(argb);
           }
 
