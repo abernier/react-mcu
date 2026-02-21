@@ -1,5 +1,5 @@
 ---
-"react-mcu": major
+"material-theme-builder": major
 ---
 
 ### BREAKING: CSS custom properties renamed to follow Material Design 3 token architecture
@@ -75,6 +75,6 @@ These experimental features are no longer needed now that `md.sys.*` tokens prop
 ```
 
 ```diff
-- react-mcu builder '#6750A4' --contrast-all-colors --adaptive-shades
-+ react-mcu builder '#6750A4'
+- material-theme-builder builder '#6750A4' --contrast-all-colors --adaptive-shades
++ material-theme-builder builder '#6750A4'
 ```
