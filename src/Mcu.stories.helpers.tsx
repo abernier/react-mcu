@@ -70,15 +70,12 @@ export function Layout({
 }
 
 const schemeVariants = cva(
-  "flex flex-col gap-4 [--mcu-scheme-light:#fbfbfb] [--mcu-scheme-dark:#1c1b1f]",
+  "flex flex-col gap-4 [--light:#fbfbfb] [--dark:#1c1b1f]",
   {
     variants: {
       theme: {
-        light: "bg-[var(--mcu-scheme-light)] text-[var(--mcu-scheme-dark)]",
-        dark: [
-          "dark",
-          "bg-[var(--mcu-scheme-dark)] text-[var(--mcu-scheme-light)]",
-        ],
+        light: "bg-[var(--light)] text-[var(--dark)]",
+        dark: ["dark", "bg-[var(--dark)] text-[var(--light)]"],
       },
     },
     compoundVariants: [
@@ -431,7 +428,7 @@ export function Scheme({
                   title={kebabCase(customColor.name)}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)})`,
+                    backgroundColor: `var(--md-sys-color-${kebabCase(customColor.name)})`,
                   }}
                 >
                   <p>{upperFirst(customColor.name)}</p>
@@ -442,7 +439,7 @@ export function Scheme({
                   title={`on-${kebabCase(customColor.name)}`}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)})`,
+                    backgroundColor: `var(--md-sys-color-on-${kebabCase(customColor.name)})`,
                   }}
                 >
                   <p>On {upperFirst(customColor.name)}</p>
@@ -453,7 +450,7 @@ export function Scheme({
                   title={`${kebabCase(customColor.name)}-container`}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-${kebabCase(customColor.name)}-container)`,
+                    backgroundColor: `var(--md-sys-color-${kebabCase(customColor.name)}-container)`,
                   }}
                 >
                   <p>{upperFirst(customColor.name)} Container</p>
@@ -464,7 +461,7 @@ export function Scheme({
                   title={`on-${kebabCase(customColor.name)}-container`}
                   className="h-20"
                   style={{
-                    backgroundColor: `var(--mcu-on-${kebabCase(customColor.name)}-container)`,
+                    backgroundColor: `var(--md-sys-color-on-${kebabCase(customColor.name)}-container)`,
                   }}
                 >
                   <p>On {upperFirst(customColor.name)} Container</p>
@@ -522,7 +519,7 @@ export function Shades({
                   title={`${isCustom ? kebabCase(name) : name}-${tone}`}
                   className="h-16 flex items-center justify-center"
                   style={{
-                    backgroundColor: `var(--mcu-${isCustom ? kebabCase(name) : name}-${tone})`,
+                    backgroundColor: `var(--md-ref-palette-${isCustom ? kebabCase(name) : name}-${tone})`,
                   }}
                 >
                   <p>{tone}</p>

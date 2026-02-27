@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
 // @example
-
+//
+// Pre-requisite: `pnpm run build`
+//
 // ```sh
-// $ node dist/cli.js builder '#6750A4'
-// $ node dist/cli.js builder '#6750A4' --format css
-// $ node dist/cli.js builder '#6750A4' --adaptive-shades --format figma
+// $ node dist/cli.js '#6750A4'
+// $ node dist/cli.js '#6750A4' --format css
 // ```
 
 import * as fs from "node:fs";
@@ -14,20 +15,17 @@ import * as path from "node:path";
 import { Command, Option } from "commander";
 import {
   builder,
-  DEFAULT_ADAPTIVE_SHADES,
   DEFAULT_BLEND,
   DEFAULT_CONTRAST,
-  DEFAULT_CONTRAST_ALL_COLORS,
+  DEFAULT_PREFIX,
   DEFAULT_SCHEME,
   schemeNames,
 } from "./lib/builder";
 
 const program = new Command();
 
-program.name("react-mcu").description("m3 color system for react");
-
 program
-  .command("builder")
+  .name("material-theme-builder")
   .description("Generate a color theme from a source color")
   .argument("<source>", "Source color in hex format (e.g. #6750A4)")
   .addOption(
@@ -54,14 +52,9 @@ program
   .option("--format <type>", "Output format: json, css, or figma", "figma")
   .option("--output <dir>", "Output directory (required for figma format)")
   .option(
-    "--adaptive-shades",
-    "Adapt tonal palette shades for dark mode",
-    DEFAULT_ADAPTIVE_SHADES,
-  )
-  .option(
-    "--contrast-all-colors",
-    "Apply contrast adjustment to tonal palette shades",
-    DEFAULT_CONTRAST_ALL_COLORS,
+    "--prefix <string>",
+    "CSS variable prefix (e.g. md → --md-sys-color-*, --md-ref-palette-*)",
+    DEFAULT_PREFIX,
   )
   .action((source: string, opts) => {
     let customColors: { name: string; hex: string; blend: boolean }[] = [];
@@ -93,14 +86,13 @@ program
       neutral: opts.neutral,
       neutralVariant: opts.neutralVariant,
       customColors,
-      adaptiveShades: opts.adaptiveShades,
-      contrastAllColors: opts.contrastAllColors,
+      prefix: opts.prefix,
     });
 
     if (opts.format === "css") {
       process.stdout.write(result.toCss());
     } else if (opts.format === "figma") {
-      const outputDir = opts.output ?? "mcu-theme";
+      const outputDir = opts.output ?? "material-theme";
       fs.mkdirSync(outputDir, { recursive: true });
       const files = result.toFigmaTokens();
       for (const [filename, content] of Object.entries(files)) {

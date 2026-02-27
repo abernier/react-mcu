@@ -2,10 +2,9 @@
 
 import { useMemo } from "react";
 import {
-  DEFAULT_ADAPTIVE_SHADES,
   DEFAULT_CONTRAST,
-  DEFAULT_CONTRAST_ALL_COLORS,
   DEFAULT_CUSTOM_COLORS,
+  DEFAULT_PREFIX,
   DEFAULT_SCHEME,
   type McuConfig,
 } from "./lib/builder";
@@ -26,8 +25,7 @@ export function Mcu({
   error,
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
-  contrastAllColors = DEFAULT_CONTRAST_ALL_COLORS,
-  adaptiveShades = DEFAULT_ADAPTIVE_SHADES,
+  prefix = DEFAULT_PREFIX,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
@@ -43,9 +41,7 @@ export function Mcu({
       error,
       colorMatch,
       customColors,
-      // extras features
-      contrastAllColors,
-      adaptiveShades,
+      prefix,
     }),
     [
       contrast,
@@ -59,8 +55,7 @@ export function Mcu({
       neutralVariant,
       error,
       colorMatch,
-      contrastAllColors,
-      adaptiveShades,
+      prefix,
     ],
   );
 
