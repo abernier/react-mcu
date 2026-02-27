@@ -85,6 +85,81 @@ describe("builder", () => {
     );
   });
 
+  describe("specVersion", () => {
+    it("should NOT include 2025 dim roles when specVersion is '2021' (default)", () => {
+      const result = builder("#6750A4");
+      const css = result.toCss();
+
+      expect(css).not.toContain("--md-sys-color-primary-dim:");
+      expect(css).not.toContain("--md-sys-color-secondary-dim:");
+      expect(css).not.toContain("--md-sys-color-tertiary-dim:");
+      expect(css).not.toContain("--md-sys-color-error-dim:");
+
+      expect(result.mergedColorsLight).not.toHaveProperty("primaryDim");
+      expect(result.mergedColorsLight).not.toHaveProperty("secondaryDim");
+      expect(result.mergedColorsLight).not.toHaveProperty("tertiaryDim");
+      expect(result.mergedColorsLight).not.toHaveProperty("errorDim");
+    });
+
+    it("should include 2025 dim roles in toCss() when specVersion is '2025'", () => {
+      const css = builder("#6750A4", { specVersion: "2025" }).toCss();
+
+      expect(css).toContain("--md-sys-color-primary-dim:");
+      expect(css).toContain("--md-sys-color-secondary-dim:");
+      expect(css).toContain("--md-sys-color-tertiary-dim:");
+      expect(css).toContain("--md-sys-color-error-dim:");
+    });
+
+    it("should include 2025 dim roles as valid hex colors in CSS", () => {
+      const css = builder("#6750A4", { specVersion: "2025" }).toCss();
+
+      // Dim colors should appear in the CSS output (as hex since they're at non-standard tones)
+      expect(css).toMatch(/--md-sys-color-primary-dim:#[0-9a-f]{6}/);
+      expect(css).toMatch(/--md-sys-color-secondary-dim:#[0-9a-f]{6}/);
+      expect(css).toMatch(/--md-sys-color-tertiary-dim:#[0-9a-f]{6}/);
+      expect(css).toMatch(/--md-sys-color-error-dim:#[0-9a-f]{6}/);
+    });
+
+    it("should include 2025 dim roles in mergedColorsLight and mergedColorsDark", () => {
+      const result = builder("#6750A4", { specVersion: "2025" });
+
+      expect(result.mergedColorsLight).toHaveProperty("primaryDim");
+      expect(result.mergedColorsLight).toHaveProperty("secondaryDim");
+      expect(result.mergedColorsLight).toHaveProperty("tertiaryDim");
+      expect(result.mergedColorsLight).toHaveProperty("errorDim");
+
+      expect(result.mergedColorsDark).toHaveProperty("primaryDim");
+      expect(result.mergedColorsDark).toHaveProperty("secondaryDim");
+      expect(result.mergedColorsDark).toHaveProperty("tertiaryDim");
+      expect(result.mergedColorsDark).toHaveProperty("errorDim");
+    });
+
+    it("should include 2025 dim roles in Figma tokens with descriptions", () => {
+      const files = builder("#6750A4", { specVersion: "2025" }).toFigmaTokens();
+
+      for (const key of ["Light.tokens.json", "Dark.tokens.json"] as const) {
+        const sysColor = files[key].sys.color as Record<string, { $description?: string; "css.variable"?: string }>;
+
+        expect(sysColor).toHaveProperty("Primary Dim");
+        expect(sysColor).toHaveProperty("Secondary Dim");
+        expect(sysColor).toHaveProperty("Tertiary Dim");
+        expect(sysColor).toHaveProperty("Error Dim");
+
+        // Should have $description
+        expect((sysColor["Primary Dim"] as Record<string, unknown>)["$description"]).toBeTypeOf("string");
+      }
+    });
+
+    it("should produce different dim color values in light vs dark modes", () => {
+      const result = builder("#6750A4", { specVersion: "2025" });
+
+      // Dim colors should differ between light and dark
+      expect(result.mergedColorsLight["primaryDim"]).not.toBe(
+        result.mergedColorsDark["primaryDim"],
+      );
+    });
+  });
+
   describe("toFigmaTokens()", () => {
     // DTCG schemas are downloaded by scripts/download-dtcg-schemas.sh (via pretest hook)
     function loadSchema(relativePath: string) {
