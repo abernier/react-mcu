@@ -2,13 +2,15 @@
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
 [![](https://img.shields.io/badge/storybook-171c23.svg?logo=storybook)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
 
-Generates [m3 colors](https://m3.material.io/styles/color/system/overview) `--md-sys-color-*` and `--md-ref-palette-*` values [programmatically](#programmatic-api), 1:1 with [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/).
+Outputs [m3 colors](https://m3.material.io/styles/color/system/overview) `--md-sys-color-*` and `--md-ref-palette-*`, 1:1 with [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/), either:
+
+- [programmatically](#programmatic-api)
+- from [CLI](#cli)
+- using [React](#react)
 
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
 
 Support for:
-
-Base (like in the Builder):
 
 - [x] light/dark mode
 - [x] source color
@@ -56,6 +58,8 @@ will generate a `material-theme` folder with: `Light.tokens.json` and `Dark.toke
 See `npx material-theme-builder builder --help` for all available options.
 
 ## React
+
+CSS variables are injected into the page:
 
 ```tsx
 import { Mcu } from "material-theme-builder";
