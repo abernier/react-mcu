@@ -1,5 +1,11 @@
 # material-theme-builder
 
+## 2.1.2
+
+### Patch Changes
+
+- 8ee5992: -builder subcommand
+
 ## 2.1.1
 
 ### Patch Changes
