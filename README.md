@@ -39,6 +39,40 @@ Extra:
 
 # Usage
 
+## Programmatic API
+
+```ts
+import { builder } from "material-theme-builder";
+
+const theme = builder("#6750A4", {
+  scheme: "vibrant",
+  contrast: 0.5,
+  primary: "#FF0000",
+  secondary: "#00FF00",
+  customColors: [
+    { name: "brand", hex: "#FF5733", blend: true },
+    { name: "success", hex: "#28A745", blend: false },
+  ],
+  contrastAllColors: true,
+});
+
+theme.toFigmaTokens();
+theme.toJson();
+theme.toCss();
+```
+
+## CLI
+
+```sh
+$ npx material-theme-builder builder "#6750A4"
+```
+
+will generate a `material-theme` folder with: `Light.tokens.json` and `Dark.tokens.json` [design-tokens](https://www.designtokens.org/tr/2025.10/) files, you can (both) import into Figma.
+
+See `npx material-theme-builder builder --help` for all available options.
+
+## React
+
 ```tsx
 import { Mcu } from "material-theme-builder";
 
@@ -173,37 +207,6 @@ Simply override/remap
 >
 > Make sure `:root, .dark { ... }` comes AFTER `.root { ... } .dark { ... }` to
 > take precedence.
-
-## Programmatic API
-
-```ts
-import { builder } from "material-theme-builder";
-
-const theme = builder("#6750A4", {
-  scheme: "vibrant",
-  contrast: 0.5,
-  primary: "#FF0000",
-  secondary: "#00FF00",
-  customColors: [
-    { name: "brand", hex: "#FF5733", blend: true },
-    { name: "success", hex: "#28A745", blend: false },
-  ],
-  contrastAllColors: true,
-});
-
-theme.toJson();
-theme.toCss();
-```
-
-## CLI
-
-```sh
-$ npx material-theme-builder builder "#6750A4"
-```
-
-will generate a `material-theme` folder with: `Light.tokens.json` and `Dark.tokens.json` [design-tokens](https://www.designtokens.org/tr/2025.10/) files, you can (both) import into Figma.
-
-See `npx material-theme-builder builder --help` for all available options.
 
 # Dev
 
