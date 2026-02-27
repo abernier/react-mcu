@@ -74,7 +74,7 @@ import { Mcu } from "material-theme-builder";
     backgroundColor: "var(--md-sys-color-surface)",
     color: "var(--md-sys-color-on-surface)",
   }}>
-    Hello, MCU <span style={{
+    Hello, m3 <span style={{
       backgroundColor: "var(--md-sys-color-my-custom-color-1)",
       color: "var(--md-sys-color-on-my-custom-color-1)",
     }}>colors<span>!
