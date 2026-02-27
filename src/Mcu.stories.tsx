@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo } from "react";
 import { allModes } from "../.storybook/modes";
-import { type McuConfig, schemeNames, type SpecVersion } from "./lib/builder";
+import { type McuConfig, schemeNames } from "./lib/builder";
 import { recolorizeSvg } from "./lib/recolorizeSvg";
 import { Mcu } from "./Mcu";
 import { useMcu } from "./Mcu.context";
@@ -95,18 +95,15 @@ export const St2: Story = {
     source: "#769CDF",
     contrast: 0,
   },
-  render: (args, { globals }) => {
-    const specVersion = (globals.specVersion ?? args.specVersion) as SpecVersion | undefined;
-    return (
-      <Mcu {...args} specVersion={specVersion}>
-        <Layout notext>
-          <Scheme customColors={args.customColors} specVersion={specVersion}>
-            <Shades customColors={args.customColors} noTitle />
-          </Scheme>
-        </Layout>
-      </Mcu>
-    );
-  },
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout notext>
+        <Scheme customColors={args.customColors} specVersion={args.specVersion}>
+          <Shades customColors={args.customColors} noTitle />
+        </Scheme>
+      </Layout>
+    </Mcu>
+  ),
 };
 
 export const St1: Story = {
@@ -114,29 +111,26 @@ export const St1: Story = {
   args: {
     source: "#769CDF",
   },
-  render: (args, { globals }) => {
-    const specVersion = (globals.specVersion ?? args.specVersion) as SpecVersion | undefined;
-    return (
-      <Mcu {...args} specVersion={specVersion}>
-        <Layout>
-          <Scheme
-            theme="light"
-            title="Light scheme"
-            customColors={args.customColors}
-            specVersion={specVersion}
-          />
+  render: (args) => (
+    <Mcu {...args}>
+      <Layout>
+        <Scheme
+          theme="light"
+          title="Light scheme"
+          customColors={args.customColors}
+          specVersion={args.specVersion}
+        />
 
-          <Scheme
-            theme="dark"
-            title="Dark scheme"
-            customColors={args.customColors}
-            specVersion={specVersion}
-          />
-          <Shades customColors={args.customColors} />
-        </Layout>
-      </Mcu>
-    );
-  },
+        <Scheme
+          theme="dark"
+          title="Dark scheme"
+          customColors={args.customColors}
+          specVersion={args.specVersion}
+        />
+        <Shades customColors={args.customColors} />
+      </Layout>
+    </Mcu>
+  ),
 };
 
 export const Spec2025St: Story = {

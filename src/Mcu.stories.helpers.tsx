@@ -117,30 +117,26 @@ export function Scheme({
         }
 
         <div className="grid grid-cols-3 grid-rows-2 gap-(--gap2)">
-          <Foo>
-            <FooTop className="h-20 bg-primary" title="primary">
-              <p>Primary</p>
-            </FooTop>
-            <FooBottom className="bg-on-primary" title="on-primary">
-              <p>On Primary</p>
-            </FooBottom>
-          </Foo>
-          <Foo>
-            <FooTop className="h-20 bg-secondary" title="secondary">
-              <p>Secondary</p>
-            </FooTop>
-            <FooBottom className="bg-on-secondary" title="on-secondary">
-              <p>On Secondary</p>
-            </FooBottom>
-          </Foo>
-          <Foo>
-            <FooTop className="h-20 bg-tertiary" title="tertiary">
-              <p>Tertiary</p>
-            </FooTop>
-            <FooBottom className="bg-on-tertiary" title="on-tertiary">
-              <p>On Tertiary</p>
-            </FooBottom>
-          </Foo>
+          {(["primary", "secondary", "tertiary"] as const).map((color) => (
+            <Foo key={color}>
+              <FooTop
+                className={cn("h-20", specVersion === "2025" ? "grid grid-cols-2 grid-rows-1" : `bg-${color}`)}
+                title={specVersion !== "2025" ? color : undefined}
+              >
+                {specVersion === "2025" ? (
+                  <>
+                    <div className={`bg-${color}`} title={color}><p>{color.charAt(0).toUpperCase() + color.slice(1)}</p></div>
+                    <div className={`bg-${color}-dim`} title={`${color}-dim`}><p>{color.charAt(0).toUpperCase() + color.slice(1)} Dim</p></div>
+                  </>
+                ) : (
+                  <p>{color.charAt(0).toUpperCase() + color.slice(1)}</p>
+                )}
+              </FooTop>
+              <FooBottom className={`bg-on-${color}`} title={`on-${color}`}>
+                <p>On {color.charAt(0).toUpperCase() + color.slice(1)}</p>
+              </FooBottom>
+            </Foo>
+          ))}
           <Foo>
             <FooTop
               className="h-20 bg-primary-container"
@@ -197,8 +193,18 @@ export function Scheme({
 
         <div className="grid grid-cols-1 grid-rows-2 gap-(--gap2)">
           <Foo>
-            <FooTop className="h-20 bg-error" title="error">
-              <p>Error</p>
+            <FooTop
+              className={cn("h-20", specVersion === "2025" ? "grid grid-cols-2 grid-rows-1" : "bg-error")}
+              title={specVersion !== "2025" ? "error" : undefined}
+            >
+              {specVersion === "2025" ? (
+                <>
+                  <div className="bg-error" title="error"><p>Error</p></div>
+                  <div className="bg-error-dim" title="error-dim"><p>Error Dim</p></div>
+                </>
+              ) : (
+                <p>Error</p>
+              )}
             </FooTop>
             <FooBottom className="bg-on-error" title="on-error">
               <p>On Error</p>
@@ -471,33 +477,6 @@ export function Scheme({
               </Foo>
             </div>
           ))}
-        </div>
-      )}
-
-      {specVersion === "2025" && (
-        <div className="flex flex-col gap-(--gap2)">
-          <div className="grid grid-cols-4 gap-(--gap2)">
-            {(
-              [
-                ["primary-dim", "Primary Dim"],
-                ["secondary-dim", "Secondary Dim"],
-                ["tertiary-dim", "Tertiary Dim"],
-                ["error-dim", "Error Dim"],
-              ] as const
-            ).map(([token, label]) => (
-              <Foo key={token}>
-                <FooTop
-                  className="h-20"
-                  title={token}
-                  style={{
-                    backgroundColor: `var(--md-sys-color-${token})`,
-                  }}
-                >
-                  <p>{label}</p>
-                </FooTop>
-              </Foo>
-            ))}
-          </div>
         </div>
       )}
 
