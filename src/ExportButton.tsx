@@ -3,13 +3,9 @@ import { builder } from "./lib/builder";
 
 interface ExportButtonProps {
   config: McuConfig;
-  label?: string;
 }
 
-export function ExportButton({
-  config,
-  label = "Export Figma Tokens",
-}: ExportButtonProps) {
+export function ExportButton({ config }: ExportButtonProps) {
   const handleExport = () => {
     try {
       const { source, ...rest } = config;
@@ -42,12 +38,14 @@ export function ExportButton({
   return (
     <button
       onClick={handleExport}
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-primary px-6 py-4 text-sm font-medium text-on-primary shadow-lg transition-shadow hover:shadow-xl active:shadow-md cursor-pointer"
+      title="Export Figma Tokens"
+      aria-label="Export Figma Tokens"
+      className="fixed bottom-6 right-6 z-50 flex size-14 items-center justify-center rounded-full bg-primary text-on-primary shadow-lg transition-shadow hover:shadow-xl active:shadow-md cursor-pointer"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -59,7 +57,6 @@ export function ExportButton({
         <polyline points="7 10 12 15 17 10" />
         <line x1="12" y1="15" x2="12" y2="3" />
       </svg>
-      {label}
     </button>
   );
 }
