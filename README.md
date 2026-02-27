@@ -2,17 +2,9 @@
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
 [![](https://img.shields.io/badge/storybook-171c23.svg?logo=storybook)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
 
-[Material Design colors](https://m3.material.io/styles/color/system/overview) as seen on [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/).
-
-It injects `--md-sys-color-*` and `--md-ref-palette-*` CSS variables into the page (prefix is [configurable](#programmatic-api)).
+Generates [m3 colors](https://m3.material.io/styles/color/system/overview) `--md-sys-color-*` and `--md-ref-palette-*` values [programmatically](#programmatic-api), 1:1 with [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/).
 
 https://github.com/user-attachments/assets/5b67c961-d7a4-4b64-9356-4ada26bc9be4
-
-m3 references:
-
-| builder                                                                                                                                                                                                                             | roles                                                                                                                                                                                                           |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 08 58 40@2x" src="https://github.com/user-attachments/assets/e4b47c00-716f-4b08-b393-de306d5ce302" />](https://material-foundation.github.io/material-theme-builder/) | [<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 09 01 23@2x" src="https://github.com/user-attachments/assets/826e502d-e173-43c4-807a-53d0ba075a88" />](https://m3.material.io/styles/color/roles) |
 
 Support for:
 
@@ -30,13 +22,6 @@ Base (like in the Builder):
 - [x] Shades (aka. "tonals")
 - [ ] colorMatch
 
-Extra:
-
-- [x] `contrastAllColors`: contrast also applies to custom-colors and shades
-      (not only the core-colors)
-- [x] `adaptiveShades`: shades adapt to the light/dark mode (instead of being
-      fixed)
-
 # Usage
 
 ## Programmatic API
@@ -53,7 +38,6 @@ const theme = builder("#6750A4", {
     { name: "brand", hex: "#FF5733", blend: true },
     { name: "success", hex: "#28A745", blend: false },
   ],
-  contrastAllColors: true,
 });
 
 theme.toFigmaTokens();
@@ -249,3 +233,11 @@ pnpm exec changeset
 ```
 
 This helps us maintain the changelog and version the package appropriately.
+
+# Outro
+
+m3 references:
+
+| builder                                                                                                                                                                                                                             | roles                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 08 58 40@2x" src="https://github.com/user-attachments/assets/e4b47c00-716f-4b08-b393-de306d5ce302" />](https://material-foundation.github.io/material-theme-builder/) | [<img width="2836" height="2266" alt="CleanShot 2026-01-14 at 09 01 23@2x" src="https://github.com/user-attachments/assets/826e502d-e173-43c4-807a-53d0ba075a88" />](https://m3.material.io/styles/color/roles) |
