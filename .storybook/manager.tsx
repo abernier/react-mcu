@@ -1,6 +1,5 @@
-import React from "react";
-import { addons, types, useChannel } from "storybook/manager-api";
 import { Button } from "storybook/internal/components";
+import { addons, types, useChannel } from "storybook/manager-api";
 
 const ADDON_ID = "export-figma-tokens";
 const TOOL_ID = `${ADDON_ID}/tool`;

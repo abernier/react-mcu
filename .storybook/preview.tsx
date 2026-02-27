@@ -1,7 +1,7 @@
 import type { Preview } from "@storybook/react-vite";
 import { useChannel } from "storybook/preview-api";
-import "../src/tailwind.css";
 import { builder } from "../src/lib/builder";
+import "../src/tailwind.css";
 import "./preview.css";
 
 import { withThemeByClassName } from "@storybook/addon-themes";
