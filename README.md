@@ -1,4 +1,4 @@
-[![npm version](https://img.shields.io/npm/v/react-mcu.svg)](https://www.npmjs.com/package/react-mcu)
+[![npm version](https://img.shields.io/npm/v/material-theme-builder.svg)](https://www.npmjs.com/package/material-theme-builder)
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
 [![](https://img.shields.io/badge/storybook-171c23.svg?logo=storybook)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
 
@@ -41,7 +41,7 @@ Extra:
 # Usage
 
 ```tsx
-import { Mcu } from "react-mcu";
+import { Mcu } from "material-theme-builder";
 
 <Mcu
   source="#0e1216"
@@ -80,7 +80,7 @@ import { Mcu } from "react-mcu";
 A hook is also provided:
 
 ```tsx
-import { useMcu } from "react-mcu";
+import { useMcu } from "material-theme-builder";
 
 const { initials, setMcuConfig, getMcuColor } = useMcu();
 
@@ -95,18 +95,18 @@ return (
 
 Compatible through [theme variables](https://tailwindcss.com/docs/theme):
 
-https://github.com/abernier/react-mcu/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L3-L186
+https://github.com/abernier/material-theme-builder/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L3-L186
 
 Or simply:
 
 ```css
-@import "react-mcu/tailwind.css";
+@import "material-theme-builder/tailwind.css";
 ```
 
 > [!IMPORTANT]
 >
 > Do not forget to manually add your custom colors, as in:
-> https://github.com/abernier/react-mcu/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L126-L185
+> https://github.com/abernier/material-theme-builder/blob/688c789e322ed3858b51389b33eb7ea342bba81e/src/tailwind.css#L126-L185
 
 ## shadcn
 
@@ -178,7 +178,7 @@ Simply override/remap
 ## Programmatic API
 
 ```ts
-import { builder } from "react-mcu";
+import { builder } from "material-theme-builder";
 
 const theme = builder("#6750A4", {
   scheme: "vibrant",
@@ -199,12 +199,12 @@ theme.toCss();
 ## CLI
 
 ```sh
-$ npx react-mcu builder "#6750A4"
+$ npx material-theme-builder builder "#6750A4"
 ```
 
-will generate a `mcu-theme` folder with: `Light.tokens.json` and `Dark.tokens.json` [design-tokens](https://www.designtokens.org/tr/2025.10/) files, you can (both) import into Figma.
+will generate a `material-theme` folder with: `Light.tokens.json` and `Dark.tokens.json` [design-tokens](https://www.designtokens.org/tr/2025.10/) files, you can (both) import into Figma.
 
-See `npx react-mcu builder --help` for all available options.
+See `npx material-theme-builder builder --help` for all available options.
 
 # Dev
 

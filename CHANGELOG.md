@@ -1,4 +1,11 @@
-# react-mcu
+# material-theme-builder
+
+## 2.1.0
+
+### Minor Changes
+
+- Package renamed from `react-mcu` to `material-theme-builder`
+- Default Figma output directory renamed from `mcu-theme` to `material-theme`
 
 ## 2.0.0
 
