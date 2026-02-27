@@ -24,7 +24,7 @@ import {
 
 const program = new Command();
 
-program.name("react-mcu").description("m3 color system for react");
+program.name("material-theme-builder").description("m3 color system for react");
 
 program
   .command("builder")
