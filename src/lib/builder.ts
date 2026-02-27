@@ -21,6 +21,9 @@ import {
 } from "@material/material-color-utilities";
 import { kebabCase, startCase, upperFirst } from "lodash-es";
 
+/** Material Design spec version for color generation (`"2021"` or `"2025"`). */
+export type SpecVersion = "2021" | "2025";
+
 type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
 };
@@ -64,12 +67,19 @@ export type McuConfig = {
    * Default: "md" (Material Design convention).
    */
   prefix?: string;
+  /**
+   * Material Design spec version to use for color generation.
+   * - `"2021"` — original Material You spec (default)
+   * - `"2025"` — updated spec with additional color roles (e.g. primaryDim, secondaryDim)
+   */
+  specVersion?: SpecVersion;
 };
 
 type SchemeConstructor = new (
   sourceColorHct: Hct,
   isDark: boolean,
   contrastLevel: number,
+  specVersion?: SpecVersion,
 ) => DynamicScheme;
 
 export const schemeNames = [
@@ -98,6 +108,7 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 export const DEFAULT_BLEND = true;
 export const DEFAULT_PREFIX = "md";
+export const DEFAULT_SPEC_VERSION: SpecVersion = "2021";
 
 // The set of standard tone values used in Material You tonal palettes
 export const STANDARD_TONES = [
@@ -416,6 +427,7 @@ export function builder(
     error,
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
     prefix = DEFAULT_PREFIX,
+    specVersion = DEFAULT_SPEC_VERSION,
   }: Omit<McuConfig, "source"> = {},
 ) {
   const sourceArgb = argbFromHex(hexSource);
@@ -432,7 +444,7 @@ export function builder(
   // Create a base scheme to get the standard chroma values
   const SchemeClass = schemesMap[scheme];
   const primaryHct = Hct.fromInt(effectiveSourceArgb);
-  const baseScheme = new SchemeClass(primaryHct, false, contrast);
+  const baseScheme = new SchemeClass(primaryHct, false, contrast, specVersion);
 
   // Unified color processing: Combine core colors and custom colors, filter to only those with hex defined
   const allColors: ColorDefinition[] = [
@@ -498,6 +510,7 @@ export function builder(
     sourceColorHct: Hct.fromInt(effectiveSourceArgb),
     variant,
     contrastLevel: contrast,
+    specVersion,
     primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
     secondaryPalette: colorPalettes["secondary"] || baseScheme.secondaryPalette,
     tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
@@ -837,7 +850,7 @@ export function builder(
           role: "primaryPalette" | "neutralPalette" | "neutralVariantPalette",
         ) {
           if (!hex) return null;
-          return new SchemeClass(Hct.fromInt(argbFromHex(hex)), false, 0)[role];
+          return new SchemeClass(Hct.fromInt(argbFromHex(hex)), false, 0, specVersion)[role];
         }
 
         // Override palettes (isDark/contrast-invariant)
@@ -863,7 +876,7 @@ export function builder(
 
         for (const { name, isDark, contrast } of jsonContrastLevels) {
           // Base scheme from primary — provides default palettes for all roles
-          const baseScheme = new SchemeClass(primaryHct, isDark, contrast);
+          const baseScheme = new SchemeClass(primaryHct, isDark, contrast, specVersion);
 
           // Compose scheme: override palette where specified, base default otherwise
           const composedScheme = new DynamicScheme({
@@ -871,6 +884,7 @@ export function builder(
             variant: schemeToVariant[scheme],
             contrastLevel: contrast,
             isDark,
+            specVersion,
             primaryPalette: baseScheme.primaryPalette,
             secondaryPalette: secPalette || baseScheme.secondaryPalette,
             tertiaryPalette: terPalette || baseScheme.tertiaryPalette,
