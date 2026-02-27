@@ -94,7 +94,7 @@ program
     if (opts.format === "css") {
       process.stdout.write(result.toCss());
     } else if (opts.format === "figma") {
-      const outputDir = opts.output ?? "mcu-theme";
+      const outputDir = opts.output ?? "material-theme";
       fs.mkdirSync(outputDir, { recursive: true });
       const files = result.toFigmaTokens();
       for (const [filename, content] of Object.entries(files)) {

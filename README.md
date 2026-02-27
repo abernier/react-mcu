@@ -202,7 +202,7 @@ theme.toCss();
 $ npx material-theme-builder builder "#6750A4"
 ```
 
-will generate a `mcu-theme` folder with: `Light.tokens.json` and `Dark.tokens.json` [design-tokens](https://www.designtokens.org/tr/2025.10/) files, you can (both) import into Figma.
+will generate a `material-theme` folder with: `Light.tokens.json` and `Dark.tokens.json` [design-tokens](https://www.designtokens.org/tr/2025.10/) files, you can (both) import into Figma.
 
 See `npx material-theme-builder builder --help` for all available options.
 
