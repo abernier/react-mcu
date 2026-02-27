@@ -5,8 +5,8 @@
 // Pre-requisite: `pnpm run build`
 //
 // ```sh
-// $ node dist/cli.js builder '#6750A4'
-// $ node dist/cli.js builder '#6750A4' --format css
+// $ node dist/cli.js '#6750A4'
+// $ node dist/cli.js '#6750A4' --format css
 // ```
 
 import * as fs from "node:fs";
@@ -24,10 +24,8 @@ import {
 
 const program = new Command();
 
-program.name("material-theme-builder").description("m3 color system");
-
 program
-  .command("builder")
+  .name("material-theme-builder")
   .description("Generate a color theme from a source color")
   .argument("<source>", "Source color in hex format (e.g. #6750A4)")
   .addOption(
