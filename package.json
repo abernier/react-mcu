@@ -1,7 +1,7 @@
 {
-  "name": "react-mcu",
-  "version": "1.3.2",
-  "description": "A React component library",
+  "name": "material-theme-builder",
+  "version": "2.1.2",
+  "description": "m3 color-system for JS/TS ecosystem",
   "keywords": [
     "react",
     "component",
@@ -14,14 +14,14 @@
     },
     "./tailwind.css": "./dist/tailwind.css"
   },
-  "homepage": "https://github.com/abernier/react-mcu",
+  "homepage": "https://github.com/abernier/material-theme-builder",
   "bugs": {
-    "url": "https://github.com/abernier/react-mcu/issues"
+    "url": "https://github.com/abernier/material-theme-builder/issues"
   },
   "author": "abernier",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/abernier/react-mcu.git"
+    "url": "git+https://github.com/abernier/material-theme-builder.git"
   },
   "license": "MIT",
   "files": [
@@ -29,7 +29,7 @@
     "src/tailwind.css"
   ],
   "bin": {
-    "react-mcu": "./dist/cli.js"
+    "material-theme-builder": "./dist/cli.js"
   },
   "type": "module",
   "packageManager": "pnpm@10.27.0",
@@ -51,16 +51,16 @@
     "@vitejs/plugin-react": "^5.1.2",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
-    "chromatic": "^13.3.5",
+    "chromatic": "^15.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "culori": "^4.0.2",
     "eslint": "^10.0.0",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-sonarjs": "^3.0.7",
+    "eslint-plugin-sonarjs": "^4.0.0",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
-    "jsdom": "^27.4.0",
+    "jsdom": "^28.1.0",
     "lint-staged": "^16.2.7",
     "postcss": "^8.5.6",
     "prettier": "^3.3.3",
