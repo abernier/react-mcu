@@ -6,7 +6,6 @@ import {
   DEFAULT_CUSTOM_COLORS,
   DEFAULT_PREFIX,
   DEFAULT_SCHEME,
-  DEFAULT_SPEC_VERSION,
   type McuConfig,
 } from "./lib/builder";
 import { McuProvider } from "./Mcu.context";
@@ -27,7 +26,6 @@ export function Mcu({
   colorMatch = DEFAULT_COLOR_MATCH,
   customColors = DEFAULT_CUSTOM_COLORS,
   prefix = DEFAULT_PREFIX,
-  specVersion = DEFAULT_SPEC_VERSION,
   children,
 }: McuConfig & { children?: React.ReactNode }) {
   const config = useMemo(
@@ -44,7 +42,6 @@ export function Mcu({
       colorMatch,
       customColors,
       prefix,
-      specVersion,
     }),
     [
       contrast,
@@ -59,7 +56,6 @@ export function Mcu({
       error,
       colorMatch,
       prefix,
-      specVersion,
     ],
   );
 

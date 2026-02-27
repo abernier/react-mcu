@@ -85,21 +85,6 @@ describe("builder", () => {
     );
   });
 
-  describe("specVersion", () => {
-    it("should NOT include 2025 extra roles for default (2021) spec", () => {
-      const css = builder("#6750A4").toCss();
-      expect(css).not.toContain("--md-sys-color-primary-dim:");
-    });
-
-    it("should include 2025 extra roles when specVersion is '2025'", () => {
-      const css = builder("#6750A4", { specVersion: "2025" }).toCss();
-      expect(css).toContain("--md-sys-color-primary-dim:");
-      expect(css).toContain("--md-sys-color-secondary-dim:");
-      expect(css).toContain("--md-sys-color-tertiary-dim:");
-      expect(css).toContain("--md-sys-color-error-dim:");
-    });
-  });
-
   describe("toFigmaTokens()", () => {
     // DTCG schemas are downloaded by scripts/download-dtcg-schemas.sh (via pretest hook)
     function loadSchema(relativePath: string) {

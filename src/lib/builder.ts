@@ -19,10 +19,7 @@ import {
   SchemeVibrant,
   TonalPalette,
 } from "@material/material-color-utilities";
-import { kebabCase, camelCase, startCase, upperFirst } from "lodash-es";
-
-/** Material Design spec version for color generation (`"2021"` or `"2025"`). */
-export type SpecVersion = "2021" | "2025";
+import { kebabCase, startCase, upperFirst } from "lodash-es";
 
 type HexCustomColor = Omit<CustomColor, "value"> & {
   hex: string;
@@ -67,19 +64,12 @@ export type McuConfig = {
    * Default: "md" (Material Design convention).
    */
   prefix?: string;
-  /**
-   * Material Design spec version to use for color generation.
-   * - `"2021"` — original Material You spec (default)
-   * - `"2025"` — updated spec with additional color roles (e.g. primaryDim, secondaryDim)
-   */
-  specVersion?: SpecVersion;
 };
 
 type SchemeConstructor = new (
   sourceColorHct: Hct,
   isDark: boolean,
   contrastLevel: number,
-  specVersion?: SpecVersion,
 ) => DynamicScheme;
 
 export const schemeNames = [
@@ -108,7 +98,6 @@ export const DEFAULT_CONTRAST = 0;
 export const DEFAULT_CUSTOM_COLORS: HexCustomColor[] = [];
 export const DEFAULT_BLEND = true;
 export const DEFAULT_PREFIX = "md";
-export const DEFAULT_SPEC_VERSION: SpecVersion = "2021";
 
 // The set of standard tone values used in Material You tonal palettes
 export const STANDARD_TONES = [
@@ -293,7 +282,6 @@ function mergeBaseAndCustomColors(
   scheme: DynamicScheme,
   customColors: CustomColor[],
   colorPalettes: ColorPalettes,
-  specVersion: SpecVersion = DEFAULT_SPEC_VERSION,
 ) {
   //
   // Base colors (all listed in tokenNames)
@@ -305,21 +293,6 @@ function mergeBaseAndCustomColors(
     const argb = dynamicColor.getArgb(scheme);
     return [tokenName, argb];
   });
-
-  //
-  // 2025-spec additional color roles: derived from what the library provides
-  // beyond the base tokenNames set.
-  //
-  const vars2025: Record<string, number> = {};
-  if (specVersion === "2025") {
-    const knownTokens = new Set<string>(tokenNames);
-    for (const dc of scheme.colors.allColors) {
-      const camelName = camelCase(dc.name); // e.g. "primary_dim" → "primaryDim"
-      if (!knownTokens.has(camelName)) {
-        vars2025[camelName] = dc.getArgb(scheme);
-      }
-    }
-  }
 
   //
   // Custom colors - using MaterialDynamicColors-like approach
@@ -381,8 +354,8 @@ function mergeBaseAndCustomColors(
       onContainerDynamicColor.getArgb(scheme);
   });
 
-  // Merge all
-  return { ...baseVars, ...vars2025, ...customVars };
+  // Merge both
+  return { ...baseVars, ...customVars };
 }
 
 //
@@ -443,7 +416,6 @@ export function builder(
     error,
     customColors: hexCustomColors = DEFAULT_CUSTOM_COLORS,
     prefix = DEFAULT_PREFIX,
-    specVersion = DEFAULT_SPEC_VERSION,
   }: Omit<McuConfig, "source"> = {},
 ) {
   const sourceArgb = argbFromHex(hexSource);
@@ -460,7 +432,7 @@ export function builder(
   // Create a base scheme to get the standard chroma values
   const SchemeClass = schemesMap[scheme];
   const primaryHct = Hct.fromInt(effectiveSourceArgb);
-  const baseScheme = new SchemeClass(primaryHct, false, contrast, specVersion);
+  const baseScheme = new SchemeClass(primaryHct, false, contrast);
 
   // Unified color processing: Combine core colors and custom colors, filter to only those with hex defined
   const allColors: ColorDefinition[] = [
@@ -526,7 +498,6 @@ export function builder(
     sourceColorHct: Hct.fromInt(effectiveSourceArgb),
     variant,
     contrastLevel: contrast,
-    specVersion,
     primaryPalette: colorPalettes["primary"] || baseScheme.primaryPalette,
     secondaryPalette: colorPalettes["secondary"] || baseScheme.secondaryPalette,
     tertiaryPalette: colorPalettes["tertiary"] || baseScheme.tertiaryPalette,
@@ -576,13 +547,11 @@ export function builder(
     lightScheme,
     customColors,
     colorPalettes,
-    specVersion,
   );
   const mergedColorsDark = mergeBaseAndCustomColors(
     darkScheme,
     customColors,
     colorPalettes,
-    specVersion,
   );
 
   // ── Shared token→palette mapping ──────────────────────────────────────
@@ -619,23 +588,6 @@ export function builder(
     return result;
   }
   const tokenToPalette = buildTokenToPaletteMap(schemePalettes, lightScheme);
-
-  // Derive palette mappings for 2025 extra tokens from scheme.colors.allColors
-  if (specVersion === "2025") {
-    const knownTokens = new Set<string>(tokenNames);
-    for (const dc of lightScheme.colors.allColors) {
-      const camelName = camelCase(dc.name);
-      if (!knownTokens.has(camelName)) {
-        const palette = dc.palette(lightScheme);
-        for (const [palName, pal] of schemePalettes) {
-          if (palette === pal) {
-            tokenToPalette[camelName] = palName;
-            break;
-          }
-        }
-      }
-    }
-  }
 
   // Set of kebab-cased palette names for custom color token resolution
   const allPaletteNamesKebab = new Set(Object.keys(allPalettes).map(kebabCase));
@@ -885,7 +837,7 @@ export function builder(
           role: "primaryPalette" | "neutralPalette" | "neutralVariantPalette",
         ) {
           if (!hex) return null;
-          return new SchemeClass(Hct.fromInt(argbFromHex(hex)), false, 0, specVersion)[role];
+          return new SchemeClass(Hct.fromInt(argbFromHex(hex)), false, 0)[role];
         }
 
         // Override palettes (isDark/contrast-invariant)
@@ -911,7 +863,7 @@ export function builder(
 
         for (const { name, isDark, contrast } of jsonContrastLevels) {
           // Base scheme from primary — provides default palettes for all roles
-          const baseScheme = new SchemeClass(primaryHct, isDark, contrast, specVersion);
+          const baseScheme = new SchemeClass(primaryHct, isDark, contrast);
 
           // Compose scheme: override palette where specified, base default otherwise
           const composedScheme = new DynamicScheme({
@@ -919,7 +871,6 @@ export function builder(
             variant: schemeToVariant[scheme],
             contrastLevel: contrast,
             isDark,
-            specVersion,
             primaryPalette: baseScheme.primaryPalette,
             secondaryPalette: secPalette || baseScheme.secondaryPalette,
             tertiaryPalette: terPalette || baseScheme.tertiaryPalette,
