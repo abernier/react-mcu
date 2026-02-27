@@ -19,7 +19,7 @@ import {
   SchemeVibrant,
   TonalPalette,
 } from "@material/material-color-utilities";
-import { kebabCase, startCase, upperFirst } from "lodash-es";
+import { kebabCase, camelCase, startCase, upperFirst } from "lodash-es";
 
 /** Material Design spec version for color generation (`"2021"` or `"2025"`). */
 export type SpecVersion = "2021" | "2025";
@@ -239,23 +239,6 @@ export const tokenNames = Object.keys(
 
 export type TokenName = keyof typeof tokenDescriptions;
 
-/**
- * Additional system color tokens introduced in the 2025 Material Design spec.
- * These are included in the output only when `specVersion: "2025"` is configured.
- */
-export const tokenDescriptions2025 = {
-  primaryDim:
-    "Dimmed variant of the primary color, used for lower-emphasis interactive elements in the 2025 spec.",
-  secondaryDim:
-    "Dimmed variant of the secondary color, used for lower-emphasis accents in the 2025 spec.",
-  tertiaryDim:
-    "Dimmed variant of the tertiary color, used for lower-emphasis complementary elements in the 2025 spec.",
-  errorDim:
-    "Dimmed variant of the error color, used for lower-emphasis error states in the 2025 spec.",
-} as const;
-
-export type TokenName2025 = keyof typeof tokenDescriptions2025;
-
 // Helper to transform array to record
 function toRecord<T, K extends string, V>(
   arr: readonly T[],
@@ -324,20 +307,17 @@ function mergeBaseAndCustomColors(
   });
 
   //
-  // 2025-spec additional color roles
+  // 2025-spec additional color roles: derived from what the library provides
+  // beyond the base tokenNames set.
   //
   const vars2025: Record<string, number> = {};
   if (specVersion === "2025") {
-    const mdc = scheme.colors;
-    const dimColors: [TokenName2025, () => DynamicColor | undefined][] = [
-      ["primaryDim", () => mdc.primaryDim()],
-      ["secondaryDim", () => mdc.secondaryDim()],
-      ["tertiaryDim", () => mdc.tertiaryDim()],
-      ["errorDim", () => mdc.errorDim()],
-    ];
-    for (const [name, getDc] of dimColors) {
-      const dc = getDc();
-      if (dc) vars2025[name] = dc.getArgb(scheme);
+    const knownTokens = new Set<string>(tokenNames);
+    for (const dc of scheme.colors.allColors) {
+      const camelName = camelCase(dc.name); // e.g. "primary_dim" → "primaryDim"
+      if (!knownTokens.has(camelName)) {
+        vars2025[camelName] = dc.getArgb(scheme);
+      }
     }
   }
 
@@ -640,12 +620,21 @@ export function builder(
   }
   const tokenToPalette = buildTokenToPaletteMap(schemePalettes, lightScheme);
 
-  // Add 2025-specific palette mappings
+  // Derive palette mappings for 2025 extra tokens from scheme.colors.allColors
   if (specVersion === "2025") {
-    tokenToPalette["primaryDim"] = "primary";
-    tokenToPalette["secondaryDim"] = "secondary";
-    tokenToPalette["tertiaryDim"] = "tertiary";
-    tokenToPalette["errorDim"] = "error";
+    const knownTokens = new Set<string>(tokenNames);
+    for (const dc of lightScheme.colors.allColors) {
+      const camelName = camelCase(dc.name);
+      if (!knownTokens.has(camelName)) {
+        const palette = dc.palette(lightScheme);
+        for (const [palName, pal] of schemePalettes) {
+          if (palette === pal) {
+            tokenToPalette[camelName] = palName;
+            break;
+          }
+        }
+      }
+    }
   }
 
   // Set of kebab-cased palette names for custom color token resolution
@@ -1162,9 +1151,7 @@ export function builder(
         const tokens: Record<string, unknown> = {};
 
         for (const [name, argb] of Object.entries(mergedColors)) {
-          const description =
-            tokenDescriptions[name as TokenName] ??
-            tokenDescriptions2025[name as TokenName2025];
+          const description = tokenDescriptions[name as TokenName];
           const cssVar = `--${prefix}-sys-color-${kebabCase(name)}`;
 
           const value = resolveModeValue(argb, name, refPalettes);

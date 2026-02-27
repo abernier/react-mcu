@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { kebabCase, upperFirst } from "lodash-es";
 import type { ComponentProps } from "react";
-import { STANDARD_TONES } from "./lib/builder";
+import { type SpecVersion, STANDARD_TONES } from "./lib/builder";
 import { cn } from "./lib/cn";
 import { Mcu } from "./Mcu";
 
@@ -91,12 +91,14 @@ export function Scheme({
   theme,
   title = "",
   customColors,
+  specVersion,
   children,
   className,
   ...props
 }: {
   title?: string;
   customColors?: ComponentProps<typeof Mcu>["customColors"];
+  specVersion?: SpecVersion;
 } & VariantProps<typeof schemeVariants> &
   Omit<ComponentProps<"div">, "title">) {
   return (
@@ -469,6 +471,33 @@ export function Scheme({
               </Foo>
             </div>
           ))}
+        </div>
+      )}
+
+      {specVersion === "2025" && (
+        <div className="flex flex-col gap-(--gap2)">
+          <div className="grid grid-cols-4 gap-(--gap2)">
+            {(
+              [
+                ["primary-dim", "Primary Dim"],
+                ["secondary-dim", "Secondary Dim"],
+                ["tertiary-dim", "Tertiary Dim"],
+                ["error-dim", "Error Dim"],
+              ] as const
+            ).map(([token, label]) => (
+              <Foo key={token}>
+                <FooTop
+                  className="h-20"
+                  title={token}
+                  style={{
+                    backgroundColor: `var(--md-sys-color-${token})`,
+                  }}
+                >
+                  <p>{label}</p>
+                </FooTop>
+              </Foo>
+            ))}
+          </div>
         </div>
       )}
 
