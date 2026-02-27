@@ -1,9 +1,11 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { kebabCase, upperFirst } from "lodash-es";
 import type { ComponentProps } from "react";
+import { ExportButton } from "./ExportButton";
 import { STANDARD_TONES } from "./lib/builder";
 import { cn } from "./lib/cn";
 import { Mcu } from "./Mcu";
+import { useMcu } from "./Mcu.context";
 
 function Foo({ children, ...props }: ComponentProps<"div">) {
   return (
@@ -30,6 +32,8 @@ export function Layout({
   notext?: boolean;
   children: React.ReactNode;
 }) {
+  const { initials } = useMcu();
+
   return (
     <div className="flex flex-col gap-6 max-w-208 mx-auto">
       <style>{`
@@ -64,6 +68,7 @@ export function Layout({
           }
         }
       `}</style>
+      <ExportButton config={initials} />
       {children}
     </div>
   );
