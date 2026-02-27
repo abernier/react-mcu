@@ -68,9 +68,7 @@ export function Layout({
           }
         }
       `}</style>
-      <div className="flex justify-end mb-2">
-        <ExportButton config={initials} />
-      </div>
+      <ExportButton config={initials} />
       {children}
     </div>
   );
