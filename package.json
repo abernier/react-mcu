@@ -1,7 +1,7 @@
 {
   "name": "material-theme-builder",
   "version": "1.0.0",
-  "description": "Material Design 3 color system for React",
+  "description": "m3 color-system for JS/TS ecosystem",
   "keywords": [
     "react",
     "component",
