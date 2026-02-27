@@ -2,8 +2,7 @@
 [![](https://img.shields.io/badge/chromatic-171c23.svg?logo=chromatic)](https://www.chromatic.com/library?appId=695eb517cb602e59b4cc045c&branch=main)
 [![](https://img.shields.io/badge/storybook-171c23.svg?logo=storybook)](https://main--695eb517cb602e59b4cc045c.chromatic.com)
 
-[Material Design colors](https://m3.material.io/styles/color/system/overview)
-for React.
+[Material Design colors](https://m3.material.io/styles/color/system/overview) as seen on [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/).
 
 It injects `--md-sys-color-*` and `--md-ref-palette-*` CSS variables into the page (prefix is [configurable](#programmatic-api)).
 
