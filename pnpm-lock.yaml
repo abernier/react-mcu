@@ -135,6 +135,12 @@ importers:
       typescript-eslint:
         specifier: ^8.55.0
         version: 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
+      vite:
+        specifier: ^7.3.1
+        version: 7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite-plugin-singlefile:
+        specifier: ^2.3.0
+        version: 2.3.0(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
       vitest:
         specifier: ^4.0.16
         version: 4.0.18(@types/node@24.10.7)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
@@ -3055,6 +3061,13 @@ packages:
   validate-npm-package-name@5.0.1:
     resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  vite-plugin-singlefile@2.3.0:
+    resolution: {integrity: sha512-DAcHzYypM0CasNLSz/WG0VdKOCxGHErfrjOoyIPiNxTPTGmO6rRD/te93n1YL/s+miXq66ipF1brMBikf99c6A==}
+    engines: {node: '>18.0.0'}
+    peerDependencies:
+      rollup: ^4.44.1
+      vite: ^5.4.11 || ^6.0.0 || ^7.0.0
 
   vite@7.3.1:
     resolution: {integrity: sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==}
@@ -6054,6 +6067,12 @@ snapshots:
       react: 19.2.4
 
   validate-npm-package-name@5.0.1: {}
+
+  vite-plugin-singlefile@2.3.0(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)):
+    dependencies:
+      micromatch: 4.0.8
+      rollup: 4.57.1
+      vite: 7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   vite@7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:

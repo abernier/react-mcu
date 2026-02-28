@@ -1,0 +1,148 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  background: #fff;
+  color: #333;
+}
+
+.plugin {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.header h1 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* --- Controls --- */
+.controls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.control input[type="color"] {
+  width: 48px;
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.control select {
+  height: 32px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+.control input[type="range"] {
+  width: 140px;
+}
+
+/* --- Preview --- */
+.preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.preview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.swatch {
+  position: relative;
+  aspect-ratio: 2.2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swatch-label {
+  font-size: 9px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+/* --- Footer --- */
+.footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.apply-btn,
+.download-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.apply-btn:hover,
+.download-btn:hover {
+  opacity: 0.85;
+}
+
+.apply-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.apply-btn {
+  background: #18a0fb;
+  color: #fff;
+}
+
+.download-btn {
+  background: #eee;
+  color: #333;
+}

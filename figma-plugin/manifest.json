@@ -1,0 +1,10 @@
+{
+  "name": "Material Theme Builder",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "dist/index.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}
