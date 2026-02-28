@@ -1,0 +1,26 @@
+{
+  "name": "figma-plugin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm run build:code && pnpm run build:ui",
+    "build:code": "esbuild code.ts --bundle --outfile=dist/code.js --target=es2022",
+    "build:ui": "vite build"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.123.0",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "clsx": "^2.1.1",
+    "esbuild": "^0.27.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.5.4",
+    "vite": "^7.3.1",
+    "vite-plugin-singlefile": "^2.3.0"
+  }
+}

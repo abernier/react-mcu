@@ -6,7 +6,7 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "typeRoots": ["../node_modules/@figma"]
+    "typeRoots": ["./node_modules/@figma"]
   },
   "include": ["code.ts"],
   "exclude": ["node_modules", "dist", "ui"]
