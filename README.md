@@ -450,9 +450,17 @@ Pre-requisites:
 $ pnpm i
 ```
 
-## Figma plugin build
+## Figma plugin
+
+### Build
 
 `build-storybook:figma` produces a self-contained **`storybook-static/figma-plugin.html`** (all JS/CSS inlined via `vite-plugin-singlefile`), suitable for embedding as a Figma plugin UI.
+
+### Usage in Figma
+
+1. Build the plugin UI: `pnpm run build-storybook:figma`
+2. In Figma → Plugins → Development → Import plugin from manifest…
+3. Select `figma-plugin/manifest.json`
 
 ## Validation
 
