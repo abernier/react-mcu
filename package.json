@@ -90,7 +90,7 @@
     "local-release": "pnpm run lgtm && changeset version && changeset publish",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build-storybook:single": "STORYBOOK_SINGLE_FILE=1 storybook build && mv storybook-static/iframe.html storybook-static/figma-plugin.html",
+    "build-storybook:single": "STORYBOOK_SINGLE_FILE=1 storybook build && cp storybook-static/iframe.html storybook-static/figma-plugin.html",
     "chromatic": "chromatic --project-token $CHROMATIC_PROJECT_TOKEN",
     "prepare": "pnpm run pretest && husky",
     "changeset": "pnpm exec changeset"

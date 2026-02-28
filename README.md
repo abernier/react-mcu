@@ -458,7 +458,7 @@ Build a self-contained HTML file (e.g. for Figma plugin UI):
 $ pnpm run build-storybook:single
 ```
 
-→ generates **`storybook-static/figma-plugin.html`** with all JS/CSS inlined.
+→ generates both **`storybook-static/iframe.html`** and **`storybook-static/figma-plugin.html`** with all JS/CSS inlined.
 
 ## Validation
 
