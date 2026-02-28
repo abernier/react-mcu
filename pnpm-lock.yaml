@@ -30,6 +30,9 @@ importers:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.0.2(jiti@2.6.1))
+      '@figma/plugin-typings':
+        specifier: ^1.123.0
+        version: 1.123.0
       '@storybook/addon-docs':
         specifier: ^10.1.11
         version: 10.2.12(@types/react@19.2.14)(esbuild@0.27.2)(rollup@4.57.1)(storybook@10.2.12(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
@@ -135,6 +138,12 @@ importers:
       typescript-eslint:
         specifier: ^8.55.0
         version: 8.56.1(eslint@10.0.2(jiti@2.6.1))(typescript@5.9.3)
+      vite:
+        specifier: ^7.3.1
+        version: 7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
+      vite-plugin-singlefile:
+        specifier: ^2.3.0
+        version: 2.3.0(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
       vitest:
         specifier: ^4.0.16
         version: 4.0.18(@types/node@24.10.7)(jiti@2.6.1)(jsdom@28.1.0)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
@@ -776,6 +785,9 @@ packages:
     peerDependenciesMeta:
       '@noble/hashes':
         optional: true
+
+  '@figma/plugin-typings@1.123.0':
+    resolution: {integrity: sha512-NLv2aQ8R9dP5psDplWpq+pJxRUGsJ1YEYYbBV2oTd03kS+aau7N9XWLjw52s1uVgi8jQ33N001EX3f7vSCztjQ==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -3056,6 +3068,13 @@ packages:
     resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
+  vite-plugin-singlefile@2.3.0:
+    resolution: {integrity: sha512-DAcHzYypM0CasNLSz/WG0VdKOCxGHErfrjOoyIPiNxTPTGmO6rRD/te93n1YL/s+miXq66ipF1brMBikf99c6A==}
+    engines: {node: '>18.0.0'}
+    peerDependencies:
+      rollup: ^4.44.1
+      vite: ^5.4.11 || ^6.0.0 || ^7.0.0
+
   vite@7.3.1:
     resolution: {integrity: sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -3862,6 +3881,8 @@ snapshots:
       levn: 0.4.1
 
   '@exodus/bytes@1.14.1': {}
+
+  '@figma/plugin-typings@1.123.0': {}
 
   '@humanfs/core@0.19.1': {}
 
@@ -6054,6 +6075,12 @@ snapshots:
       react: 19.2.4
 
   validate-npm-package-name@5.0.1: {}
+
+  vite-plugin-singlefile@2.3.0(rollup@4.57.1)(vite@7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)):
+    dependencies:
+      micromatch: 4.0.8
+      rollup: 4.57.1
+      vite: 7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)
 
   vite@7.3.1(@types/node@24.10.7)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2):
     dependencies:

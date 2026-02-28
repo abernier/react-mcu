@@ -8,3 +8,4 @@ src/fixtures/.dtcg-schemas
 
 src/stories
 .DS_Store
+figma-plugin/dist
