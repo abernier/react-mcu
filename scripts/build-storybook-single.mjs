@@ -114,10 +114,10 @@ indexHtml = indexHtml.replace(
   (_match, importBlock) => {
     // Parse import statements
     const importRegex = /import\s+['"]([^'"]+)['"]\s*;?/g;
-    let m;
+    let importMatch;
     const scripts = [];
-    while ((m = importRegex.exec(importBlock)) !== null) {
-      const modulePath = m[1].replace(/^\.\//, "");
+    while ((importMatch = importRegex.exec(importBlock)) !== null) {
+      const modulePath = importMatch[1].replace(/^\.\//, "");
       try {
         const content = read(modulePath);
         scripts.push(`<script type="module">\n${content}\n</script>`);
