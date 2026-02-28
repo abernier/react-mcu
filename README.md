@@ -450,6 +450,16 @@ Pre-requisites:
 $ pnpm i
 ```
 
+## Single-file Storybook build
+
+Build a self-contained HTML file (e.g. for Figma plugin UI):
+
+```sh
+$ pnpm run build-storybook:single
+```
+
+→ generates **`storybook-static/iframe.html`** with all JS/CSS inlined.
+
 ## Validation
 
 ```sh
