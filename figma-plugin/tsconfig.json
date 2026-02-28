@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@figma"]
+  },
+  "include": ["code.ts"],
+  "exclude": ["node_modules", "dist", "ui"]
+}
