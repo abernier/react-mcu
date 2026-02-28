@@ -1,8 +1,8 @@
 // Material Theme Builder — Figma Plugin Code
 //
 // This file runs in Figma's main thread (sandbox).
-// It shows the plugin UI built from the Storybook export and
-// handles messages from the UI to create/update Figma Variables.
+// It shows the plugin UI (built from the React source in src/ via Vite)
+// and handles messages from the UI to create/update Figma Variables.
 
 figma.showUI(__html__, { width: 860, height: 740, themeColors: true });
 

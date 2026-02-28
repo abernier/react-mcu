@@ -8,7 +8,7 @@ This directory contains the [Figma plugin](https://www.figma.com/plugin-docs/) w
 | --- | --- |
 | `manifest.json` | Figma plugin manifest |
 | `code.js` | Runs in Figma's main thread — shows the UI and creates/updates **Figma Variables** when the user clicks *Apply to Figma* |
-| `src/` | React UI source — built into a single `dist/ui.html` via Vite |
+| `src/` | React UI source — built into a single `dist/index.html` via Vite |
 
 ## Build
 
@@ -18,7 +18,7 @@ From the **repository root**:
 pnpm run build-figma-plugin
 ```
 
-This produces `figma-plugin/dist/ui.html` (a self-contained HTML file with all JS/CSS inlined).
+This produces `figma-plugin/dist/index.html` (a self-contained HTML file with all JS/CSS inlined).
 
 ## Load in Figma
 
