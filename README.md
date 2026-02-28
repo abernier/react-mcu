@@ -450,15 +450,9 @@ Pre-requisites:
 $ pnpm i
 ```
 
-## Single-file Storybook build
+## Figma plugin build
 
-Build a self-contained HTML file (e.g. for Figma plugin UI):
-
-```sh
-$ pnpm run build-storybook:single
-```
-
-→ generates both **`storybook-static/iframe.html`** and **`storybook-static/figma-plugin.html`** with all JS/CSS inlined.
+`build-storybook` produces a self-contained **`storybook-static/figma-plugin.html`** (copy of `iframe.html` with all JS/CSS inlined via `vite-plugin-singlefile`), suitable for embedding as a Figma plugin UI.
 
 ## Validation
 

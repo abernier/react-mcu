@@ -10,9 +10,7 @@ const config: StorybookConfig = {
     "@chromatic-com/storybook",
   ],
   viteFinal: async (config) => {
-    if (process.env.STORYBOOK_SINGLE_FILE) {
-      config.plugins = [...(config.plugins || []), viteSingleFile()];
-    }
+    config.plugins = [...(config.plugins || []), viteSingleFile()];
     return config;
   },
 };
