@@ -2,6 +2,7 @@ node_modules
 dist
 *storybook.log
 storybook-static
+storybook-single
 package-lock.json
 material-theme
 src/fixtures/.dtcg-schemas

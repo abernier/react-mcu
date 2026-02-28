@@ -1,4 +1,5 @@
 import type { StorybookConfig } from "@storybook/react-vite";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 const config: StorybookConfig = {
   framework: "@storybook/react-vite",
@@ -8,5 +9,11 @@ const config: StorybookConfig = {
     "@storybook/addon-themes",
     "@chromatic-com/storybook",
   ],
+  viteFinal: async (config) => {
+    if (process.env.STORYBOOK_SINGLE_FILE) {
+      config.plugins = [...(config.plugins || []), viteSingleFile()];
+    }
+    return config;
+  },
 };
 export default config;
