@@ -452,7 +452,7 @@ $ pnpm i
 
 ## Figma plugin build
 
-`build-storybook` produces the standard Storybook output **and** a self-contained **`storybook-static/figma-plugin.html`** (all JS/CSS inlined via `vite-plugin-singlefile`), suitable for embedding as a Figma plugin UI. The normal `iframe.html` is left untouched.
+`build-storybook:figma` produces a self-contained **`storybook-static/figma-plugin.html`** (all JS/CSS inlined via `vite-plugin-singlefile`), suitable for embedding as a Figma plugin UI.
 
 ## Validation
 
