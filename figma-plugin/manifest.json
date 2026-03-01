@@ -3,6 +3,6 @@
   "id": "material-theme-builder",
   "api": "1.0.0",
   "main": "code.js",
-  "ui": "../storybook-static/figma-plugin.html",
+  "ui": "dist/index.html",
   "editorType": ["figma"]
 }
